@@ -1,0 +1,22 @@
+{
+  "servers": {
+    "n8n-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "n8n-mcp"
+      ],
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "MCP_MODE": "stdio",
+        "N8N_MODE": "true",
+        "LOG_LEVEL": "info",
+        "DISABLE_CONSOLE_OUTPUT": "false"
+      }
+    },
+    "n8n-docs": {
+      "type": "http",
+      "url": "https://n8n.mcp.kapa.ai/"
+    }
+  }
+}

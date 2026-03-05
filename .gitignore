@@ -1,1 +1,9 @@
 .env
+
+# Serena memory cache (workspace-specific)
+.serena/
+
+# Python artifacts
+__pycache__/
+*.pyc
+node_modules
