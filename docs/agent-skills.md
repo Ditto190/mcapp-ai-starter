@@ -15,9 +15,9 @@ This repository provides four skills:
 
 ## Install the Skills
 
-Choose one of the following installation methods based on your agent:
+Choose the instructions for your agent:
 
-### Option 1: Claude Code Plugin
+### Claude Code
 
 Install via Claude Code:
 
@@ -26,26 +26,89 @@ Install via Claude Code:
 /plugin install mcp-apps@modelcontextprotocol-ext-apps
 ```
 
-### Option 2: Vercel Skills CLI
+### VS Code (Copilot agent mode)
 
-Use the [Vercel Skills CLI](https://skills.sh/) to install skills across different AI coding agents:
+> **Note:** Agent skills require agent mode in [VS Code Insiders](https://code.visualstudio.com/insiders/). Support in the stable VS Code release is coming soon.
+
+**Option A — Vercel Skills CLI (recommended):**
 
 ```bash
 npx skills add modelcontextprotocol/ext-apps
 ```
 
-### Option 3: Manual Installation
+**Option B — Manual installation:**
 
-Clone the repository:
+Copy each skill folder from [`plugins/mcp-apps/skills/`](https://github.com/modelcontextprotocol/ext-apps/tree/main/plugins/mcp-apps/skills) into a skills directory that Copilot watches:
+
+- **Personal skills** (available in all projects): `~/.copilot/skills/`
+- **Project skills** (checked in to a repo): `.github/skills/`
+
+```bash
+# Clone the repo (or download the skills folder)
+git clone https://github.com/modelcontextprotocol/ext-apps.git
+cd ext-apps
+
+# Copy all four skills to your personal skills directory
+cp -r plugins/mcp-apps/skills/create-mcp-app    ~/.copilot/skills/
+cp -r plugins/mcp-apps/skills/migrate-oai-app   ~/.copilot/skills/
+cp -r plugins/mcp-apps/skills/add-app-to-server ~/.copilot/skills/
+cp -r plugins/mcp-apps/skills/convert-web-app   ~/.copilot/skills/
+```
+
+See [VS Code agent skills docs](https://code.visualstudio.com/docs/copilot/customization/agent-skills) for full details.
+
+### GitHub Copilot CLI
+
+**Option A — Install as a plugin (recommended):**
+
+```bash
+copilot plugin install modelcontextprotocol/ext-apps:plugins/mcp-apps
+```
+
+This installs the plugin directly from the GitHub repository. Verify with:
+
+```bash
+copilot plugin list
+```
+
+**Option B — Install via the marketplace:**
+
+```bash
+copilot plugin marketplace add modelcontextprotocol/ext-apps
+copilot plugin install mcp-apps@ext-apps
+```
+
+**Option C — Manual skill installation:**
+
+Clone the repository and copy each skill folder to `~/.copilot/skills/` (personal) or `.github/skills/` (project), then reload skills in an active session:
 
 ```bash
 git clone https://github.com/modelcontextprotocol/ext-apps.git
+cd ext-apps
+
+cp -r plugins/mcp-apps/skills/create-mcp-app    ~/.copilot/skills/
+cp -r plugins/mcp-apps/skills/migrate-oai-app   ~/.copilot/skills/
+cp -r plugins/mcp-apps/skills/add-app-to-server ~/.copilot/skills/
+cp -r plugins/mcp-apps/skills/convert-web-app   ~/.copilot/skills/
 ```
 
-Then copy the skills from `plugins/mcp-apps/skills/` to your agent's skills directory. See your agent's documentation for the correct location:
+```
+/skills reload
+```
+
+See [GitHub Copilot CLI skills docs](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/create-skills) for full details.
+
+### Other agents
+
+Any AI coding agent that supports the [Agent Skills](https://agentskills.io/) open standard can use these skills. Use the [Vercel Skills CLI](https://skills.sh/) to install across different agents:
+
+```bash
+npx skills add modelcontextprotocol/ext-apps
+```
+
+Or copy the skill folders manually to the appropriate location for your agent:
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code/skills)
-- [VS Code](https://code.visualstudio.com/docs/copilot/customization/agent-skills) / [GitHub Copilot](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills)
 - [Codex](https://developers.openai.com/codex/skills/)
 - [Gemini CLI](https://geminicli.com/docs/cli/skills/)
 - [Cline](https://docs.cline.bot/features/skills#skills)

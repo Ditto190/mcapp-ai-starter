@@ -67,10 +67,23 @@ then just ask:
 /plugin install mcp-apps@modelcontextprotocol-ext-apps
 ```
 
+**GitHub Copilot CLI** — install as a plugin:
+
+```bash
+copilot plugin install modelcontextprotocol/ext-apps:plugins/mcp-apps
+```
+
+**VS Code** (agent mode, VS Code Insiders) — copy skills to `~/.copilot/skills/`
+or use the Vercel Skills CLI:
+
+```bash
+npx skills add modelcontextprotocol/ext-apps
+```
+
 **Other agents** — any AI coding agent that supports
 [Agent Skills](https://agentskills.io/) can use these skills. See the
-[agent skills guide](./docs/agent-skills.md) for manual installation
-instructions.
+[agent skills guide](./docs/agent-skills.md) for step-by-step instructions for
+each agent.
 
 Once installed, verify by asking your agent _"What skills do you have?"_ — you
 should see `create-mcp-app`, `migrate-oai-app`, `add-app-to-server`, and
