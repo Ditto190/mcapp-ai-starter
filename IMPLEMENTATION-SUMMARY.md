@@ -14,7 +14,7 @@ A fully functional FastMCP server that wraps the GenerateAgents.md CLI and expos
 
 **Tool Coverage**:
 - ✅ `list_models()` - Returns 100+ supported LLM providers
-- ✅ `generate_agents(repo_path, style, model, api_base?, api_key?)` - Local repo analysis
+- ✅ `generate_agents(repo_path, style, model, api_base?)` - Local repo analysis (read API keys from environment variables)
 - ✅ `generate_agents_from_github(repo_url, ...)` - GitHub repo cloning + analysis
 - ✅ `validate_output(project_name)` - AGENTS.md validation
 - ✅ `run_tests(include_e2e?)` - Test suite execution
