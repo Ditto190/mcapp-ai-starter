@@ -140,8 +140,7 @@ def run_agents_md_pipeline(repo_dir, repo_name, lm, style="comprehensive", analy
             logging.info(f"Lessons Learned:\n{git_lessons}")
             logging.info(f"Anti-Patterns:\n{git_anti_patterns}")
         else:
-            logging.info("No reverted git history found or selected. Exiting early as requested.")
-            sys.exit(0)
+            logging.info("No reverted git history found or selected. Continuing pipeline without git insights.")
 
     # Step 1: Extract Conventions
     logging.info(f"\n[1/3] Scanning codebase tree for '{repo_name}' using RLM (style: {style})...")
