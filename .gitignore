@@ -1,6 +1,6 @@
 # Environment files
 .env
-.env.codespaces
+# .env.codespaces is a sanitized template and should be committed
 
 # Python
 __pycache__/
