@@ -29,10 +29,14 @@ if [ ! -f .env ]; then
   # Generate secure secrets
   ENCRYPTION_KEY=$(openssl rand -base64 32)
   JWT_SECRET=$(openssl rand -base64 32)
+
+  # Escape secrets for safe use in sed replacement (handles '/' and '&')
+  ENCRYPTION_KEY_ESC=$(printf '%s\n' "$ENCRYPTION_KEY" | sed 's/[\/&]/\\&/g')
+  JWT_SECRET_ESC=$(printf '%s\n' "$JWT_SECRET" | sed 's/[\/&]/\\&/g')
   
   # Update secrets in .env (for non-production use)
-  sed -i "s/N8N_ENCRYPTION_KEY=.*/N8N_ENCRYPTION_KEY=$ENCRYPTION_KEY/" .env
-  sed -i "s/N8N_USER_MANAGEMENT_JWT_SECRET=.*/N8N_USER_MANAGEMENT_JWT_SECRET=$JWT_SECRET/" .env
+  sed -i "s/N8N_ENCRYPTION_KEY=.*/N8N_ENCRYPTION_KEY=$ENCRYPTION_KEY_ESC/" .env
+  sed -i "s/N8N_USER_MANAGEMENT_JWT_SECRET=.*/N8N_USER_MANAGEMENT_JWT_SECRET=$JWT_SECRET_ESC/" .env
   
   echo "✅ .env file created with secure keys"
 else
