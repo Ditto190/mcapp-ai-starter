@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "session-logger/log-session-start.sh",
+        "cwd": ".",
+        "timeoutSec": 5
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "session-logger/log-session-end.sh",
+        "cwd": ".",
+        "timeoutSec": 5
+      }
+    ],
+    "userPromptSubmitted": [
+      {
+        "type": "command",
+        "bash": "session-logger/log-prompt.sh",
+        "cwd": ".",
+        "env": { "LOG_LEVEL": "INFO" },
+        "timeoutSec": 5
+      }
+    ]
+  }
+}
