@@ -1,5 +1,8 @@
 name: CI with Agent Search
 
+permissions:
+  contents: read
+
 on:
   pull_request:
   push:
@@ -25,6 +28,10 @@ jobs:
           echo "Running repository tests (if present)" || true
 
   agent-search:
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
     needs: build-and-test
     runs-on: ubuntu-latest
     steps:
