@@ -1,14 +1,14 @@
 # Quick Start: Connect External Agent to Codespace
 
-**Codespace Name**: `curly-space-spork-v9rg679gpqw3rj6`
+**Codespace Name**: `<CODESPACE_NAME>`
 
 ## 🚀 30-Second Setup
 
 ### Step 1: Export Credentials
 ```bash
 # On your local machine
-export N8N_API_KEY="DXx4zJ8kL2m9vQ5bR3tY7wNpH6sC1eF0oX2yZ9aB4d="
-export CODESPACE_NAME="curly-space-spork-v9rg679gpqw3rj6"
+export N8N_API_KEY="<N8N_API_KEY>"
+export CODESPACE_NAME="<CODESPACE_NAME>"
 ```
 
 ### Step 2: Copy the Python Helper
@@ -23,8 +23,8 @@ from codespace_agent import CodespaceAgent
 
 # Initialize
 agent = CodespaceAgent(
-    codespace_name="curly-space-spork-v9rg679gpqw3rj6",
-    n8n_api_key="DXx4zJ8kL2m9vQ5bR3tY7wNpH6sC1eF0oX2yZ9aB4d="
+    codespace_name="<CODESPACE_NAME>",
+    n8n_api_key="<N8N_API_KEY>"
 )
 
 # Use services
@@ -39,14 +39,14 @@ agent.qdrant.upsert("embeddings", points=[...])
 
 ### n8n
 ```
-Base: https://curly-space-spork-v9rg679gpqw3rj6-5678.app.github.dev
-API Key: DXx4zJ8kL2m9vQ5bR3tY7wNpH6sC1eF0oX2yZ9aB4d=
+Base: https://<CODESPACE_NAME>-5678.app.github.dev
+API Key: <N8N_API_KEY>
 Header: X-N8N-API-KEY
 ```
 
 ### Ollama
 ```
-Base: https://curly-space-spork-v9rg679gpqw3rj6-11434.app.github.dev
+Base: https://<CODESPACE_NAME>-11434.app.github.dev
 Models: llama3.2, mistral, neural-chat
 ```
 
