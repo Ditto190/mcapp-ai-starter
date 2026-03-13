@@ -1865,6 +1865,13 @@ Follow these styling patterns for cleaner, more consistent React Native code.
 
 **Always use `borderCurve: 'continuous'` with `borderRadius`:**
 
+```tsx
+// Incorrect
+{ borderRadius: 12 }
+
+// Correct – smoother iOS-style corners
+{ borderRadius: 12, borderCurve: 'continuous' }
+
 **Use `gap` instead of margin for spacing between elements:**
 
 ```tsx
