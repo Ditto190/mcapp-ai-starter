@@ -5,7 +5,7 @@
       "command": "contextstream-mcp",
       "env": {
         "CONTEXTSTREAM_ALLOW_HEADER_AUTH": "false",
-        "CONTEXTSTREAM_API_KEY": "cbiq_3d5pB0fsyspHNnWexOjT92B7WHV6B1ssdyUQqhMQ8Zk",
+        "CONTEXTSTREAM_API_KEY": "${env:CONTEXTSTREAM_API_KEY}",
         "CONTEXTSTREAM_API_URL": "https://api.contextstream.io",
         "CONTEXTSTREAM_AUTO_HIDE_INTEGRATIONS": "true",
         "CONTEXTSTREAM_CONSOLIDATED": "true",
