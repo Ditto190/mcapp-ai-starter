@@ -115,6 +115,7 @@ jobs:
           echo "  Cache results for next run"
           
           # For now, just document
+          mkdir -p .serena/memories
           echo "## Test Run $(date)" >> .serena/memories/recent-changes.md
           echo "Modules tested: ${{ needs.analyze-changed-symbols.outputs.changed_modules }}" >> .serena/memories/recent-changes.md
           echo "All tests passed ✓" >> .serena/memories/recent-changes.md

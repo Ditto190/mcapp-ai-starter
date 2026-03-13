@@ -24,6 +24,12 @@ echo "🔍 Validating AgentSkills..."
 
 # Check if skills-ref is installed
 SKILLS_REF_DIR="agentskills/skills-ref"
+if [ ! -d "$SKILLS_REF_DIR" ]; then
+    echo -e "${YELLOW}⚠️  agentskills/skills-ref not found. Skipping AgentSkills validation.${NC}"
+    echo "   To enable validation, initialize submodules:"
+    echo "   git submodule update --init --recursive"
+    exit 0
+fi
 if [ ! -d "$SKILLS_REF_DIR/.venv" ]; then
     echo -e "${YELLOW}⚠️  skills-ref not installed, installing now...${NC}"
     cd "$SKILLS_REF_DIR"
