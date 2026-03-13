@@ -52,7 +52,7 @@ Models: llama3.2, mistral, neural-chat
 
 ### Qdrant
 ```
-Base: https://curly-space-spork-v9rg679gpqw3rj6-6333.app.github.dev
+Base: https://<CODESPACE_NAME>-6333.app.github.dev
 Default Collection: embeddings
 ```
 
@@ -62,14 +62,14 @@ Default Collection: embeddings
 
 ```bash
 # Test n8n
-curl -H "X-N8N-API-KEY: DXx4zJ8kL2m9vQ5bR3tY7wNpH6sC1eF0oX2yZ9aB4d=" \
-  https://curly-space-spork-v9rg679gpqw3rj6-5678.app.github.dev/api/v1/workflows | jq
+curl -H "X-N8N-API-KEY: <N8N_API_KEY>" \
+  https://<CODESPACE_NAME>-5678.app.github.dev/api/v1/workflows | jq
 
 # Test Ollama
-curl https://curly-space-spork-v9rg679gpqw3rj6-11434.app.github.dev/api/tags | jq
+curl https://<CODESPACE_NAME>-11434.app.github.dev/api/tags | jq
 
 # Test Qdrant
-curl https://curly-space-spork-v9rg679gpqw3rj6-6333.app.github.dev/health | jq
+curl https://<CODESPACE_NAME>-6333.app.github.dev/health | jq
 ```
 
 ---
@@ -111,7 +111,7 @@ A: Yes, but requires SSH tunnel setup. See CONNECTION_GUIDE.md for details.
 A: Use the Ollama client. Models are downloaded on-demand via `pull_model()`.
 
 **Q: What if the Codespace shuts down?**  
-A: Restart with `gh codespace resume --codespace curly-space-spork-v9rg679gpqw3rj6`
+A: Restart with `gh codespace resume --codespace <CODESPACE_NAME>`
 
 **Q: Can multiple agents connect simultaneously?**  
 A: Yes! n8n, Ollama, and Qdrant support concurrent connections.
