@@ -1,15 +1,15 @@
 name: Serena Symbol Analysis + Targeted Testing
 
-# Example workflow demonstrating Serena symbolic code analysis
-# integrated with GitHub Actions for smart CI/CD
+# Demonstration workflow for integrating Serena symbolic code analysis
+# with GitHub Actions to drive smart, targeted testing on PRs.
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - '**/*.py'
-      - '**/*.ts'
-      - '**/*.js'
+      - "**/*.py"
+      - "**/*.ts"
+      - "**/*.js"
 
 permissions:
   contents: read
@@ -17,42 +17,45 @@ permissions:
 
 jobs:
   analyze-changed-symbols:
+    name: Analyze changed symbols (Serena demo)
     runs-on: ubuntu-latest
     outputs:
       changed_modules: ${{ steps.serena.outputs.modules }}
       test_targets: ${{ steps.serena.outputs.tests }}
-    
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Full history for analysis
-      
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-      
+          python-version: "3.12"
+
       - name: Get changed files
         id: changed
         run: |
           git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.sha }} > changed_files.txt
+          echo "Changed files:"
           cat changed_files.txt
-      
-      # This would use Serena MCP tools in real implementation
-      # For now, demonstrates the concept
-      - name: Analyze symbols with Serena pattern
+
+      # In a production setup, this step would call Serena MCP tools.
+      - name: Analyze symbols with Serena pattern (demo)
         id: serena
         run: |
-          echo "In production, this would call Serena tools:"
+          echo "In production, this would call Serena MCP tools, for example:"
           echo "  mcp_oraios_serena_find_symbol() for each changed file"
           echo "  mcp_oraios_serena_find_referencing_symbols() to map dependencies"
           echo "  mcp_oraios_serena_search_for_pattern() to find related tests"
-          
-          # Simulate output
-          echo "modules=[\"cli.py\",\"modules.py\"]" >> $GITHUB_OUTPUT
-          echo "tests=[\"tests/test_cli.py\",\"tests/test_modules.py\"]" >> $GITHUB_OUTPUT
+
+          # Simulated output for demonstration purposes:
+          echo 'modules=["cli.py","modules.py"]' >> "$GITHUB_OUTPUT"
+          echo 'tests=["tests/test_cli.py","tests/test_modules.py"]' >> "$GITHUB_OUTPUT"
 
   run-targeted-tests:
+    name: Run targeted tests for affected components
     needs: analyze-changed-symbols
     runs-on: ubuntu-latest
     strategy:
@@ -61,22 +64,23 @@ jobs:
           - GenerateAgents.md
           - generateagents-mcp
           - prompt-registry
-    
+
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup Python (for Python components)
         if: matrix.component != 'prompt-registry'
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-      
-      - name: Setup Node (for TypeScript components)
+          python-version: "3.12"
+
+      - name: Setup Node.js (for TypeScript components)
         if: matrix.component == 'prompt-registry'
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      
+          node-version: "20"
+
       - name: Install dependencies
         run: |
           if [ "${{ matrix.component }}" = "GenerateAgents.md" ]; then
@@ -86,11 +90,11 @@ jobs:
           elif [ "${{ matrix.component }}" = "prompt-registry" ]; then
             cd prompt-registry && npm ci
           fi
-      
+
       - name: Run targeted tests
         run: |
-          echo "Running tests for: ${{ needs.analyze-changed-symbols.outputs.changed_modules }}"
-          
+          echo "Running tests for changed modules: ${{ needs.analyze-changed-symbols.outputs.changed_modules }}"
+
           if [ "${{ matrix.component }}" = "GenerateAgents.md" ]; then
             cd GenerateAgents.md && pytest -m 'not e2e' -v
           elif [ "${{ matrix.component }}" = "generateagents-mcp" ]; then
@@ -100,53 +104,66 @@ jobs:
           fi
 
   update-serena-memory:
+    name: Update Serena memory (demo)
     needs: [analyze-changed-symbols, run-targeted-tests]
     runs-on: ubuntu-latest
     if: success()
-    
+
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Update test coverage map
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update test coverage map (demo)
         run: |
           echo "In production, this would:"
           echo "  mcp_oraios_serena_write_memory('test-coverage-map.md')"
           echo "  Store new symbol → test mappings discovered"
-          echo "  Cache results for next run"
-          
+          echo "  Cache results for future runs"
+
           # Ensure Serena memory directory exists before writing
           mkdir -p .serena/memories
-          
-          # For now, just document
-          echo "## Test Run $(date)" >> .serena/memories/recent-changes.md
-          echo "Modules tested: ${{ needs.analyze-changed-symbols.outputs.changed_modules }}" >> .serena/memories/recent-changes.md
-          echo "All tests passed ✓" >> .serena/memories/recent-changes.md
+
+          # For now, just append basic info
+          {
+            echo "## Test Run $(date)"
+            echo "Modules tested: ${{ needs.analyze-changed-symbols.outputs.changed_modules }}"
+            echo "All tests passed ✓"
+            echo
+          } >> .serena/memories/recent-changes.md
 
   comment-summary:
+    name: Comment PR with Serena analysis summary
     needs: [analyze-changed-symbols, run-targeted-tests, update-serena-memory]
     runs-on: ubuntu-latest
     if: always()
-    
+
     steps:
       - name: Comment PR with analysis
         uses: actions/github-script@v7
         with:
           script: |
-            const body = `## 🔍 Serena Symbol Analysis
-            
-            **Changed Modules:** \`${{ needs.analyze-changed-symbols.outputs.changed_modules }}\`
-            
-            **Tests Executed:** ${{ needs.analyze-changed-symbols.outputs.test_targets }}
-            
-            **Result:** ${{ needs.run-targeted-tests.result == 'success' && '✅ All tests passed' || '❌ Tests failed' }}
-            
+            const changedModules = `${{ needs.analyze-changed-symbols.outputs.changed_modules }}`;
+            const testTargets = `${{ needs.analyze-changed-symbols.outputs.test_targets }}`;
+            const testsResult = `${{ needs.run-targeted-tests.result }}`;
+
+            const resultText = testsResult === 'success'
+              ? '✅ All tests passed'
+              : '❌ Tests failed (see logs above)';
+
+            const body = `## 🔍 Serena Symbol Analysis (Demo)
+
+            **Changed Modules:** \`${changedModules}\`
+
+            **Tests Considered:** \`${testTargets}\`
+
+            **Result:** ${resultText}
+
             ---
-            *Powered by Serena symbolic code analysis + GitHub Actions MCP*
-            `;
-            
+            _Powered by Serena-style symbolic code analysis + GitHub Actions MCP (demo workflow)_`;
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: body
+              body
             });
