@@ -1,5 +1,10 @@
 {
   "devDependencies": {
     "n8n-mcp": "^2.35.6"
+  },
+  "dependencies": {
+    "claude": "^0.1.1",
+    "claude-code": "^1.0.0",
+    "suggest": "^0.0.1"
   }
 }

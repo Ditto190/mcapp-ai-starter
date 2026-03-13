@@ -1,25 +1,84 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Generate .env from .env.codespaces",
-            "type": "shell",
-            "command": "bash",
-            "args": [
-                "scripts/generate-env.sh",
-                ".env.codespaces",
-                ".env"
-            ],
-            "problemMatcher": []
+  "version": "2.0.0",
+  "presentation": {
+    "reveal": "always",
+    "panel": "new",
+    "focus": false,
+    "clearedOutput": false
+  },
+  "tasks": [
+    {
+      "label": "🔄 Sync Environment Secrets",
+      "type": "shell",
+      "command": "bash",
+      "args": ["scripts/sync-env-secrets.sh", "--verbose"],
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "focus": true
+      }
+    },
+    {
+      "label": "👁️  Watch .env Changes (Auto-Sync)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["scripts/watch-env.sh"],
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^.*$"
         },
-        {
-            "label": "Run devcontainer post-create",
-            "type": "shell",
-            "command": "bash",
-            "args": [
-                ".devcontainer/post-create.sh"
-            ],
-            "problemMatcher": []
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^(Watching|👁️).*",
+          "endsPattern": "^(Stopped|Error).*"
         }
-    ]
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "📋 Preview Secrets Sync (Dry-Run)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["scripts/sync-env-secrets.sh", "--dry-run"],
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "🔑 Reload Environment Variables",
+      "type": "shell",
+      "command": "bash",
+      "args": ["scripts/load-env-vars.sh", ".env"],
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "📦 Show Environment Keys (Sample)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "echo '=== Environment Keys Loaded ===' && echo '' && echo 'Total env vars:' && env | wc -l && echo '' && echo 'Sample keys:' && env | grep -E '^(OPENAI|N8N_API|GITHUB_PERSONAL|CODESPACE_NAME)' | head -5 || echo 'No sample keys found'"
+      ],
+      "isBackground": false,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ]
 }

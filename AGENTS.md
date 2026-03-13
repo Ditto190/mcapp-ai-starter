@@ -417,7 +417,117 @@ docker compose logs -f n8n
 - For n8n API operations, include `Authorization: Bearer <N8N_API_KEY>`.
 - For MCP server tools, avoid exposing API keys in logs or tool responses.
 
+## Environment Management
+
+### Overview
+This project uses a **two-file secure environment pattern**:
+- **`.env.codespaces`** — Committed template with all keys and placeholders (no secrets)
+- **`.env`** — Runtime file with actual values (gitignored, for local/Codespaces execution only)
+
+### Setup in Codespaces
+
+**Automatic (Post-Create Hook):**
+- `.devcontainer/post-create.sh` runs `scripts/generate-env.sh` automatically
+- Generates `.env` from template using GitHub Codespaces secrets/variables as values
+- All keys are populated at Codespaces boot time
+
+**Manual (Current Session):**
+```bash
+# Load all env vars into current bash session
+source scripts/load-env-vars.sh .env
+
+# Verify vars are available
+echo $OPENAI_API_KEY
+env | grep -E 'POSTGRES|N8N|OPENAI|GITHUB|MCP|CONTEXT'
+```
+
+### Key Files
+
+| File | Purpose | Git Status |
+|------|---------|-----------|
+| `.env.codespaces` | Template with all keys (no secrets) | ✅ Committed |
+| `.env` | Runtime values for local/Codespaces execution | ❌ Gitignored |
+| `scripts/generate-env.sh` | Generates `.env` from template + Codespaces secrets | ✅ Committed |
+| `scripts/load-env-vars.sh` | Loads all `.env` keys into bash session | ✅ Committed |
+| `scripts/save-to-codespaces-secrets.sh` | Generates GitHub CLI commands for secret setup | ✅ Committed |
+
+### Environment Variables by Category
+
+**76+ keys across:**
+- PostgreSQL (4) — `POSTGRES_USER`, `POSTGRES_PASSWORD`, etc.
+- n8n Core (15) — Encryption, auth, API, host/port config
+- AI/LLM APIs (12) — OpenAI, Anthropic, Azure OpenAI, Gemini, HuggingFace
+- Integrations (10) — GitHub PAT, GitLab PAT, Jules, Google APIs
+- MCP/Context (6) — ContextStream, Context7, AgentMode, MCP endpoints
+- Database (4) — PostgreSQL connection strings for n8n tracing
+- OpenTelemetry (6) — gRPC endpoint, service name/version, tracing config
+- Agents (3) — Agent name, description, tool approval settings
+- Services (3) — Ollama, MCP server, runtime config
+- Metadata (3) — Codespace name, admin user, domain
+
+**Full list:** See `.env.codespaces` for all keys and descriptions.
+
+### Persisting Secrets to Codespaces
+
+**Option 1: GitHub CLI (Fastest)**
+```bash
+gh auth login
+bash scripts/save-to-codespaces-secrets.sh | bash
+```
+
+**Option 2: GitHub Web UI**
+- Visit https://github.com/settings/codespaces
+- Add each secret under "Repository secrets"
+
+**Option 3: Reference Guide**
+- See `CODESPACES-SECRETS-SETUP.md` for detailed multi-method walkthrough
+- Includes security best practices and troubleshooting
+
+### Authentication
+
+**n8n API:**
+- Use header: `Authorization: Bearer <N8N_API_KEY>`
+- ⚠️ NOT `X-N8N-API-KEY` (that was legacy)
+
+**GitHub Codespaces:**
+- `GITHUB_PERSONAL_ACCESS_TOKEN` — Full PAT for automation
+- `github_pat_extended` — Extended PAT variant
+- Pre-configured in GitHub App integrations
+
+**LLM APIs:**
+- `OPENAI_API_KEY` — o1 preview, GPT-4o, etc.
+- `ANTHROPIC_API_KEY` (or `CLAUDE_MODEL`) — Claude 3 models
+- `AZURE_OPENAI_API_KEY` — Azure-hosted OpenAI
+- `GEMINI_API_KEY` — Google Gemini
+- `HUGGING_FACE_TOKEN` — HuggingFace model inference
+
+**MCP/Context:**
+- `CONTEXTSTREAM_API_KEY` — ContextStream premium search
+- `CONTEXT7_API_KEY` — Context7 integrations
+- `AGENTMODE_MCP_API_KEY` — AgentMode MCP server
+- `N8N_MCP_TOKEN` — n8n ↔ MCP bridge auth
+
+### Troubleshooting
+
+**Vars not loading in new Codespaces:**
+- Check GitHub Settings > Secrets > Codespaces — confirm secrets are set
+- Run `.devcontainer/post-create.sh` manually to debug
+- Verify `generate-env.sh` reads from GitHub Codespaces secrets
+
+**n8n can't access vars:**
+- Ensure `docker compose up` runs AFTER `.devcontainer/post-create.sh`
+- Check `N8N_HOST` matches Codespaces domain (auto-detected via `CODESPACE_*` vars)
+- Verify n8n pod has `.env` mounted correctly
+
+**MCP servers failing:**
+- Confirm `MCP_MODE=stdio` and `MCP_PORT=3000` match `.vscode/mcp.json`
+- Check `N8N_MCP_TOKEN` is set in running environment (`docker exec`)
+- Review `generateagents-mcp/AGENTS.md` for Python-specific env setup
+
 ## Pitfalls
 - `.github/copilot-instructions.md` contains broader ecosystem guidance; when conflicts exist, prioritize this file plus nearest-folder `AGENTS.md` in this repository.
 - `generateagents-mcp` uses Python/`uv`, while SDK/examples use Bun/npm; use the matching toolchain per component.
 - Codespaces URLs can change; update `N8N_HOST` in local `.env` when needed.
+- Use `Authorization: Bearer <N8N_API_KEY>` for n8n API calls — NOT `X-N8N-API-KEY`.
+- `.env` must be gitignored; only commit `.env.codespaces` template.
+- After adding new keys to `.env.codespaces`, run `scripts/generate-env.sh` to regenerate `.env`, then update Codespaces secrets.
