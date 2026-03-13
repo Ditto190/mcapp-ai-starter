@@ -1,0 +1,49 @@
+{
+    "copilot.advanced": {
+        "debug.testingEnabled": true
+    },
+    "typespec.disable": true,
+    // Plan Agent - Architecture + Symbolic Analysis + GitHub Actions
+    "github.copilot.chat.planAgent.additionalTools": [
+        "memory",
+        "sequentialthinking",
+        "context7",
+        "github_support_docs_search",
+        "n8n-docs",
+        "github",
+        "mcp_oraios_serena_find_symbol",
+        "mcp_oraios_serena_get_symbols_overview",
+        "mcp_oraios_serena_find_referencing_symbols",
+        "mcp_oraios_serena_search_for_pattern",
+        "mcp_oraios_serena_read_memory",
+        "mcp_oraios_serena_write_memory"
+    ],
+    // Ask Agent - Quick lookups + Symbol queries
+    "github.copilot.chat.askAgent.additionalTools": [
+        "github_support_docs_search",
+        "n8n-docs",
+        "memory",
+        "time",
+        "mcp_oraios_serena_find_symbol",
+        "mcp_oraios_serena_get_symbols_overview"
+    ],
+    "[copilot].mcp": {
+        "servers": [
+            {
+                "name": "generateagents-mcp",
+                "description": "GenerateAgents.md MCP Server - Expose AGENTS.md generation as LLM-callable tools",
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "cd /workspaces/self-hosted-ai-starter-kit/generateagents-mcp && uv run python server.py"
+                ],
+                "env": {
+                    "PYTHONPATH": "/workspaces/self-hosted-ai-starter-kit",
+                    "LOG_LEVEL": "INFO",
+                    "PATH": "/root/.local/bin:/usr/local/bin:/usr/bin:/bin"
+                }
+            }
+        ]
+    },
+    "markdown.validate.enabled": true
+}

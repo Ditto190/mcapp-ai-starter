@@ -1,0 +1,357 @@
+Metadata-Version: 2.4
+Name: generateagents-mcp
+Version: 0.1.0
+Summary: Model Context Protocol server exposing GenerateAgents.md CLI as LLM-callable tools
+License-Expression: MIT
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: fastmcp>=3.0.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+
+# GenerateAgents MCP Server
+
+A Model Context Protocol (MCP) server that exposes the GenerateAgents.md CLI as first-class LLM-callable tools for VS Code Copilot, Claude Desktop, and other MCP-compatible AI assistants.
+
+## Overview
+
+The GenerateAgents MCP server bridges the gap between the GenerateAgents.md CLI tool and AI assistants by:
+- Exposing 5 core GenerateAgents functions as MCP tools with JSON schemas
+- Handling tool execution, error handling, and output structuring
+- Supporting both local and remote deployment via stdio/HTTP transports
+- Integrating with VS Code Copilot, Claude Desktop, and OpenAI Function Calling
+
+## Installation
+
+### Prerequisites
+- Python 3.12+
+- GenerateAgents.md repository cloned to `../GenerateAgents.md`
+- `uv` package manager installed
+
+### Setup
+
+```bash
+cd /workspaces/self-hosted-ai-starter-kit/generateagents-mcp
+pip install -e .
+# or with uv:
+uv sync
+```
+
+## Tool Reference
+
+### 1. `list_models()`
+Lists all available language models across 100+ providers (OpenAI, Anthropic, Gemini, Ollama, etc.).
+
+**Returns:**
+```json
+{
+  "success": true,
+  "provider_count": 10,
+  "models": {
+    "openai": ["gpt-4", "gpt-4-turbo", ...],
+    "anthropic": ["claude-3-opus", ...],
+    ...
+  }
+}
+```
+
+---
+
+### 2. `generate_agents(repo_path, style, model, api_base?, api_key?)`
+Generates AGENTS.md from a local repository.
+
+**Parameters:**
+- `repo_path` (str): Absolute path to local repository
+- `style` (str): "comprehensive" or "strict" (default: "comprehensive")
+- `model` (str): Model identifier like "gemini/gemini-2.5-pro" (default: "gemini/gemini-2.5-pro")
+- `api_base` (str, optional): Custom API base URL
+- `api_key` (str, optional): API key (never returned in output)
+
+**Returns:**
+```json
+{
+  "success": true,
+  "status": "completed",
+  "output_path": "/path/to/projects/repo_name/AGENTS.md",
+  "agents_md_content": "# Agents\n...(first 1000 chars)...",
+  "repo_name": "repo_name"
+}
+```
+
+---
+
+### 3. `generate_agents_from_github(repo_url, style, model, analyze_git_history?, api_base?, api_key?)`
+Generates AGENTS.md from a public GitHub repository (clones it automatically).
+
+**Parameters:**
+- `repo_url` (str): Full GitHub URL (e.g., "https://github.com/owner/repo")
+- `style` (str): "comprehensive" or "strict"
+- `model` (str): Model identifier
+- `analyze_git_history` (int, optional): Number of recent commits to analyze for anti-patterns (e.g., 500)
+- `api_base` (str, optional): Custom API base URL
+- `api_key` (str, optional): API key
+
+**Returns:**
+```json
+{
+  "success": true,
+  "status": "completed",
+  "output_path": "...",
+  "agents_md_content": "...",
+  "repo_name": "repo",
+  "analyzed_commits": 500
+}
+```
+
+---
+
+### 4. `validate_output(project_name)`
+Validates that AGENTS.md was generated correctly for a project.
+
+**Parameters:**
+- `project_name` (str): Project name (repository name)
+
+**Returns:**
+```json
+{
+  "project_name": "flask",
+  "is_valid": true,
+  "file_path": "/path/to/projects/flask/AGENTS.md",
+  "file_size_bytes": 5432,
+  "has_agents_section": true,
+  "has_architecture_section": true,
+  "has_constraints_section": true,
+  "issues": []
+}
+```
+
+---
+
+### 5. `run_tests(include_e2e?)`
+Runs the GenerateAgents test suite to validate tool functionality.
+
+**Parameters:**
+- `include_e2e` (bool): Include end-to-end tests requiring API keys (default: false)
+
+**Returns:**
+```json
+{
+  "success": true,
+  "total_tests": 22,
+  "passed_tests": 22,
+  "failed_tests": 0,
+  "skipped_tests": 4,
+  "summary": "22 passed, 4 skipped in 45.23s"
+}
+```
+
+---
+
+## Usage
+
+### Local Development (VS Code Copilot)
+
+1. **Start the MCP server:**
+   ```bash
+   python /workspaces/self-hosted-ai-starter-kit/generateagents-mcp/server.py
+   ```
+   Or with uv:
+   ```bash
+   cd /workspaces/self-hosted-ai-starter-kit/generateagents-mcp && uv run server.py
+   ```
+
+2. **Register in VS Code Copilot** (see Configuration section below)
+
+3. **Test the tools:**
+   ```bash
+   # In VS Code Copilot chat, try:
+   @generateagents-mcp list_models
+   @generateagents-mcp generate_agents /path/to/repo comprehensive gemini/gemini-2.5-pro
+   ```
+
+### Production Deployment (HTTP Transport)
+
+For remote deployment, use HTTP transport:
+
+```python
+from mcp.server.httpserver import HTTPServer
+mcp.run(HTTPServer(host="0.0.0.0", port=8000))
+```
+
+Then register the server with its HTTPS endpoint in client configs.
+
+---
+
+## Configuration
+
+### VS Code Copilot (Local Stdio)
+
+Create or update `.vscode/settings.json` in your workspace:
+
+```json
+{
+  "copilot.advanced": {
+    "debug.testingEnabled": true
+  },
+  "[copilot].mcp": {
+    "servers": [
+      {
+        "name": "generateagents-mcp",
+        "description": "GenerateAgents.md as MCP tools",
+        "command": "python",
+        "args": ["/workspaces/self-hosted-ai-starter-kit/generateagents-mcp/server.py"],
+        "env": {
+          "PYTHONPATH": "/workspaces/self-hosted-ai-starter-kit"
+        }
+      }
+    ]
+  }
+}
+```
+
+Or for `uv`-based invocation:
+
+```json
+{
+  "[copilot].mcp": {
+    "servers": [
+      {
+        "name": "generateagents-mcp",
+        "command": "bash",
+        "args": ["-c", "cd /workspaces/self-hosted-ai-starter-kit/generateagents-mcp && uv run server.py"],
+        "env": {
+          "PATH": "/home/codespace/.local/bin:/home/codespace/.deno/bin:$PATH"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Claude Desktop (Local Stdio)
+
+Update `~/.claude_config.json` or equivalent:
+
+```json
+{
+  "mcp": {
+    "servers": [
+      {
+        "name": "generateagents-mcp",
+        "description": "GenerateAgents.md tools",
+        "command": "python",
+        "args": ["/workspaces/self-hosted-ai-starter-kit/generateagents-mcp/server.py"],
+        "disabled": false
+      }
+    ]
+  }
+}
+```
+
+### OpenAI Function Calling (REST API)
+
+See `openai-function-spec.json` in this directory for integration with OpenAI's Function Calling API.
+
+Example:
+```python
+import json
+from openai import OpenAI
+
+spec = json.load(open("/workspaces/self-hosted-ai-starter-kit/generateagents-mcp/openai-function-spec.json"))
+
+client = OpenAI()
+response = client.chat.completions.create(
+    model="gpt-4-turbo",
+    messages=[
+        {"role": "user", "content": "Generate AGENTS.md for my repo at /tmp/my-repo"}
+    ],
+  tools=spec["x-openai-functions"],
+    tool_choice="auto"
+)
+```
+
+---
+
+## Security Considerations
+
+⚠️ **Important Security Notes:**
+
+1. **API Keys**: Never pass API keys via the MCP tool parameters in production. Instead:
+   - Use environment variables (e.g., `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`)
+   - Use credential files in user home directory
+   - Use secure key management systems (AWS Secrets Manager, HashiCorp Vault)
+
+2. **Path Sandboxing**: The server validates paths exist but does not currently sandbox directory traversal. For production:
+   - Restrict `repo_path` to specific directories
+   - Validate paths don't escape allowed regions
+
+3. **Output Filtering**: The server filters out sensitive keys from subprocess environment. However:
+   - Review command output for accidental secret leaks
+   - Consider logging policies for production deployments
+
+4. **Resource Limits**: Set timeouts appropriately:
+   - Local repos: 600 seconds (10 minutes)
+   - GitHub clones: 900 seconds (15 minutes)
+   - Tests: 600 seconds
+
+---
+
+## Troubleshooting
+
+### "GenerateAgents CLI not found"
+Ensure GenerateAgents.md is installed:
+```bash
+cd ../GenerateAgents.md
+uv sync
+```
+
+### MCP Server won't start
+- Check Python version: `python --version` (must be 3.12+)
+- Check mcp package: `pip show mcp`
+- Check permissions: `ls -la /workspaces/self-hosted-ai-starter-kit/generateagents-mcp/server.py`
+
+### Tools not appearing in Copilot
+- Verify MCP config syntax in `.vscode/settings.json` (JSON validation)
+- Restart VS Code or Claude Desktop after config changes
+- Check MCP server logs: `grep -i "error\|warning" ~/.mcp.log`
+
+### Generation timeouts
+- Local Ollama models may timeout; use cloud providers (Gemini, OpenAI, Anthropic)
+- Increase `timeout` parameter in `run_command()` if needed
+- Check model availability: `uv run autogenerateagentsmd --list-models`
+
+---
+
+## Development
+
+### Running Tests
+```bash
+cd generateagents-mcp
+uv run pytest tests/ -v
+```
+
+### Testing MCP compliance
+Use the MCP Inspector tool (bundled with mcp package):
+```bash
+mcp dev server.py
+```
+
+This opens an interactive inspector where you can test each tool directly.
+
+---
+
+## API Reference
+
+See [openai-function-spec.json](./openai-function-spec.json) for the complete OpenAPI specification of all tools.
+
+---
+
+## License
+
+MIT – See [LICENSE](../LICENSE) in parent directory.
+
+---
+
+## Contributing
+
+Contributions welcome! See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines.
