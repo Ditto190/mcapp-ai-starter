@@ -1,0 +1,8 @@
+schemaVersion: 0.0.1
+isProduction: true
+accountableOwners:
+  service: 22135ffc-18b3-497b-b4f7-2e0777864a89
+routing:
+  defaultAreaPath:
+    org: devdiv
+    path: OnlineServices\CloudTestingService

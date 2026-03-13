@@ -1,0 +1,245 @@
+{
+	"name": "vscode-ai-remote",
+	"displayName": "Azure Machine Learning - Remote",
+	"description": "This extension is used by the Azure Machine Learning Extension",
+	"version": "1.4.5",
+	"publisher": "ms-toolsai",
+	"aiKey": "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255",
+	"engines": {
+		"vscode": "^1.105.0"
+	},
+	"icon": "icons/logo.png",
+	"categories": [
+		"Azure",
+		"Other"
+	],
+	"keywords": [
+		"Azure Machine Learning",
+		"AML",
+		"Azure ML",
+		"Deep Learning"
+	],
+	"enabledApiProposals": [
+		"resolvers"
+	],
+	"repository": {
+		"url": "https://github.com/Microsoft/vscode-tools-for-ai"
+	},
+	"bugs": {
+		"url": "https://github.com/Microsoft/vscode-tools-for-ai/issues",
+		"email": "vscai-support@microsoft.com"
+	},
+	"extensionKind": [
+		"ui",
+		"workspace"
+	],
+	"api": "none",
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"supported": true
+		}
+	},
+	"activationEvents": [
+		"onResolveRemoteAuthority:amlext",
+		"onUri"
+	],
+	"browser": "./dist/src/extension.web.js",
+	"main": "./dist/src/extension.node",
+	"l10n": "./l10n",
+	"contributes": {
+		"webOpener": {
+			"scheme": "vscode-remote",
+			"import": "dist/webOpener.js"
+		},
+		"resourceLabelFormatters": [
+			{
+				"scheme": "vscode-remote",
+				"authority": "amlext+*",
+				"formatting": {
+					"label": "${path}",
+					"separator": "/",
+					"tildify": true,
+					"workspaceSuffix": "Azure ML"
+				}
+			}
+		],
+		"commands": [
+			{
+				"command": "azureml-remote.commandPalette.computeInstance.connect",
+				"title": "%azureml-remote.commandPalette.computeInstance.connect.title%",
+				"category": "Azure ML - Remote"
+			},
+			{
+				"command": "azureml-remote.commandPalette.computeInstance.connectInNewWindow",
+				"title": "%azureml-remote.commandPalette.computeInstance.connectInNewWindow.title%",
+				"category": "Azure ML - Remote"
+			},
+			{
+				"command": "azureml-remote.commandPalette.computeInstance.diagnosticReport",
+				"title": "%azureml-remote.commandPalette.computeInstance.diagnosticReport.title%",
+				"category": "Azure ML - Remote"
+			},
+			{
+				"command": "azureml-remote.commandPalette.computeInstance.killVSCodeServer",
+				"title": "%azureml-remote.commandPalette.computeInstance.killVSCodeServer.title%",
+				"category": "Azure ML - Remote"
+			},
+			{
+				"command": "azureml-remote.commandPalette.computeInstance.killWebsocketServer",
+				"title": "%azureml-remote.commandPalette.computeInstance.killWebsocketServer.title%",
+				"category": "Azure ML - Remote"
+			},
+			{
+				"command": "azureml-remote.commandPalette.computeInstance.uninstallVSCodeServer",
+				"title": "%azureml-remote.commandPalette.computeInstance.uninstallVSCodeServer.title%",
+				"category": "Azure ML - Remote"
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "%configuration.title%",
+			"properties": {
+				"azureML - Remote.authenticationScope": {
+					"type": "string",
+					"default": "Default",
+					"description": "%azureML - Remote.authenticationScope.description%",
+					"enum": [
+						"Default",
+						"User Impersonation"
+					],
+					"scope": "application"
+				},
+				"azureML - Remote.interactiveJobs.preferJupyterTerminal": {
+					"description": "%azureML - Remote.interactiveJobs.preferJupyterTerminal.description%",
+					"type": "boolean",
+					"default": true,
+					"scope": "machine"
+				},
+				"azureML - Remote.portsToForward": {
+					"type": "array",
+					"description": "%azureML - Remote.portsToForward.description%",
+					"scope": "application",
+					"items": {
+						"type": "number"
+					}
+				},
+				"azureML-Remote.useExecServer": {
+					"type": "boolean",
+					"default": false,
+					"description": "%azureML - Remote.useExecServer.description%",
+					"scope": "application",
+					"tags": [
+						"experimental",
+						"onExP"
+					]
+				}
+			}
+		},
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "azureml-remote.commandPalette.computeInstance.connect",
+					"when": "!isWeb && !isRemote"
+				},
+				{
+					"command": "azureml-remote.commandPalette.computeInstance.connectInNewWindow",
+					"when": "!isWeb"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"clean": "rimraf ./dist",
+		"download-vscode-api": "npx vscode-dts main",
+		"download-vscode-proposed-api": "npx vscode-dts dev",
+		"host": "serve --ssl-cert localhost+1.pem --ssl-key localhost+1-key.pem --cors -l 5000",
+		"lint": "eslint -c .eslintrc.js --ext .ts ./src",
+		"package": "vsce package --no-dependencies",
+		"prettier-fix": "prettier src/**/*.ts --write",
+		"postinstall": "npm run download-vscode-api && npm run download-vscode-proposed-api",
+		"test:unit": "jest --runInBand --testPathPattern=\\.unit\\.test\\.ts",
+		"vscode:prepublish": "npm run clean && npm run webpack && npm run webpack-web",
+		"watch": "webpack --mode development --progress --color --watch",
+		"watch-web": "webpack --config ./config/webpack.dev.config.js --watch",
+		"webpack": "copyfiles -f src/common/jupyter/jupyterConfigData.json dist/src && webpack --mode production --progress --color",
+		"webpack-web": "webpack --config ./config/webpack.prod.config.js --progress --color"
+	},
+	"dependencies": {
+		"@azure/arm-machinelearning": "^3.0.0",
+		"@azure/arm-resources-subscriptions": "^2.1.0",
+		"@azure/core-auth": "^1.5.0",
+		"@azure/ms-rest-azure-env": "^2.0.0",
+		"@azure/msal-common": "^14.4.0",
+		"@azure/msal-node": "^2.9.2",
+		"@jupyterlab/services": "^7.4.6",
+		"@microsoft/vscode-azext-azureauth": "^4.2.1",
+		"@microsoft/vscode-azext-utils": "^3.4.1",
+		"@msgpack/msgpack": "^3.0.0-beta2",
+		"@vscode-azureml/azureml-js-sdk": "*",
+		"@vscode-internal/remote-web-rpc": "^2.1.9",
+		"@vscode-internal/vsda": "^0.0.1",
+		"@vscode/extension-telemetry": "^0.9.8",
+		"browserify-zlib": "^0.2.0",
+		"bufferutil": "4.0.6",
+		"console-browserify": "^1.2.0",
+		"constants-browserify": "^1.0.0",
+		"cross-fetch": "^4.0.0",
+		"crypto-browserify": "^3.12.1",
+		"fast-safe-stringify": "^2.1.1",
+		"fs-extra": "^11.3.0",
+		"get-port": "^5.1.1",
+		"http-errors": "^1.8.0",
+		"https-browserify": "^1.0.0",
+		"https-proxy-agent": "^7.0.5",
+		"inversify": "^6.0.1",
+		"inversify-inject-decorators": "^3.1.0",
+		"isomorphic-ws": "^4.0.1",
+		"jsdom": "^27.0.0",
+		"lodash": "^4.17.20",
+		"memory-fs": "^0.5.0",
+		"moment": "^2.29.4",
+		"net": "^1.0.2",
+		"node-fetch": "^3.3.2",
+		"path": "^0.12.7",
+		"querystring-es3": "^0.2.1",
+		"reflect-metadata": "^0.2.2",
+		"stream-browserify": "^3.0.0",
+		"stream-http": "^3.2.0",
+		"url": "^0.11.4",
+		"utf-8-validate": "^5.0.9",
+		"uuid": "^11.1.0",
+		"vm-browserify": "^1.1.2",
+		"vscode-tas-client": "^0.1.75",
+		"winston": "^3.3.3",
+		"winston-transport": "^4.4.0",
+		"ws": "^7.5.10"
+	},
+	"devDependencies": {
+		"@types/fs-extra": "^9.0.4",
+		"@types/glob": "^7.1.3",
+		"@types/http-errors": "^1.8.1",
+		"@types/jest": "^30.0.0",
+		"@types/jsdom": "^21.1.7",
+		"@types/lodash": "^4.14.165",
+		"@types/node": "^24.5.2",
+		"@types/node-fetch": "^2.5.7",
+		"@types/uuid": "^10.0.0",
+		"@types/ws": "^7.4.0",
+		"@vscode/vsce": "^3.6.2",
+		"assert": "^2.0.0",
+		"copyfiles": "^2.4.1",
+		"jest": "^30.0.5",
+		"rimraf": "^6.0.1",
+		"terser-webpack-plugin": "^5.2.4",
+		"ts-jest": "^29.4.1",
+		"ts-loader": "^8.0.3",
+		"ts-mockito": "^2.6.1",
+		"webpack": "^5.97.1",
+		"webpack-cli": "^5.1.4"
+	},
+	"__metadata": {
+		"installedTimestamp": 1772752338312,
+		"targetPlatform": "undefined",
+		"size": 7624331
+	}
+}

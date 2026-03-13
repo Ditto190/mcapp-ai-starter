@@ -14,31 +14,22 @@
         "DISABLE_CONSOLE_OUTPUT": "false"
       }
     },
-    "n8n-mcp-proxy": {
+    "n8n-docs": {
+      "type": "http",
+      "url": "https://n8n.mcp.kapa.ai/"
+    },
+    "contextstream": {
       "type": "stdio",
       "command": "npx",
       "args": [
         "-y",
-        "mcp-remote",
-        "--streamableHttp",
-        "${env:MCP_PORT}",
-        "--header",
-        "Authorization: Bearer ${env:MCP_TOKEN}",
-        "--header",
-        "Accept: application/json, text/event-stream",
-        "--header",
-        "X-Tunnel-Skip-Anti-Phishing-Page: true"
+        "@contextstream/mcp-server@latest"
       ],
       "envFile": "${workspaceFolder}/.env",
       "env": {
         "MCP_MODE": "stdio",
-        "LOG_LEVEL": "info",
-        "MCP_PORT": "3000"
+        "LOG_LEVEL": "info"
       }
-    },
-    "n8n-docs": {
-      "type": "http",
-      "url": "https://n8n.mcp.kapa.ai/"
     }
   }
 }

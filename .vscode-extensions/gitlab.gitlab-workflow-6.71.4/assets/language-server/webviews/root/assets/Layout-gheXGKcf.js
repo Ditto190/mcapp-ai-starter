@@ -1,0 +1,1 @@
+import{u as t}from"./persistenceStore-j3W-4xRT.js";import{d as n,i as s,j as r,k as a,o as i,l as c}from"./index-QBjJ1Jkb.js";const l=n({__name:"Layout",setup(p){const e=t();return s(async()=>{await e.initialize()}),r(()=>{e.dispose()}),(u,_)=>{const o=c("router-view");return i(),a(o)}}});export{l as default};

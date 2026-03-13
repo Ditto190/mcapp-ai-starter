@@ -41,3 +41,6 @@ n8n/demo-data/credentials/*.json
 # Ignore build artifacts
 build/
 *.zip
+# Ignore VS Code workspace extension bundles
+.vscode-extensions/
+.vscode/*

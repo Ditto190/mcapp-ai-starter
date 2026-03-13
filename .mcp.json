@@ -1,8 +1,11 @@
 {
   "mcpServers": {
     "contextstream": {
-      "args": [],
-      "command": "contextstream-mcp",
+      "args": [
+        "-y",
+        "@contextstream/mcp-server@latest"
+      ],
+      "command": "npx",
       "env": {
         "CONTEXTSTREAM_ALLOW_HEADER_AUTH": "false",
         "CONTEXTSTREAM_API_KEY": "cbiq_3d5pB0fsyspHNnWexOjT92B7WHV6B1ssdyUQqhMQ8Zk",

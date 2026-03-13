@@ -51,6 +51,23 @@ docker pull ollama/ollama:latest &
 docker pull qdrant/qdrant &
 wait
 
+# Install global npm packages for development tools
+echo "📦 Installing global npm packages..."
+npm install -g \
+  genkit-cli \
+  claude \
+  claude-code \
+  opencode
+echo "✅ npm global packages installed"
+
+# Install Python development tools
+echo "📦 Installing Python development tools..."
+python -m pip install --user \
+  gh-cli \
+  claude-code \
+  opencode
+echo "✅ Python packages installed"
+
 echo ""
 echo "✅ Setup Complete!"
 echo "=========================================="

@@ -1,0 +1,59 @@
+{
+	"name": "vscode-node-azure-pack",
+	"version": "1.8.0",
+	"publisher": "ms-vscode",
+	"displayName": "Azure Tools",
+	"description": "Build, deploy, and manage Azure applications with support from Copilot all without leaving VS Code.",
+	"license": "MIT",
+	"galleryBanner": {
+		"color": "#0072c6",
+		"theme": "dark"
+	},
+	"icon": "azure.png",
+	"repository": {
+		"url": "https://github.com/microsoft/vscode-node-azure-pack"
+	},
+	"homepage": "https://github.com/microsoft/vscode-node-azure-pack",
+	"bugs": {
+		"url": "https://github.com/microsoft/vscode-node-azure-pack/issues"
+	},
+	"keywords": [
+		"azure",
+		"cloud",
+		"hosting"
+	],
+	"categories": [
+		"Azure",
+		"Extension Packs"
+	],
+	"engines": {
+		"vscode": "^1.92.0"
+	},
+	"extensionPack": [
+		"ms-azuretools.vscode-azureappservice",
+		"ms-azuretools.vscode-azurestaticwebapps",
+		"ms-azuretools.vscode-azurefunctions",
+		"ms-azuretools.vscode-azurestorage",
+		"ms-azuretools.vscode-cosmosdb",
+		"ms-azuretools.vscode-azurevirtualmachines",
+		"ms-azuretools.vscode-azurecontainerapps",
+		"ms-azuretools.azure-dev",
+		"ms-azuretools.vscode-azure-github-copilot",
+		"ms-azuretools.vscode-azure-mcp-server",
+		"ms-azure-load-testing.microsoft-testing",
+		"TeamsDevApp.vscode-ai-foundry"
+	],
+	"scripts": {
+		"build": "",
+		"package": "vsce package",
+		"test": ""
+	},
+	"devDependencies": {
+		"@vscode/vsce": "^3.2.1"
+	},
+	"__metadata": {
+		"installedTimestamp": 1772752248817,
+		"targetPlatform": "undefined",
+		"size": 22807
+	}
+}

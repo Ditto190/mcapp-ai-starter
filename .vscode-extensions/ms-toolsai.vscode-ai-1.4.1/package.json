@@ -1,0 +1,1724 @@
+{
+	"name": "vscode-ai",
+	"displayName": "Azure Machine Learning",
+	"description": "Visual Studio Code extension for Azure Machine Learning",
+	"license": "SEE LICENSE IN LICENSE",
+	"version": "1.4.1",
+	"publisher": "ms-toolsai",
+	"aiKey": "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255",
+	"engines": {
+		"vscode": "^1.105.0"
+	},
+	"icon": "icons/logo.png",
+	"preview": false,
+	"categories": [
+		"Azure",
+		"Other"
+	],
+	"keywords": [
+		"Azure Machine Learning",
+		"AML",
+		"Azure ML",
+		"Deep Learning"
+	],
+	"extensionKind": [
+		"workspace"
+	],
+	"repository": {
+		"url": "https://github.com/Microsoft/vscode-tools-for-ai"
+	},
+	"bugs": {
+		"url": "https://github.com/Microsoft/vscode-tools-for-ai/issues",
+		"email": "vscai-support@microsoft.com"
+	},
+	"extensionDependencies": [
+		"ms-toolsai.vscode-ai-remote"
+	],
+	"activationEvents": [
+		"onCommand:azureml.internal.activate",
+		"onCommand:azureml.internal.azureAccount.login",
+		"onCommand:azureml.internal.remote.setNotebookKernel",
+		"onCommand:azureml.internal.remoteSSH.install",
+		"onCommand:jupyter.selectjupyteruri",
+		"onUri"
+	],
+	"main": "./dist/src/extension",
+	"l10n": "./l10n",
+	"contributes": {
+		"colors": [
+			{
+				"defaults": {
+					"dark": "#F48771",
+					"light": "#A1260D"
+				},
+				"description": "Generic color for Error icons",
+				"id": "azureml.error"
+			},
+			{
+				"defaults": {
+					"dark": "#3794FF",
+					"light": "#006AB1"
+				},
+				"description": "Color for Running Job icons",
+				"id": "azureml.job.running"
+			},
+			{
+				"defaults": {
+					"dark": "#89D185",
+					"light": "#388A34"
+				},
+				"description": "Generic color for success icons",
+				"id": "azureml.success"
+			},
+			{
+				"defaults": {
+					"dark": "#C5C5C5",
+					"light": "#424242"
+				},
+				"description": "Generic color for tree node icons",
+				"id": "azureml.tree"
+			},
+			{
+				"defaults": {
+					"dark": "#FFCC00",
+					"light": "#DDB100"
+				},
+				"description": "Generic color for warning icons",
+				"id": "azureml.warning"
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "%configuration.title%",
+			"properties": {
+				"azureML.experiments.enabled": {
+					"default": true,
+					"description": "%experiments.enabled.description%",
+					"scope": "machine",
+					"type": "boolean"
+				},
+				"azureML.schemasBlobVersion": {
+					"description": "%schemasBlobVersion.description%",
+					"type": "string",
+					"enum": [
+						"Latest",
+						"Preview"
+					],
+					"default": "Latest",
+					"scope": "machine"
+				},
+				"azureML.schemasVersion": {
+					"description": "Version prefix of the schemas to show (i.e. 0.0.22-october-cand will show 0.0.22-october-cand/workspace.schema.json from the blob)",
+					"type": "string",
+					"default": "",
+					"scope": "machine"
+				},
+				"azureML.showArchivedExperiments": {
+					"default": false,
+					"description": "%showArchivedExperiments.description%",
+					"scope": "application",
+					"type": "boolean"
+				},
+				"azureML.yaml.completion": {
+					"default": true,
+					"description": "%yaml.completion.description%",
+					"type": "boolean"
+				},
+				"azureML.yaml.customTags": {
+					"default": [],
+					"description": "%yaml.customTags.description%",
+					"type": "array"
+				},
+				"azureML.yaml.format.bracketSpacing": {
+					"default": true,
+					"description": "%yaml.format.bracketSpacing%",
+					"type": "boolean"
+				},
+				"azureML.yaml.format.enable": {
+					"default": true,
+					"description": "%yaml.format.enable.description%",
+					"type": "boolean"
+				},
+				"azureML.yaml.format.printWidth": {
+					"default": 80,
+					"description": "%yaml.format.printWidth.description%",
+					"type": "integer"
+				},
+				"azureML.yaml.format.proseWrap": {
+					"default": "never",
+					"description": "%yaml.format.proseWrap.description%",
+					"enum": [
+						"preserve",
+						"never",
+						"always"
+					],
+					"type": "string"
+				},
+				"azureML.yaml.format.singleQuote": {
+					"default": false,
+					"description": "%yaml.format.singleQuote.description%",
+					"type": "boolean"
+				},
+				"azureML.yaml.hover": {
+					"default": true,
+					"description": "%yaml.hover.description%",
+					"type": "boolean"
+				},
+				"azureML.yaml.schemas": {
+					"default": {},
+					"description": "%yaml.schemas.description%",
+					"type": "object"
+				},
+				"azureML.yaml.schemaStore.enable": {
+					"default": true,
+					"description": "%yaml.schemaStore.enable.description%",
+					"type": "boolean"
+				},
+				"azureML.yaml.trace.server": {
+					"default": "off",
+					"description": "%yaml.trace.server.description%",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"type": "string"
+				},
+				"azureML.yaml.validate": {
+					"default": true,
+					"description": "%yaml.validate.description%",
+					"type": "boolean"
+				}
+			}
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "azure",
+					"title": "Azure",
+					"icon": "$(azure)"
+				}
+			]
+		},
+		"views": {
+			"azure": [
+				{
+					"id": "AzureMLExplorer",
+					"name": "Machine Learning"
+				}
+			]
+		},
+		"viewsWelcome": [
+			{
+				"view": "AzureMLExplorer",
+				"contents": "Thank you for using Azure Machine Learning extension in VS Code. To get the most out of the extension, please sign in using your Azure Account, or create a free Azure Account.\n[Sign In to Azure...](command:azureml.internal.azureAccount.login)\n[Create an Azure Account...](command:azureml.internal.azureAccount.create)\n[Create an Azure for Students Account...](command:azureml.internal.azureAccount.createStudentsAccount)\nCheck out our quick start guide on how to use VS Code with Azure Machine Learning here: [Get Started with Azure ML in VS Code](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-launch-vs-code-remote?view=azureml-api-2&tabs=vscode-web)\nSupport for this extension is provided on our [GitHub Issue Tracker](https://github.com/Microsoft/vscode-tools-for-ai/issues). You can submit a bug report, a feature suggestion or participate in discussions.",
+				"when": "azureml.isLoggedOut"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "workbench.view.extension.azure",
+				"key": "ctrl+shift+a",
+				"mac": "cmd+shift+a",
+				"linux": "shift+alt+a"
+			}
+		],
+		"commands": [
+			{
+				"command": "azureml.commandPalette.amlCompute.createConfigFile",
+				"title": "%azureml.commandPalette.amlCompute.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.azureAccount.login",
+				"title": "%azureml.commandPalette.azureAccount.login.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.azureAccount.loginToDirectory",
+				"title": "%azureml.commandPalette.azureAccount.loginToDirectory.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.batchDeployment.createConfigFile",
+				"title": "%azureml.commandPalette.batchDeployment.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.batchDeployment.delete",
+				"title": "%azureml.commandPalette.batchDeployment.delete.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.batchDeployment.viewProperties",
+				"title": "%azureml.commandPalette.batchDeployment.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.batchEndpoint.createConfigFile",
+				"title": "%azureml.commandPalette.batchEndpoint.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.batchEndpoint.delete",
+				"title": "%azureml.commandPalette.batchEndpoint.delete.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.batchEndpoint.viewProperties",
+				"title": "%azureml.commandPalette.batchEndpoint.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.compute.createConfigFile",
+				"title": "%azureml.commandPalette.compute.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.compute.delete",
+				"title": "%azureml.commandPalette.compute.delete.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.compute.detach",
+				"title": "%azureml.commandPalette.compute.detach.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.compute.viewProperties",
+				"title": "%azureml.commandPalette.compute.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.computeInstance.connectToJupyterServer",
+				"title": "%azureml.commandPalette.computeInstance.connectToJupyterServer.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.computeInstance.copyIpAddress",
+				"title": "%azureml.commandPalette.computeInstance.copyIpAddress.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.computeInstance.copySSHCommand",
+				"title": "%azureml.commandPalette.computeInstance.copySSHCommand.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.computeInstance.createConfigFile",
+				"title": "%azureml.commandPalette.computeInstance.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.computeInstance.delete",
+				"title": "%azureml.commandPalette.computeInstance.delete.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.computeInstance.restart",
+				"title": "%azureml.commandPalette.computeInstance.restart.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.computeInstance.showSSHDocs",
+				"title": "%azureml.commandPalette.computeInstance.showSSHDocs.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.computeInstance.start",
+				"title": "%azureml.commandPalette.computeInstance.start.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.computeInstance.stop",
+				"title": "%azureml.commandPalette.computeInstance.stop.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.computeInstance.viewProperties",
+				"title": "%azureml.commandPalette.computeInstance.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.createConfigFile",
+				"title": "%azureml.commandPalette.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.dataset.container.archive",
+				"title": "%azureml.commandPalette.dataset.container.archive.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.dataset.container.viewProperties",
+				"title": "%azureml.commandPalette.dataset.container.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.dataset.createConfigFile",
+				"title": "%azureml.commandPalette.dataset.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.dataset.version.viewProperties",
+				"title": "%azureml.commandPalette.dataset.version.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.datastore.createConfigFile",
+				"title": "%azureml.commandPalette.datastore.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.datastore.delete",
+				"title": "%azureml.commandPalette.datastore.delete.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.datastore.viewProperties",
+				"title": "%azureml.commandPalette.datastore.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.endpoint.createConfigFile",
+				"title": "%azureml.commandPalette.endpoint.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.environment.container.viewProperties",
+				"title": "%azureml.commandPalette.environment.container.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.environment.createConfigFile",
+				"title": "%azureml.commandPalette.environment.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.environment.version.delete",
+				"title": "%azureml.commandPalette.environment.version.delete.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.environment.version.view",
+				"title": "%azureml.commandPalette.environment.version.view.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.executeYaml",
+				"title": "%azureml.commandPalette.executeYaml.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.experiment.hideArchived",
+				"title": "%azureml.commandPalette.experiment.hideArchived.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.experiment.showArchived",
+				"title": "%azureml.commandPalette.experiment.showArchived.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.experiment.viewInStudio",
+				"title": "%azureml.commandPalette.experiment.viewInStudio.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.feedback.issue",
+				"title": "%azureml.commandPalette.feedback.issue.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.feedback.proactive",
+				"title": "%azureml.commandPalette.feedback.proactive.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.job.createConfigFile",
+				"title": "%azureml.commandPalette.job.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.model.container.delete",
+				"title": "%azureml.commandPalette.model.container.delete.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.model.container.viewProperties",
+				"title": "%azureml.commandPalette.model.container.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.model.createConfigFile",
+				"title": "%azureml.commandPalette.model.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.model.version.delete",
+				"title": "%azureml.commandPalette.model.version.delete.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.model.version.viewProperties",
+				"title": "%azureml.commandPalette.model.version.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.onlineDeployment.createConfigFile",
+				"title": "%azureml.commandPalette.onlineDeployment.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.onlineDeployment.delete",
+				"title": "%azureml.commandPalette.onlineDeployment.delete.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.onlineDeployment.viewProperties",
+				"title": "%azureml.commandPalette.onlineDeployment.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.onlineEndpoint.createConfigFile",
+				"title": "%azureml.commandPalette.onlineEndpoint.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.onlineEndpoint.delete",
+				"title": "%azureml.commandPalette.onlineEndpoint.delete.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.onlineEndpoint.viewProperties",
+				"title": "%azureml.commandPalette.onlineEndpoint.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.refresh",
+				"title": "%azureml.commandPalette.refresh.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.run.artifact.download",
+				"title": "%azureml.commandPalette.run.artifact.download.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.run.artifact.downloadArtifacts",
+				"title": "%azureml.commandPalette.run.artifact.downloadArtifacts.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.run.artifact.view",
+				"title": "%azureml.commandPalette.run.artifact.view.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.run.cancel",
+				"title": "%azureml.commandPalette.run.cancel.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.run.viewDetails",
+				"title": "%azureml.commandPalette.run.viewDetails.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.run.viewInStudio",
+				"title": "%azureml.commandPalette.run.viewInStudio.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.subscription.filter",
+				"title": "%azureml.commandPalette.subscription.filter.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.vmCompute.createConfigFile",
+				"title": "%azureml.commandPalette.vmCompute.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.workspace.createConfigFile",
+				"title": "%azureml.commandPalette.workspace.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.workspace.clearDefault",
+				"title": "%azureml.commandPalette.workspace.clearDefault.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.workspace.delete",
+				"title": "%azureml.commandPalette.workspace.delete.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.workspace.filter",
+				"title": "%azureml.commandPalette.workspace.filter.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.workspace.setDefault",
+				"title": "%azureml.commandPalette.workspace.setDefault.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.commandPalette.workspace.viewProperties",
+				"title": "%azureml.commandPalette.workspace.viewProperties.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.editorContext.executeYaml",
+				"title": "%azureml.editorContext.executeYaml.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.editorContext.refreshResourceView",
+				"title": "%azureml.editorContext.refreshResourceView.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.editorContext.scriptJob.createConfigFile",
+				"title": "%azureml.editorContext.scriptJob.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.editorTitle.executeYaml",
+				"title": "%azureml.editorTitle.executeYaml.title%",
+				"category": "Azure ML",
+				"icon": {
+					"dark": "icons/dark/azureml.svg",
+					"light": "icons/light/azureml.svg"
+				}
+			},
+			{
+				"command": "azureml.editorTitle.refreshResourceView",
+				"title": "%azureml.editorTitle.refreshResourceView.title%",
+				"category": "Azure ML",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "azureml.explorerContext.executeYaml",
+				"title": "%azureml.explorerContext.executeYaml.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.explorerContext.scriptJob.createConfigFile",
+				"title": "%azureml.explorerContext.scriptJob.createConfigFile.title%",
+				"category": "Azure ML"
+			},
+			{
+				"command": "azureml.viewContext.amlCompute.createConfigFile",
+				"title": "%azureml.viewContext.amlCompute.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.batchDeployment.createConfigFile",
+				"title": "%azureml.viewContext.batchDeployment.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.batchDeployment.delete",
+				"title": "%azureml.viewContext.batchDeployment.delete.title%"
+			},
+			{
+				"command": "azureml.viewContext.batchDeployment.viewProperties",
+				"title": "%azureml.viewContext.batchDeployment.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewContext.batchEndpoint.createConfigFile",
+				"title": "%azureml.viewContext.batchEndpoint.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.batchEndpoint.delete",
+				"title": "%azureml.viewContext.batchEndpoint.delete.title%"
+			},
+			{
+				"command": "azureml.viewContext.batchEndpoint.viewProperties",
+				"title": "%azureml.viewContext.batchEndpoint.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewContext.compute.createConfigFile",
+				"title": "%azureml.viewContext.compute.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.compute.delete",
+				"title": "%azureml.viewContext.compute.delete.title%"
+			},
+			{
+				"command": "azureml.viewContext.compute.detach",
+				"title": "%azureml.viewContext.compute.detach.title%"
+			},
+			{
+				"command": "azureml.viewContext.compute.viewProperties",
+				"title": "%azureml.viewContext.compute.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewContext.computeInstance.connect",
+				"title": "%azureml.viewContext.computeInstance.connect.title%"
+			},
+			{
+				"command": "azureml.viewContext.computeInstance.connectInNewWindow",
+				"title": "%azureml.viewContext.computeInstance.connectInNewWindow.title%"
+			},
+			{
+				"command": "azureml.viewContext.computeInstance.copyIpAddress",
+				"title": "%azureml.viewContext.computeInstance.copyIpAddress.title%"
+			},
+			{
+				"command": "azureml.viewContext.computeInstance.copySSHCommand",
+				"title": "%azureml.viewContext.computeInstance.copySSHCommand.title%"
+			},
+			{
+				"command": "azureml.viewContext.computeInstance.createConfigFile",
+				"title": "%azureml.viewContext.computeInstance.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.computeInstance.delete",
+				"title": "%azureml.viewContext.computeInstance.delete.title%"
+			},
+			{
+				"command": "azureml.viewContext.computeInstance.restart",
+				"title": "%azureml.viewContext.computeInstance.restart.title%"
+			},
+			{
+				"command": "azureml.viewContext.computeInstance.start",
+				"title": "%azureml.viewContext.computeInstance.start.title%"
+			},
+			{
+				"command": "azureml.viewContext.computeInstance.stop",
+				"title": "%azureml.viewContext.computeInstance.stop.title%"
+			},
+			{
+				"command": "azureml.viewContext.computeInstance.viewProperties",
+				"title": "%azureml.viewContext.computeInstance.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewContext.dataset.container.archive",
+				"title": "%azureml.viewContext.dataset.container.archive.title%"
+			},
+			{
+				"command": "azureml.viewContext.dataset.container.viewProperties",
+				"title": "%azureml.viewContext.dataset.container.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewContext.dataset.createConfigFile",
+				"title": "%azureml.viewContext.dataset.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.dataset.version.viewProperties",
+				"title": "%azureml.viewContext.dataset.version.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewContext.datastore.createConfigFile",
+				"title": "%azureml.viewContext.datastore.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.datastore.delete",
+				"title": "%azureml.viewContext.datastore.delete.title%"
+			},
+			{
+				"command": "azureml.viewContext.datastore.viewProperties",
+				"title": "%azureml.viewContext.datastore.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewContext.endpoint.createConfigFile",
+				"title": "%azureml.viewContext.endpoint.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.environment.container.viewLatestVersion",
+				"title": "%azureml.viewContext.environment.container.viewLatestVersion.title%"
+			},
+			{
+				"command": "azureml.viewContext.environment.container.viewProperties",
+				"title": "%azureml.viewContext.environment.container.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewContext.environment.createConfigFile",
+				"title": "%azureml.viewContext.environment.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.experiment.viewInStudio",
+				"title": "%azureml.viewContext.experiment.viewInStudio.title%"
+			},
+			{
+				"command": "azureml.viewContext.job.createConfigFile",
+				"title": "%azureml.viewContext.job.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.model.container.delete",
+				"title": "%azureml.viewContext.model.container.delete.title%"
+			},
+			{
+				"command": "azureml.viewContext.model.container.viewProperties",
+				"title": "%azureml.viewContext.model.container.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewContext.model.createConfigFile",
+				"title": "%azureml.viewContext.model.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.model.version.delete",
+				"title": "%azureml.viewContext.model.version.delete.title%"
+			},
+			{
+				"command": "azureml.viewContext.model.version.viewProperties",
+				"title": "%azureml.viewContext.model.version.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewContext.onlineDeployment.createConfigFile",
+				"title": "%azureml.viewContext.onlineDeployment.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.onlineDeployment.delete",
+				"title": "%azureml.viewContext.onlineDeployment.delete.title%"
+			},
+			{
+				"command": "azureml.viewContext.onlineDeployment.viewProperties",
+				"title": "%azureml.viewContext.onlineDeployment.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewContext.onlineEndpoint.createConfigFile",
+				"title": "%azureml.viewContext.onlineEndpoint.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.onlineEndpoint.delete",
+				"title": "%azureml.viewContext.onlineEndpoint.delete.title%"
+			},
+			{
+				"command": "azureml.viewContext.onlineEndpoint.viewProperties",
+				"title": "%azureml.viewContext.onlineEndpoint.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewContext.refresh",
+				"title": "%azureml.viewContext.refresh.title%"
+			},
+			{
+				"command": "azureml.viewContext.run.artifact.download",
+				"title": "%azureml.viewContext.run.artifact.download.title%"
+			},
+			{
+				"command": "azureml.viewContext.run.artifact.downloadArtifacts",
+				"title": "%azureml.viewContext.run.artifact.downloadArtifacts.title%"
+			},
+			{
+				"command": "azureml.viewContext.run.artifact.view",
+				"title": "%azureml.viewContext.run.artifact.view.title%"
+			},
+			{
+				"command": "azureml.viewContext.run.cancel",
+				"title": "%azureml.viewContext.run.cancel.title%"
+			},
+			{
+				"command": "azureml.viewContext.run.viewDetails",
+				"title": "%azureml.viewContext.run.viewDetails.title%"
+			},
+			{
+				"command": "azureml.viewContext.run.viewInStudio",
+				"title": "%azureml.viewContext.run.viewInStudio.title%"
+			},
+			{
+				"command": "azureml.viewContext.subscription.filter",
+				"title": "%azureml.viewContext.subscription.filter.title%",
+				"icon": "$(filter)"
+			},
+			{
+				"command": "azureml.viewContext.vmCompute.createConfigFile",
+				"title": "%azureml.viewContext.vmCompute.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewContext.workspace.changeDefault",
+				"title": "%azureml.viewContext.workspace.changeDefault.title%",
+				"icon": "$(pinned)"
+			},
+			{
+				"command": "azureml.viewContext.workspace.createConfigFile",
+				"title": "%azureml.viewContext.workspace.createConfigFile.title%"
+			},
+			{
+				"command": "azureml.viewContext.workspace.delete",
+				"title": "%azureml.viewContext.workspace.delete.title%"
+			},
+			{
+				"command": "azureml.viewContext.workspace.filter",
+				"title": "%azureml.viewContext.workspace.filter.title%",
+				"icon": "$(filter)"
+			},
+			{
+				"command": "azureml.viewContext.workspace.setDefault",
+				"title": "%azureml.viewContext.workspace.setDefault.title%",
+				"icon": "$(pin)"
+			},
+			{
+				"command": "azureml.viewContext.workspace.viewProperties",
+				"title": "%azureml.viewContext.workspace.viewProperties.title%"
+			},
+			{
+				"command": "azureml.viewTitle.createConfigFile",
+				"title": "%azureml.viewTitle.createConfigFile.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "azureml.viewTitle.job.createConfigFile",
+				"title": "%azureml.viewTitle.job.createConfigFile.title%",
+				"icon": "$(beaker)"
+			},
+			{
+				"command": "azureml.viewTitle.refresh",
+				"title": "%azureml.viewTitle.refresh.title%",
+				"icon": "$(refresh)"
+			}
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "azureml.commandPalette.computeInstance.connectToJupyterServer",
+					"when": "notebookType == jupyter-notebook"
+				},
+				{
+					"command": "azureml.commandPalette.executeYaml",
+					"when": "editorLangId == yaml"
+				},
+				{
+					"command": "azureml.editorContext.executeYaml",
+					"when": "false"
+				},
+				{
+					"command": "azureml.editorContext.refreshResourceView",
+					"when": "false"
+				},
+				{
+					"command": "azureml.editorContext.scriptJob.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.editorTitle.executeYaml",
+					"when": "false"
+				},
+				{
+					"command": "azureml.editorTitle.refreshResourceView",
+					"when": "false"
+				},
+				{
+					"command": "azureml.explorerContext.executeYaml",
+					"when": "false"
+				},
+				{
+					"command": "azureml.explorerContext.scriptJob.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.amlCompute.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.batchDeployment.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.batchDeployment.delete",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.batchDeployment.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.batchEndpoint.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.batchEndpoint.delete",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.batchEndpoint.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.compute.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.compute.delete",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.compute.detach",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.compute.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.connect",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.connectInNewWindow",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.copyIpAddress",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.copySSHCommand",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.delete",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.restart",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.start",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.stop",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.dataset.container.archive",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.dataset.container.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.dataset.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.dataset.version.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.datastore.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.datastore.delete",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.datastore.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.endpoint.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.environment.container.viewLatestVersion",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.environment.container.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.environment.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.experiment.viewInStudio",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.job.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.model.container.delete",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.model.container.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.model.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.model.version.delete",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.model.version.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.onlineDeployment.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.onlineDeployment.delete",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.onlineDeployment.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.onlineEndpoint.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.onlineEndpoint.delete",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.onlineEndpoint.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.refresh",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.run.artifact.download",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.run.artifact.downloadArtifacts",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.run.artifact.view",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.run.cancel",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.run.viewDetails",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.run.viewInStudio",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.subscription.filter",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.vmCompute.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.workspace.changeDefault",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.workspace.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.workspace.delete",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.workspace.filter",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.workspace.setDefault",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewContext.workspace.viewProperties",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewTitle.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewTitle.job.createConfigFile",
+					"when": "false"
+				},
+				{
+					"command": "azureml.viewTitle.refresh",
+					"when": "false"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "azureml.editorContext.executeYaml",
+					"when": "editorLangId == yaml"
+				},
+				{
+					"command": "azureml.editorContext.refreshResourceView",
+					"when": "editorLangId == yaml"
+				},
+				{
+					"command": "azureml.editorContext.scriptJob.createConfigFile",
+					"when": "editorLangId == python && !notebookEditorFocused"
+				}
+			],
+			"editor/title": [
+				{
+					"command": "azureml.editorTitle.executeYaml",
+					"when": "editorLangId == yaml",
+					"group": "navigation"
+				},
+				{
+					"command": "azureml.editorTitle.refreshResourceView",
+					"when": "editorLangId == yaml",
+					"group": "navigation"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "azureml.explorerContext.executeYaml",
+					"when": "resourceLangId == yaml"
+				},
+				{
+					"command": "azureml.explorerContext.scriptJob.createConfigFile",
+					"when": "resourceLangId == python"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "azureml.viewContext.amlCompute.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLComputeClusterRoot",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.amlCompute.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLComputeClusterRoot",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.batchDeployment.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLBatchEndpoint",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.batchDeployment.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLBatchEndpoint",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.batchDeployment.delete",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLBatchDeployment",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.batchDeployment.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLBatchDeployment",
+					"group": "4_azureml@2"
+				},
+				{
+					"command": "azureml.viewContext.batchEndpoint.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLBatchEndpointRoot",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.batchEndpoint.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLBatchEndpointRoot",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.batchEndpoint.delete",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLBatchEndpoint",
+					"group": "4_azureml@2"
+				},
+				{
+					"command": "azureml.viewContext.batchEndpoint.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLBatchEndpoint",
+					"group": "4_azureml@3"
+				},
+				{
+					"command": "azureml.viewContext.compute.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLComputeRoot",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.compute.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLComputeRoot",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.compute.delete",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureML(ComputeCluster|InferenceCluster)$/",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.compute.detach",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureML(InferenceClusterAttached|AttachedCompute(?!Root).*)$/",
+					"group": "4_azureml@2"
+				},
+				{
+					"command": "azureml.viewContext.compute.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureML(ComputeCluster|InferenceCluster(Attached)?|AttachedCompute(?!Root).*)(?!Root)$/",
+					"group": "4_azureml@3"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.connect",
+					"when": "!isWeb && !isRemote && view == AzureMLExplorer && viewItem =~ /^AzureMLComputeInstance(Running|Stopped).*CanUse$/",
+					"group": "1_remote@1"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.connectInNewWindow",
+					"when": "!isWeb && view == AzureMLExplorer && viewItem =~ /^AzureMLComputeInstance(Running|Stopped).*CanUse$/",
+					"group": "1_remote@2"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.copyIpAddress",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLComputeInstance(Running|Stopped|Intermediate)SSHEnabled.*$/",
+					"group": "7_ssh@1"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.copySSHCommand",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLComputeInstance(Running|Stopped|Intermediate)SSHEnabled.*$/",
+					"group": "7_ssh@2"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLComputeInstanceRoot",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLComputeInstanceRoot",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.delete",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLComputeInstance(?!Root).*$/",
+					"group": "4_azureml@4"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.restart",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLComputeInstanceRunning.*$/",
+					"group": "4_azureml@3"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.start",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLComputeInstanceStopped.*$/",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.stop",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLComputeInstanceRunning.*$/",
+					"group": "4_azureml@2"
+				},
+				{
+					"command": "azureml.viewContext.computeInstance.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLComputeInstance(?!Root).*$/",
+					"group": "4_azureml@5"
+				},
+				{
+					"command": "azureml.viewContext.dataset.container.archive",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLDataContainer",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.dataset.container.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLDataContainer",
+					"group": "4_azureml@2"
+				},
+				{
+					"command": "azureml.viewContext.dataset.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLDatasetRoot",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.dataset.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLDatasetRoot",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.dataset.version.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLDataVersion",
+					"group": "4_azureml@2"
+				},
+				{
+					"command": "azureml.viewContext.datastore.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLDatastoreRoot",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.datastore.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLDatastoreRoot",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.datastore.delete",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLDatastore(Editable)?$/",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.datastore.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLDatastore(AutoCreated|Editable)?$/",
+					"group": "4_azureml@2"
+				},
+				{
+					"command": "azureml.viewContext.endpoint.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLEndpointRoot",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.endpoint.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLEndpointRoot",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.environment.container.viewLatestVersion",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLEnvironment(Curated)?$/",
+					"group": "5_environment@1"
+				},
+				{
+					"command": "azureml.viewContext.environment.container.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLEnvironment(Curated)?$/",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.environment.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLEnvironmentRoot",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.environment.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLEnvironmentRoot",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.experiment.viewInStudio",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLExperiment",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.job.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLExperimentRoot",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.job.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLExperimentRoot",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.model.container.delete",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLModelContainer",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.model.container.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLModelContainer",
+					"group": "4_azureml@2"
+				},
+				{
+					"command": "azureml.viewContext.model.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLModelRoot",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.model.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLModelRoot",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.model.version.delete",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLModelVersion",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.model.version.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLModelVersion",
+					"group": "4_azureml@2"
+				},
+				{
+					"command": "azureml.viewContext.onlineDeployment.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLOnlineEndpoint",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.onlineDeployment.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLOnlineEndpoint",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.onlineDeployment.delete",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLOnlineDeployment",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.onlineDeployment.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLOnlineDeployment",
+					"group": "4_azureml@2"
+				},
+				{
+					"command": "azureml.viewContext.onlineEndpoint.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLOnlineEndpointRoot",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.onlineEndpoint.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLOnlineEndpointRoot",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.onlineEndpoint.delete",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLOnlineEndpoint",
+					"group": "4_azureml@2"
+				},
+				{
+					"command": "azureml.viewContext.onlineEndpoint.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLOnlineEndpoint",
+					"group": "4_azureml@3"
+				},
+				{
+					"command": "azureml.viewContext.refresh",
+					"when": "view == AzureMLExplorer && (!viewItem || viewItem =~ /^AzureML((Compute(Instance|Cluster)?|InferenceCluster|AttachedCompute)Root|Data(setRoot|Container)|DatastoreRoot|(Batch|Online)?Endpoint(Root)?|Environment(Curated)?Root)|Experiment(Root)?|Model(Container|Root)|RunRemote(Cancellable)?|RunArtifact(Root|Path)|Subscription|Workspace(Default)?$/)",
+					"group": "9_refresh"
+				},
+				{
+					"command": "azureml.viewContext.run.artifact.download",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLRunArtifact",
+					"group": "2_artifact@2"
+				},
+				{
+					"command": "azureml.viewContext.run.artifact.downloadArtifacts",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLRunRemote(Cancellable)?|AzureMLRunArtifactRoot$/",
+					"group": "7_download@1"
+				},
+				{
+					"command": "azureml.viewContext.run.artifact.view",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLRunArtifact",
+					"group": "2_artifact@1"
+				},
+				{
+					"command": "azureml.viewContext.run.cancel",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLRunRemoteCancellable$/",
+					"group": "4_azureml@3"
+				},
+				{
+					"command": "azureml.viewContext.run.viewDetails",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLRunRemote(Cancellable)?$/",
+					"group": "4_azureml@2"
+				},
+				{
+					"command": "azureml.viewContext.run.viewInStudio",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLRunRemote(Cancellable)?$/",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.subscription.filter",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLSubscription",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.vmCompute.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLAttachedComputeRoot$/",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.vmCompute.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLAttachedComputeRoot$/",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.workspace.changeDefault",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLWorkspaceDefault",
+					"group": "inline@1"
+				},
+				{
+					"command": "azureml.viewContext.workspace.createConfigFile",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLSubscription",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.workspace.delete",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLWorkspace(Default)?$/",
+					"group": "4_azureml@1"
+				},
+				{
+					"command": "azureml.viewContext.workspace.filter",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLWorkspace(Default)?$/",
+					"group": "inline@3"
+				},
+				{
+					"command": "azureml.viewContext.workspace.setDefault",
+					"when": "view == AzureMLExplorer && viewItem == AzureMLWorkspace",
+					"group": "inline@2"
+				},
+				{
+					"command": "azureml.viewContext.workspace.viewProperties",
+					"when": "view == AzureMLExplorer && viewItem =~ /^AzureMLWorkspace(Default)?$/",
+					"group": "4_azureml@2"
+				}
+			],
+			"view/title": [
+				{
+					"command": "azureml.viewTitle.createConfigFile",
+					"when": "view == AzureMLExplorer",
+					"group": "navigation@2"
+				},
+				{
+					"command": "azureml.viewTitle.job.createConfigFile",
+					"when": "view == AzureMLExplorer",
+					"group": "navigation@1"
+				},
+				{
+					"command": "azureml.viewTitle.refresh",
+					"when": "view == AzureMLExplorer",
+					"group": "navigation@3"
+				}
+			]
+		},
+		"languages": [
+			{
+				"id": "yaml",
+				"aliases": [
+					"YAML",
+					"yaml"
+				],
+				"extensions": [
+					".yml",
+					".eyaml",
+					".eyml",
+					".yaml"
+				],
+				"filenames": [
+					".clang-format",
+					"_clang-format"
+				],
+				"firstLine": "^#cloud-config",
+				"configuration": "./syntaxes/yaml/configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "yaml",
+				"scopeName": "source.yaml",
+				"path": "./syntaxes/yaml/tmLanguage.json"
+			}
+		],
+		"configurationDefaults": {
+			"[yaml]": {
+				"editor.insertSpaces": true,
+				"editor.tabSize": 2,
+				"editor.quickSuggestions": {
+					"other": true,
+					"comments": false,
+					"strings": true
+				},
+				"editor.autoIndent": "brackets",
+				"editor.wordBasedSuggestions": "off"
+			},
+			"files.associations": {
+				"MLTable": "yaml"
+			}
+		},
+		"pythonRemoteServerProvider": [
+			{
+				"id": "azureml_compute_instances"
+			}
+		]
+	},
+	"scripts": {
+		"clean": "rimraf ./dist",
+		"lint": "eslint -c .eslintrc.js --ext .ts ./src && cd ./azureml-language-server && npm run lint",
+		"package": "vsce package --no-dependencies",
+		"postinstall": "npx @vscode/dts main && cd ./azureml-language-server && npm install",
+		"watch": "tsc -watch -p .",
+		"webpack": "webpack --progress --color",
+		"vscode:prepublish": "npm install && npm run clean && npm run webpack && cd ./azureml-language-server && npm run vscode:prepublish"
+	},
+	"dependencies": {
+		"@azure/arm-subscriptions": "^5.1.0",
+		"@azure/ms-rest-azure-env": "^2.0.0",
+		"@azure/msal-common": "^13.2.0",
+		"@azureml/websockets": "^1.0.3",
+		"@jupyterlab/services": "^7.4.6",
+		"@microsoft/signalr": "^9.0.6",
+		"@microsoft/vscode-azext-azureauth": "^4.2.1",
+		"@microsoft/vscode-azext-utils": "^3.4.1",
+		"@vscode-azureml/azureml-js-sdk": "*",
+		"@vscode/extension-telemetry": "^0.9.0",
+		"encoding": "^0.1.0",
+		"fast-safe-stringify": "^2.1.1",
+		"fs-extra": "^5.0.0",
+		"glob": "^11.0.3",
+		"http-errors": "^1.8.0",
+		"inversify": "^6.0.1",
+		"inversify-inject-decorators": "^3.0.2",
+		"js-yaml": "^3.14.0",
+		"lodash": "^4.17.15",
+		"moment": "^2.29.2",
+		"node-cache": "^5.1.2",
+		"reflect-metadata": "^0.2.2",
+		"semver": "^7.5.2",
+		"undici": "^7.13.0",
+		"uuid": "^11.1.0",
+		"vscode-languageclient": "7.0.0"
+	},
+	"devDependencies": {
+		"@azure/arm-machinelearning": "^3.0.0",
+		"@azure/core-auth": "^1.4.0",
+		"@babel/cli": "^7.15.4",
+		"@babel/core": "^7.15.5",
+		"@babel/preset-env": "^7.15.6",
+		"@types/fs-extra": "^5.0.0",
+		"@types/glob": "^7.1.1",
+		"@types/http-errors": "^1.8.1",
+		"@types/js-yaml": "^3.12.5",
+		"@types/lodash": "^4.14.149",
+		"@types/mocha": "^9.1.0",
+		"@types/node-cache": "^4.2.5",
+		"@types/semver": "^7.3.9",
+		"@types/sinon": "^17.0.4",
+		"@types/uuid": "^10.0.0",
+		"@vscode/jupyter-extension": "^1.1.0",
+		"@vscode/test-electron": "^2.5.0",
+		"@vscode/vsce": "^3.6.2",
+		"mocha": "^11.0.1",
+		"node-loader": "^2.0.0",
+		"path-browserify": "^1.0.1",
+		"sinon": "^17.0.2",
+		"string-replace-loader": "^3.2.0",
+		"terser-webpack-plugin": "^5.3.14",
+		"ts-loader": "9.5.2",
+		"webpack": "^5.101.0",
+		"webpack-cli": "^6.0.1"
+	},
+	"__metadata": {
+		"installedTimestamp": 1772752343490,
+		"targetPlatform": "undefined",
+		"size": 13059082
+	}
+}

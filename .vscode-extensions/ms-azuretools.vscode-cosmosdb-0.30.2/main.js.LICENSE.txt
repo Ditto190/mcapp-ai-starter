@@ -1,0 +1,25 @@
+/* istanbul ignore if -- @preserve */
+
+/*!
+ * Copyright 2016 The ANTLR Project. All rights reserved.
+ * Licensed under the BSD-3-Clause license. See LICENSE file in the project root for license information.
+ */
+
+/*!
+ * NevWare21 Solutions LLC - ts-async, 0.5.4
+ * https://github.com/nevware21/ts-async
+ * Copyright (c) NevWare21 Solutions LLC and contributors. All rights reserved.
+ * Licensed under the MIT license.
+ */
+
+/*! @azure/msal-common v15.10.0 2025-08-05 */
+
+/*! @azure/msal-node v3.7.0 2025-08-05 */
+
+/*! https://github.com/nevware21/ts-utils v0.12.5 */
+
+/*! https://mths.be/he v1.2.0 by @mathias | MIT license */
+
+/*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
+
+//!!context.connectionString;
