@@ -114,6 +114,9 @@ jobs:
           echo "  Store new symbol → test mappings discovered"
           echo "  Cache results for next run"
           
+          # Ensure Serena memory directory exists before writing
+          mkdir -p .serena/memories
+          
           # For now, just document
           echo "## Test Run $(date)" >> .serena/memories/recent-changes.md
           echo "Modules tested: ${{ needs.analyze-changed-symbols.outputs.changed_modules }}" >> .serena/memories/recent-changes.md
