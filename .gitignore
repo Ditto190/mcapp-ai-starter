@@ -38,3 +38,6 @@ n8n/demo-data/credentials/*.json
 .vscode/mcp.local.json
 .vscode/mcp.user-sample.json
 .vscode/n8n-registered-tools.json
+# Ignore build artifacts
+build/
+*.zip
