@@ -1,19 +1,25 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "Generate .env from .env.codespaces",
-      "type": "shell",
-      "command": "bash",
-      "args": ["scripts/generate-env.sh", ".env.codespaces", ".env"],
-      "problemMatcher": []
-    },
-    {
-      "label": "Run devcontainer post-create",
-      "type": "shell",
-      "command": "bash",
-      "args": [".devcontainer/post-create.sh"],
-      "problemMatcher": []
-    }
-  ]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Generate .env from .env.codespaces",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "scripts/generate-env.sh",
+                ".env.codespaces",
+                ".env"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run devcontainer post-create",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                ".devcontainer/post-create.sh"
+            ],
+            "problemMatcher": []
+        }
+    ]
 }
