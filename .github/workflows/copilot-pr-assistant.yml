@@ -1,0 +1,39 @@
+name: Copilot PR Assistant
+
+on:
+  pull_request_target:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  copilot-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Copilot CLI and set version env
+        id: install
+        run: |
+          npm install -g @githubnext/copilot-cli@latest
+          echo "COPILOT_VERSION=$(copilot --version 2>/dev/null || npx @githubnext/copilot-cli --version 2>/dev/null)" >> $GITHUB_ENV
+
+      - name: Post comment with Copilot CLI version
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const version = process.env.COPILOT_VERSION || 'unknown';
+            const body = `GitHub Copilot CLI is available in this run. Version: ${version}`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });

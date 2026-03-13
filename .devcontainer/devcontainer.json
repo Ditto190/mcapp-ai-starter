@@ -1,0 +1,78 @@
+{
+  "name": "n8n AI Starter Kit - CPU Mode",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest"
+    }
+  },
+  "forwardPorts": [
+    5678,
+    11434,
+    6333,
+    5432
+  ],
+  "portsAttributes": {
+    "5678": {
+      "label": "n8n UI",
+      "onAutoForward": "notify",
+      "visibility": "public",
+      "protocol": "http"
+    },
+    "11434": {
+      "label": "Ollama API",
+      "onAutoForward": "notify",
+      "visibility": "public",
+      "protocol": "http"
+    },
+    "6333": {
+      "label": "Qdrant API",
+      "onAutoForward": "notify",
+      "visibility": "public",
+      "protocol": "http"
+    },
+    "5432": {
+      "label": "PostgreSQL",
+      "onAutoForward": "silent",
+      "visibility": "private"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode-remote.remote-containers",
+        "ms-docker.docker",
+        "ms-azuretools.vscode-docker",
+        "ms-python.python",
+        "ms-python.debugpy"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "files.watcherExclude": {
+          "**/n8n-data/**": true,
+          "**/ollama_storage/**": true,
+          "**/postgres_storage/**": true,
+          "**/qdrant_storage/**": true
+        }
+      }
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "remoteEnv": {
+    "DOCKER_BUILDKIT": "1",
+    "COMPOSE_DOCKER_CLI_BUILD": "1",
+    "DB_TYPE": "sqlite",
+    "N8N_PORT": "5678",
+    "N8N_PROTOCOL": "http",
+    "N8N_HOST": "localhost",
+    "OLLAMA_HOST": "ollama:11434",
+    "QDRANT_HOST": "qdrant",
+    "QDRANT_PORT": "6333"
+  },
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "16gb"
+  },
+  "remoteUser": "root",
+  "privileged": true
+}

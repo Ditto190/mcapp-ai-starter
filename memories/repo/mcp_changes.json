@@ -1,0 +1,24 @@
+{
+    "subject": "Anthropic CLI and MCP proxy changes",
+    "fact": "Installed Anthropic CLI in .venv; added n8n-mcp-proxy to .vscode/mcp.json; updated .env.example and docs/CLAUDE_CLI_INSTALL.md; created docs/MCP_CHANGELOG.md.",
+    "citations": [
+        {
+            "path": ".vscode/mcp.json",
+            "note": "Added n8n-mcp-proxy entry"
+        },
+        {
+            "path": "docs/CLAUDE_CLI_INSTALL.md",
+            "note": "Created docs for Anthropic CLI"
+        },
+        {
+            "path": ".env.example",
+            "note": "Added MCP_ENDPOINT and MCP_TOKEN placeholders"
+        },
+        {
+            "path": "docs/MCP_CHANGELOG.md",
+            "note": "Change log record"
+        }
+    ],
+    "reason": "Persist assistant actions after ContextStream memory API failed.",
+    "category": "operation"
+}

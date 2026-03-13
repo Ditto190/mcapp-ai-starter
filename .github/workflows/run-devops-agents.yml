@@ -1,0 +1,38 @@
+name: Run DevOps Agents (MCP Fleet)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'
+
+jobs:
+  run-devops-agents:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run DevOps agents via MCP fleet
+        env:
+          MCP_SERVER_URL: ${{ secrets.MCP_SERVER_URL }}
+          MCP_SERVER_TOKEN: ${{ secrets.MCP_SERVER_TOKEN }}
+        run: |
+          cat <<'JSON' > /tmp/payload.json
+          {
+            "mode": "fleet",
+            "agents": [
+              "devops-expert",
+              "se-gitops-ci-specialist",
+              "gem-devops"
+            ],
+            "arguments": {
+              "repo_path": "${{ github.workspace }}",
+              "context": "Execute DevOps validation and deployment checks"
+            }
+          }
+          JSON
+
+          curl -sSf -X POST "${MCP_SERVER_URL}/api/v1/agents/run" \
+            -H "Authorization: Bearer ${MCP_SERVER_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data @/tmp/payload.json

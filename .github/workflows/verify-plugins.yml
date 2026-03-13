@@ -1,0 +1,26 @@
+name: Verify Plugins
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure zip is available
+        run: sudo apt-get update -y && sudo apt-get install -y zip unzip
+
+      - name: Run plugin packaging script
+        run: bash scripts/install-plugins.sh
+
+      - name: List packaged plugins
+        run: ls -la build/plugins || true
+
+      - name: Upload plugin artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugins
+          path: build/plugins

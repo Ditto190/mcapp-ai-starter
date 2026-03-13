@@ -1,0 +1,29 @@
+name: Copilot CLI — Install and verify
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  copilot-cli-install:
+    name: Install Copilot CLI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Copilot CLI
+        run: |
+          npm install -g @githubnext/copilot-cli@latest
+
+      - name: Show Copilot CLI version
+        run: |
+          copilot --version || npx @githubnext/copilot-cli --version
+
+      - name: Confirm installation
+        run: echo "Copilot CLI installed and available on runner"

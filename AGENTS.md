@@ -1,100 +1,77 @@
-# MCP Apps SDK
+# Project Guidelines
 
-## Project Overview
-
-MCP Apps SDK (`@modelcontextprotocol/ext-apps`) enables MCP servers to display interactive UIs in conversational clients.
-
-Key abstractions:
-
-- **View** - UI running in an iframe, uses `App` class with `PostMessageTransport` to communicate with host
-- **Host** - Chat client embedding the iframe, uses `AppBridge` class to proxy MCP requests
-- **Server** - MCP server that registers tools/resources with UI metadata
-
-Specification (stable): `specification/2026-01-26/apps.mdx`
-
-## Commands
-
-```bash
-# Install dependencies
-npm install
-
-# Build the SDK only (generates schemas + bundles, does not build examples)
-npm run build
-
-# Build everything (SDK + all examples)
-npm run build:all
-
-# Type check + build a single example
-npm run --workspace examples/<example-name> build
-
-# Run all examples (starts server at http://localhost:8080)
-npm start
-
-# Run E2E tests (primary testing mechanism - starts examples server automatically)
-npm run test:e2e
-
-# Run unit tests (E2E tests have broader coverage; unit tests cover specific modules)
-npm test
-
-# Check JSDoc comment syntax and `{@link}` references
-npm exec typedoc -- --treatValidationWarningsAsErrors --emit none
-
-# Regenerate package-lock.json (especially on setups w/ custom npm registry)
-rm -fR  package-lock.json node_modules && \
-  docker run  --rm -it --platform linux/amd64 -v $PWD:/src:rw -w /src node:latest npm i && \
-  rm -fR node_modules && \
-  npm  i  --cache=~/.npm-mcp-apps --registry=https://registry.npmjs.org/
-```
+## Code Style
+- Follow existing style and tooling per component instead of forcing one formatter stack across the repo.
+- Keep changes scoped to the component you touch (`src/`, `examples/`, `generateagents-mcp/`, `n8n/`, `plugins/awesome-copilot/`).
+- Prefer existing naming and file conventions in each area; do not mass-reformat unrelated files.
 
 ## Architecture
+This workspace is a multi-component monorepo:
 
-### SDK Entry Points
+1. MCP Apps SDK core in `src/` (TypeScript):
+   - `src/app.ts` (`App` view runtime)
+   - `src/app-bridge.ts` (`AppBridge` host runtime)
+   - `src/server/index.ts` (server helpers)
+   - `src/message-transport.ts` (iframe postMessage transport)
+2. Example servers in `examples/` (workspace-style sample apps).
+3. GenerateAgents MCP wrapper in `generateagents-mcp/` (Python/FastMCP).
+4. n8n integration assets in `n8n/` and runtime in `docker-compose.yml`.
+5. Plugin/content library in `plugins/awesome-copilot/`.
 
-- `@modelcontextprotocol/ext-apps` - Main SDK for Apps (`App` class, `PostMessageTransport`)
-- `@modelcontextprotocol/ext-apps/react` - React hooks (`useApp`, `useHostStyleVariables`, etc.)
-- `@modelcontextprotocol/ext-apps/app-bridge` - SDK for hosts (`AppBridge` class)
-- `@modelcontextprotocol/ext-apps/server` - Server helpers (`registerAppTool`, `registerAppResource`)
+Protocol baseline: `specification/2026-01-26/apps.mdx`
 
-### Key Source Files
+Use nearest-folder guidance when present:
+- `generateagents-mcp/AGENTS.md`
+- `n8n/AGENTS.md`
+- `plugins/awesome-copilot/AGENTS.md`
+- `.agents/skills/vercel-react-native-skills/AGENTS.md`
 
-- `src/app.ts` - `App` class extends MCP Protocol, handles guest initialization, tool calls, messaging
-- `src/app-bridge.ts` - `AppBridge` class for hosts, proxies MCP requests, sends tool input/results to guests
-- `src/server/index.ts` - Helpers for MCP servers to register tools/resources with UI metadata
-- `src/types.ts` - Protocol types re-exported from `spec.types.ts` and Zod schemas from `generated/schema.ts` (auto-generated during build)
-- `src/message-transport.ts` - `PostMessageTransport` for iframe communication
-- `src/react/` - React hooks: `useApp`, `useHostStyles`, `useAutoResize`, `useDocumentTheme`
+## Build and Test
+Run commands for the specific subsystem you are modifying.
 
-### Protocol Flow
+Root / SDK / examples:
+```bash
+# Build SDK bundles
+bun build.bun.ts
 
+# Run examples server
+npm start
+
+# Primary regression coverage
+npm run test:e2e
+
+# Unit tests
+npm test
 ```
-View (App) <--PostMessageTransport--> Host (AppBridge) <--MCP Client--> MCP Server
+
+GenerateAgents MCP wrapper:
+```bash
+cd generateagents-mcp
+uv sync
+uv run python verify.py
+python server.py
 ```
 
-1. Host creates iframe with view HTML
-2. View creates `App` instance and calls `connect()` with `PostMessageTransport`
-3. View sends `ui/initialize` request, receives host capabilities and context
-4. Host sends `sendToolInput()` with tool arguments after initialization
-5. View can call server tools via `app.callServerTool()` or send messages via `app.sendMessage()`
-6. Host sends `sendToolResult()` when tool execution completes
-7. Host calls `teardownResource()` before unmounting iframe
+n8n stack:
+```bash
+# Validate compose config
+docker compose config -q
 
-## Documentation
+# Start stack
+docker compose up
 
-JSDoc `@example` tags should pull type-checked code from companion `.examples.ts` files (e.g., `app.ts` → `app.examples.ts`). Use ` ```ts source="./file.examples.ts#regionName" ` fences referencing `//#region regionName` blocks; region names follow `exportedName_variant` or `ClassName_methodName_variant` pattern (e.g., `useApp_basicUsage`, `App_hostCapabilities_checkAfterConnection`). For whole-file inclusion (any file type), omit the `#regionName`. Run `npm run sync:snippets` to sync.
+# Tail n8n logs
+docker compose logs -f n8n
+```
 
-Standalone docs in `docs/` (listed in `typedoc.config.mjs` `projectDocuments`) can also have type-checked companion `.ts`/`.tsx` files using the same pattern.
+## Conventions
+- Treat this repo as componentized: do not assume one root `package.json` script controls every area.
+- Prefer folder-local docs and `AGENTS.md` for details before making edits in that folder.
+- Keep secrets out of git (`.env` only local; never commit credentials).
+- For n8n API operations, include `Authorization: Bearer <N8N_API_KEY>`.
+- For MCP server tools, avoid exposing API keys in logs or tool responses.
 
-## Full Examples
-
-Uses npm workspaces. Full examples in `examples/` are separate packages:
-
-- `basic-server-*` - Starter templates (vanillajs, react, vue, svelte, preact, solid). Use these as the basis for new examples.
-- `basic-host` - Reference host implementation
-- Other examples showcase specific features (charts, 3D, video, etc.)
-
-## Claude Code Plugin
-
-The `plugins/mcp-apps/` directory contains a Claude Code plugin distributed via the plugin marketplace. It provides the following Claude Code skills files:
-
-- `plugins/mcp-apps/skills/create-mcp-app/SKILL.md` — for creating an MCP App
-- `plugins/mcp-apps/skills/migrate-oai-app/SKILL.md` — for migrating an app from the OpenAI Apps SDK to the MCP Apps SDK
+## Pitfalls
+- `.github/copilot-instructions.md` contains broader ecosystem guidance; when conflicts exist, prioritize this file plus nearest-folder `AGENTS.md` in this repository.
+- `generateagents-mcp` uses Python/`uv`, while SDK/examples use Bun/npm; use the matching toolchain per component.
+- Codespaces URLs can change; update `N8N_HOST` in local `.env` when needed.

@@ -1,0 +1,28 @@
+{
+    "name": "n8n-docs-agent-creator",
+    "nodes": [
+        {
+            "parameters": {
+                "authentication": "none",
+                "url": "={{$env.MCP_SERVER_URL}}/api/v1/agents/run",
+                "method": "POST",
+                "jsonParameters": true,
+                "options": {},
+                "bodyParametersJson": "={\n+  \"mode\": \"single\",\n+  \"agents\": [\"devops-expert\"],\n+  \"arguments\": { \"repo_path\": \"{{$env.REPO_PATH || \\"/workspace\\"}}\" }\n+}",
+                "headerParametersJson": "={\n+  \"Authorization\": \"Bearer {{$env.MCP_SERVER_TOKEN}}\",\n+  \"Content-Type\": \"application/json\"\n+}"
+            },
+            "name": "Call MCP Server",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                520,
+                300
+            ]
+        }
+    ],
+    "connections": {},
+    "active": false,
+    "settings": {},
+    "id": "n8n-docs-agent-creator-1",
+    "versionId": "1"
+}

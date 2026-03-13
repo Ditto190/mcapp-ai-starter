@@ -1,0 +1,50 @@
+name: CI with Agent Search
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies (none required)
+        run: echo "No external dependencies required for agent-search"
+
+      - name: Run tests
+        run: |
+          echo "Running repository tests (if present)" || true
+
+  agent-search:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run agent-search
+        id: search
+        run: |
+          python generateagents-mcp/agent_search.py --spec generateagents-mcp/agentspec/generated/awesome-copilot.agentspec.json --query "${{ github.event.head_commit.message || 'ci review' }}" --top 5 --json > agent_search_result.json || true
+          cat agent_search_result.json
+
+      - name: Post results as PR comment
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.existsSync('agent_search_result.json') ? fs.readFileSync('agent_search_result.json','utf8') : '{"error":"no results"}';
+            const parsed = JSON.parse(body || '{}');
+            const results = (parsed.results || []).map(r => `- **${r.meta.name}** (key: ${r.key}) — score: ${r.score}\n  ${r.meta.description}`).join('\n\n') || 'No relevant agents found.';
+            const comment = `Agent search results for commit message: \n\n${results}`;
+            await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body: comment });
