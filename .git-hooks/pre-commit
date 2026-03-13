@@ -37,7 +37,7 @@ if [ ! -d "$SKILLS_REF_DIR/.venv" ]; then
 fi
 
 # Get list of modified skill directories
-MODIFIED_SKILLS=$(git diff --cached --name-only --diff-filter=ACM | grep '^awesome-copilot/skills/' | cut -d'/' -f1-3 | sort -u)
+MODIFIED_SKILLS=$(git diff --cached --name-only --diff-filter=ACM | grep '^\(.agents\|awesome-copilot\)/skills/' | cut -d'/' -f1-3 | sort -u)
 
 if [ -z "$MODIFIED_SKILLS" ]; then
     echo -e "${GREEN}✅ No AgentSkills modified, skipping validation${NC}"
