@@ -1,0 +1,18 @@
+{
+    "name": "mcapp-ai-starter Dev Container",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/devcontainers/features/node": {
+            "version": "24"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.vscode-node-azure-pack"
+            ]
+        }
+    },
+    "postCreateCommand": "npm --version || true",
+    "remoteUser": "vscode"
+}
