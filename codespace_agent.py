@@ -318,7 +318,7 @@ class CodespaceQdrantClient:
     ) -> Dict[str, Any]:
         """Upsert vectors into a collection."""
         payload = {"points": points}
-        return self._request("POST", f"/collections/{collection}/points", json=payload)
+        return self._request("PUT", f"/collections/{collection}/points", json=payload)
     
     def search(
         self,
