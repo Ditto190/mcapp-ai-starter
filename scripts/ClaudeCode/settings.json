@@ -1,0 +1,250 @@
+{
+    "$schema": "https://code.claude.com/.claude/settings.schema.json",
+    "version": 1,
+    // ========================================================================
+    // SETUP HOOKS (first-time repository initialization & maintenance)
+    // Runs via: claude --init or claude --maintenance
+    // ========================================================================
+    "hooks": {
+        "Setup": [
+            {
+                "matcher": "init",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "bash .claude/hooks/setup-init.sh",
+                        "timeout": 120
+                    }
+                ]
+            },
+            {
+                "matcher": "maintenance",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "bash .claude/hooks/setup-maintenance.sh",
+                        "timeout": 60
+                    }
+                ]
+            }
+        ],
+        // ====================================================================
+        // SESSION START HOOKS (inject context & validate environment)
+        // Runs AFTER Claude Code starts, on session startup/resume/compact
+        // ====================================================================
+        "SessionStart": [
+            {
+                "matcher": "startup|resume",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "bash .claude/hooks/session-start.sh",
+                        "timeout": 30
+                    }
+                ]
+            },
+            {
+                "matcher": "compact",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "bash .claude/hooks/session-compact.sh",
+                        "timeout": 30
+                    }
+                ]
+            }
+        ],
+        // ====================================================================
+        // PRE-TOOL HOOKS (validate before tool execution)
+        // ====================================================================
+        "PreToolUse": [
+            {
+                "matcher": "Bash",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "bash .claude/hooks/pre-bash.sh",
+                        "timeout": 5
+                    }
+                ]
+            },
+            {
+                "matcher": "Edit|Write",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "bash .claude/hooks/pre-file-edit.sh",
+                        "timeout": 5
+                    }
+                ]
+            }
+        ],
+        // ====================================================================
+        // POST-TOOL HOOKS (cleanup, logging after tool execution)
+        // ====================================================================
+        "PostToolUse": [
+            {
+                "matcher": "Write",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "bash .claude/hooks/post-write.sh",
+                        "timeout": 10
+                    }
+                ]
+            }
+        ]
+    },
+    // ========================================================================
+    // PERMISSIONS (determine what Claude can access)
+    // ========================================================================
+    "permissions": {
+        "allowBrowser": false,
+        "allowNetworkAccess": true,
+        "allowRead": [
+            "**"
+        ],
+        "allowWrite": [
+            "src/**",
+            "tests/**",
+            ".claude/**",
+            "docs/**",
+            "package.json",
+            "README.md"
+        ],
+        "allowBash": true,
+        "askBeforeExecuting": []
+    },
+    // ========================================================================
+    // DENY RULES (prevent Claude from touching sensitive files)
+    // ========================================================================
+    "denyRules": [
+        {
+            "paths": [
+                ".env",
+                ".env.local",
+                "secrets/**",
+                "*.key",
+                "*.pem"
+            ],
+            "reason": "Secrets and credentials"
+        },
+        {
+            "paths": [
+                "node_modules/**",
+                ".venv/**",
+                "venv/**",
+                ".cargo/**"
+            ],
+            "reason": "Dependency directories"
+        },
+        {
+            "paths": [
+                "dist/**",
+                "build/**",
+                ".git/**"
+            ],
+            "reason": "Generated/metadata directories"
+        }
+    ],
+    // ========================================================================
+    // CONTEXT & MEMORY
+    // ========================================================================
+    "context": {
+        "maxTokens": 200000,
+        "focusMode": false
+    },
+    // ========================================================================
+    // SKILLS & AUTO-DISCOVERY
+    // Claude auto-discovers skills in .claude/skills/
+    // ========================================================================
+    "skills": {
+        "autoDiscover": true,
+        "includeGlobalSkills": true
+    },
+    // ========================================================================
+    // OUTPUT STYLES (customize how Claude presents responses)
+    // ========================================================================
+    "outputStyle": "default",
+    // ========================================================================
+    // RULES (path-specific rules for different parts of the project)
+    // Load rules from .claude/rules/ automatically
+    // ========================================================================
+    "rules": [
+        {
+            "paths": [
+                "src/**"
+            ],
+            "ruleFiles": [
+                ".claude/rules/code-style.md"
+            ]
+        },
+        {
+            "paths": [
+                "tests/**"
+            ],
+            "ruleFiles": [
+                ".claude/rules/testing.md"
+            ]
+        }
+    ],
+    // ========================================================================
+    // SUBAGENTS (if using Claude Code's task delegation)
+    // Define specialized agents for specific workflows
+    // ========================================================================
+    "subagents": [
+        {
+            "id": "code-reviewer",
+            "name": "Code Reviewer",
+            "description": "Reviews code for style, tests, and performance",
+            "skills": [
+                ".claude/skills/code-review.md"
+            ],
+            "instructions": "Focus on test coverage, code smells, and performance. Be constructive."
+        },
+        {
+            "id": "dependency-updater",
+            "name": "Dependency Updater",
+            "description": "Updates project dependencies safely",
+            "permissions": {
+                "allowWrite": [
+                    "package.json",
+                    "package-lock.json",
+                    "requirements.txt",
+                    "pyproject.toml"
+                ]
+            }
+        }
+    ],
+    // ========================================================================
+    // COMMANDS (saved prompts for frequent tasks)
+    // Accessible via /command-name in Claude Code
+    // ========================================================================
+    "commands": [
+        {
+            "name": "review",
+            "description": "Run code review with the Code Reviewer subagent",
+            "prompt": "Review my changes for code quality, test coverage, and style compliance."
+        },
+        {
+            "name": "test",
+            "description": "Run full test suite and report coverage",
+            "prompt": "Run the test suite, check coverage, and report any failing tests."
+        },
+        {
+            "name": "deps",
+            "description": "Check and update dependencies",
+            "prompt": "Check for outdated dependencies and propose safe updates."
+        }
+    ],
+    // ========================================================================
+    // CLOUD ENVIRONMENT SPECIFIC
+    // Settings optimized for Claude Code on the web
+    // ========================================================================
+    "cloudEnvironment": {
+        "setupScript": "bash claude_code_web_startup.sh",
+        "networkAccess": "limited",
+        "sessionTimeout": 3600,
+        "idleTimeout": 300
+    }
+}

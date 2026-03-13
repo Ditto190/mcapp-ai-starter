@@ -17,3 +17,24 @@ node_modules/
 __pycache__/
 *.pyc
 node_modules
+
+# Sensitive / generated files to ignore
+# snapshot imports (large, generated)
+import-snapshot-*.tar.gz
+.snapshot-manifest.txt
+.snapshot_file_list
+
+# n8n demo credentials (should not be committed)
+n8n/demo-data/credentials/*.json
+
+# Local virtualenvs
+.venv/
+
+# Build artifacts
+/dist/
+/build/
+
+# VSCode local MCP and secrets variants
+.vscode/mcp.local.json
+.vscode/mcp.user-sample.json
+.vscode/n8n-registered-tools.json

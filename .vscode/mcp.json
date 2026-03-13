@@ -21,9 +21,10 @@
         "-y",
         "mcp-remote",
         "--streamableHttp",
-        "${MCP_ENDPOINT}",
+        "${lineNumber}",
         "--header",
-        "Authorization: Bearer ${MCP_TOKEN}",
+        // The token is injected securely from the environment variable MCP_TOKEN at runtime. Do not hardcode sensitive values.
+        "Authorization: Bearer ${env:MCP_TOKEN}",
         "--header",
         "Accept: application/json, text/event-stream",
         "--header",

@@ -9,6 +9,11 @@ echo "✅ Checking Docker..."
 docker --version
 docker compose --version
 
+# Generate .env from .env.codespaces using runtime env vars (if present)
+if [ -f scripts/generate-env.sh ]; then
+  bash scripts/generate-env.sh .env.codespaces .env || true
+fi
+
 # Create .env file from template if it doesn't exist
 if [ ! -f .env ]; then
   echo "📝 Creating .env file..."
