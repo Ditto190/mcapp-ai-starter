@@ -6,7 +6,7 @@
             "headers": {
                 "Authorization": "${input:Authorization}"
             }
-        },d
+        },
         "github": {
             "type": "http",
             "url": "https://api.githubcopilot.com/mcp/"
