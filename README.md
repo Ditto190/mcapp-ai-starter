@@ -253,3 +253,4 @@ point your client at a local build:
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for
 guidelines on how to get started, submit pull requests, and report issues.
+[session-auto-test]
