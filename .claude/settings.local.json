@@ -1,0 +1,12 @@
+{
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "contextstream"
+  ],
+  "enabledPlugins": {
+    "pagerduty@claude-plugins-official": true,
+    "example-skills@anthropic-agent-skills": true,
+    "zapier@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true
+  }
+}

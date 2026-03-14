@@ -9,6 +9,9 @@
     "mounts": [
         "source=${localWorkspaceFolder}/.devcontainer/.cache/npm,target=/home/vscode/.npm,type=bind"
     ],
+    "containerEnv": {
+        "HOME": "/home/vscode"
+    },
     "customizations": {
         "vscode": {
             "extensions": [
@@ -17,7 +20,7 @@
             ]
         }
     },
-    "postCreateCommand": "mkdir -p .devcontainer/.cache/npm && python -m pip install --upgrade \"dspy[mcp]\" && corepack enable && if [ -f package.json ]; then npm ci || true; fi",
+    "postCreateCommand": "mkdir -p /home/vscode/.config/vscode-dev-containers && touch /home/vscode/.config/vscode-dev-containers/first-run-notice-already-displayed || true && mkdir -p .devcontainer/.cache/npm && python -m pip install --upgrade \"dspy[mcp]\" && corepack enable && if [ -f package.json ]; then npm ci || true; fi",
     "postStartCommand": "node --version || true",
     "remoteUser": "vscode"
 }

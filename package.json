@@ -121,7 +121,11 @@
     "@babel/plugin-transform-runtime": "^7.22.0",
     "@babel/runtime": "^7.22.0"
   },
+  "dependencies": {
+    "tar-stream": "^2.2.0"
+  },
   "scripts": {
+    "parse:snapshots": "node scripts/stream-parse-tar.js",
     "postinstall": "node scripts/setup-bun.mjs || echo 'setup-bun.mjs failed or not available'",
     "start": "npm run examples:dev",
     "generate:schemas": "tsx scripts/generate-schemas.ts && prettier --write \"src/generated/**/*\"",
