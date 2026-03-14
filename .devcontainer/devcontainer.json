@@ -20,7 +20,7 @@
             ]
         }
     },
-    "postCreateCommand": "mkdir -p /home/vscode/.config/vscode-dev-containers && touch /home/vscode/.config/vscode-dev-containers/first-run-notice-already-displayed || true && mkdir -p .devcontainer/.cache/npm && python -m pip install --upgrade \"dspy[mcp]\" && corepack enable && if [ -f package.json ]; then npm ci || true; fi",
-    "postStartCommand": "node --version || true",
+    "postCreateCommand": "mkdir -p /home/vscode/.config/vscode-dev-containers && touch /home/vscode/.config/vscode-dev-containers/first-run-notice-already-displayed || true && mkdir -p .devcontainer/.cache/npm && python -m pip install --upgrade \"dspy[mcp]\" && corepack enable && if [ -f package.json ]; then npm ci || true; fi && npm install -g @contextstream/mcp-server",
+    "postStartCommand": "node --version || true && NVM_NODE=$(find /usr/local/share/nvm/versions/node -maxdepth 1 -mindepth 1 -type d | sort -V | tail -1)/bin && sudo ln -sf $NVM_NODE/npx /usr/local/bin/npx && sudo ln -sf $NVM_NODE/node /usr/local/bin/node && sudo ln -sf $NVM_NODE/npm /usr/local/bin/npm || true",
     "remoteUser": "vscode"
 }
