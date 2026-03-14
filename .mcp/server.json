@@ -1,0 +1,8 @@
+{
+    "command": "python",
+    "args": [
+        "dspy_mcp_server.py"
+    ],
+    "env": null,
+    "description": "StdIO MCP server launch command for Codespace (auto-start when client connects)."
+}

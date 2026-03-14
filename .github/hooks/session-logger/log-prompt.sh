@@ -3,6 +3,18 @@ set -euo pipefail
 
 LOG_DIR=".session/logs"
 mkdir -p "$LOG_DIR"
+
+# Rotate prompts log if it exceeds 5MB to avoid unbounded growth
+PROMPTS_FILE="$LOG_DIR/prompts.log"
+if [ -f "$PROMPTS_FILE" ]; then
+  SIZE=$(wc -c < "$PROMPTS_FILE" || echo 0)
+  MAX=$((5 * 1024 * 1024))
+  if [ "$SIZE" -gt "$MAX" ]; then
+    ROT_TS=$(date --utc +"%Y%m%dT%H%M%SZ")
+    mv "$PROMPTS_FILE" "$LOG_DIR/prompts.log.$ROT_TS"
+    gzip -f "$LOG_DIR/prompts.log.$ROT_TS" || true
+  fi
+fi
 TS=$(date --utc +"%Y-%m-%dT%H:%M:%SZ")
 USER_NAME="${GIT_AUTHOR_NAME:-$(git config user.name || echo unknown)}"
 LOG_LEVEL="${LOG_LEVEL:-INFO}"
@@ -15,35 +27,11 @@ else
   PROMPT_TEXT=$(cat -)
 fi
 
-# Truncate very long prompts to 4096 chars
-PROMPT_TEXT_SHORT=$(printf "%s" "$PROMPT_TEXT" | cut -c1-4096)
+# Preserve full prompt text (Copilot chat payloads can be large JSON)
+PROMPT_TEXT_RAW=$(printf "%s" "$PROMPT_TEXT")
 
 cat >> "$LOG_DIR/prompts.log" <<EOF
-$TS | PROMPT | level=$LOG_LEVEL | user=$USER_NAME | prompt="$PROMPT_TEXT_SHORT"
+$TS | PROMPT | level=$LOG_LEVEL | user=$USER_NAME | prompt="$PROMPT_TEXT_RAW"
 EOF
 
 echo "prompt-logged:$TS"
-#!/bin/bash
-
-# Log user prompt submission
-
-set -euo pipefail
-
-# Skip if logging disabled
-if [[ "${SKIP_LOGGING:-}" == "true" ]]; then
-  exit 0
-fi
-
-# Read input from Copilot (contains prompt info)
-INPUT=$(cat)
-
-# Create logs directory if it doesn't exist
-mkdir -p logs/copilot
-
-# Extract timestamp
-TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-# Log prompt (you can parse INPUT for more details)
-echo "{\"timestamp\":\"$TIMESTAMP\",\"event\":\"userPromptSubmitted\",\"level\":\"${LOG_LEVEL:-INFO}\"}" >> logs/copilot/prompts.log
-
-exit 0

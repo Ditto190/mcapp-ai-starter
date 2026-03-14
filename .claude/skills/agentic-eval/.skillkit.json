@@ -1,0 +1,9 @@
+{
+  "name": "agentic-eval",
+  "description": "",
+  "source": "/workspaces/mcapp-ai-starter/plugins/awesome-copilot/skills/agentic-eval",
+  "sourceType": "local",
+  "subpath": "agentic-eval",
+  "installedAt": "2026-03-14T05:04:27.069Z",
+  "enabled": true
+}

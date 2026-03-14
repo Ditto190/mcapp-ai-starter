@@ -12,11 +12,12 @@
     "customizations": {
         "vscode": {
             "extensions": [
+                "ms-python.python",
                 "ms-vscode.vscode-node-azure-pack"
             ]
         }
     },
-    "postCreateCommand": "mkdir -p .devcontainer/.cache/npm && if [ -f package.json ]; then corepack enable && npm ci; else npm --version || true; fi",
+    "postCreateCommand": "mkdir -p .devcontainer/.cache/npm && python -m pip install --upgrade \"dspy[mcp]\" && corepack enable && if [ -f package.json ]; then npm ci || true; fi",
     "postStartCommand": "node --version || true",
     "remoteUser": "vscode"
 }

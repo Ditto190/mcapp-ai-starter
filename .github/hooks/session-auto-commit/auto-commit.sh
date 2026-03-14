@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Attach session logging: ensure session-end is called on exit, then log start
+if [ -x ".github/hooks/session-logger/log-session-end.sh" ]; then
+  trap '.github/hooks/session-logger/log-session-end.sh || true' EXIT
+fi
+if [ -x ".github/hooks/session-logger/log-session-start.sh" ]; then
+  .github/hooks/session-logger/log-session-start.sh || true
+fi
+
 # auto-commit only whitelisted paths to avoid accidental commits
 BASE_DIR="."
 WHITELIST_FILE=".github/hooks/session-auto-commit/whitelist.txt"

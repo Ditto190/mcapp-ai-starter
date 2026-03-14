@@ -1,0 +1,72 @@
+{
+    "lspServers": {
+        "typescript": {
+            "command": "typescript-language-server",
+            "args": [
+                "--stdio"
+            ],
+            "fileExtensions": {
+                ".ts": "typescript",
+                ".tsx": "typescript",
+                ".js": "javascript",
+                ".jsx": "javascript"
+            }
+        },
+        "python": {
+            "command": "pyright-langserver",
+            "args": [
+                "--stdio"
+            ],
+            "fileExtensions": {
+                ".py": "python"
+            }
+        },
+        "go": {
+            "command": "gopls",
+            "args": [],
+            "fileExtensions": {
+                ".go": "go"
+            }
+        },
+        "yaml": {
+            "command": "yaml-language-server",
+            "args": [
+                "--stdio"
+            ],
+            "fileExtensions": {
+                ".yml": "yaml",
+                ".yaml": "yaml"
+            }
+        },
+        "json": {
+            "command": "vscode-json-languageserver",
+            "args": [
+                "--stdio"
+            ],
+            "fileExtensions": {
+                ".json": "json"
+            }
+        },
+        "bash": {
+            "command": "bash-language-server",
+            "args": [
+                "start"
+            ],
+            "fileExtensions": {
+                ".sh": "bash"
+            }
+        },
+        "zod": {
+            "command": "typescript-language-server",
+            "args": [
+                "--stdio"
+            ],
+            "fileGlobs": [
+                "**/*.zod.ts",
+                "**/*zod*.ts"
+            ],
+            "fileExtensions": {},
+            "note": "Zod schemas are TypeScript-based — use the TypeScript LSP for Zod files."
+        }
+    }
+}

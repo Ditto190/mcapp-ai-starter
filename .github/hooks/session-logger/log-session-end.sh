@@ -1,3 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LOG_DIR=".session/logs"
+mkdir -p "$LOG_DIR"
+TS=$(date --utc +"%Y-%m-%dT%H:%M:%SZ")
+USER_NAME="${GIT_AUTHOR_NAME:-$(git config user.name || echo unknown)}"
+
+cat >> "$LOG_DIR/end.log" <<EOF
+$TS | END | user=$USER_NAME cwd=$(pwd)
+EOF
+
+echo "session-end-logged:$TS"
 #!/bin/bash
 
 # Log session end event

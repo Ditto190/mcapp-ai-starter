@@ -109,3 +109,78 @@ Example minimal JSON shape (for guidance only):
 ---
 
 Generated/edited by repository bootstrap assistant — update if repo conventions change.
+
+
+# Skills System
+
+You have access to specialized skills that can help complete tasks.
+Skills provide domain-specific knowledge and step-by-step instructions.
+
+## Available Skills
+
+### composable-agent-collection
+
+Compose, materialize, and validate a new GitHub Copilot plugin collection from the local awesome-copilot library. Use when: building a team plugin, creating a domain-specific agent bundle, authoring a composable collection, composing agents and skills into a plugin.json manifest, running materialize-plugins, generating marketplace.json, or validating plugin schema. Runs the full eng/ pipeline: discover → compose manifest → materialize → validate → index.
+
+**Invoke:** `skillkit read composable-agent-collection`
+
+## How to Use Skills
+
+When a task matches a skill's description, load it using the terminal:
+
+```bash
+skillkit read <skill-name>
+```
+
+The skill content will load with detailed instructions.
+Each skill is self-contained with its own resources.
+
+
+# Skills System
+
+You have access to specialized skills that can help complete tasks.
+Skills provide domain-specific knowledge and step-by-step instructions.
+
+## Available Skills
+
+### composable-agent-collection
+
+Compose, materialize, and validate a new GitHub Copilot plugin collection from the local awesome-copilot library. Use when: building a team plugin, creating a domain-specific agent bundle, authoring a composable collection, composing agents and skills into a plugin.json manifest, running materialize-plugins, generating marketplace.json, or validating plugin schema. Runs the full eng/ pipeline: discover → compose manifest → materialize → validate → index.
+
+**Invoke:** `skillkit read composable-agent-collection`
+
+## How to Use Skills
+
+When a task matches a skill's description, load it using the terminal:
+
+```bash
+skillkit read <skill-name>
+```
+
+The skill content will load with detailed instructions.
+Each skill is self-contained with its own resources.
+
+
+# Skills System
+
+You have access to specialized skills that can help complete tasks.
+Skills provide domain-specific knowledge and step-by-step instructions.
+
+## Available Skills
+
+### composable-agent-collection
+
+Compose, materialize, and validate a new GitHub Copilot plugin collection from the local awesome-copilot library. Use when: building a team plugin, creating a domain-specific agent bundle, authoring a composable collection, composing agents and skills into a plugin.json manifest, running materialize-plugins, generating marketplace.json, or validating plugin schema. Runs the full eng/ pipeline: discover → compose manifest → materialize → validate → index.
+
+**Invoke:** `skillkit read composable-agent-collection`
+
+## How to Use Skills
+
+When a task matches a skill's description, load it using the terminal:
+
+```bash
+skillkit read <skill-name>
+```
+
+The skill content will load with detailed instructions.
+Each skill is self-contained with its own resources.

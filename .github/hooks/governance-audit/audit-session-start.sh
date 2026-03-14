@@ -4,6 +4,14 @@
 
 set -euo pipefail
 
+# Attach session logging: ensure session-end is called on exit, then log start
+if [ -x ".github/hooks/session-logger/log-session-end.sh" ]; then
+  trap '.github/hooks/session-logger/log-session-end.sh || true' EXIT
+fi
+if [ -x ".github/hooks/session-logger/log-session-start.sh" ]; then
+  .github/hooks/session-logger/log-session-start.sh || true
+fi
+
 if [[ "${SKIP_GOVERNANCE_AUDIT:-}" == "true" ]]; then
   exit 0
 fi

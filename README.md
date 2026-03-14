@@ -117,6 +117,30 @@ resources:
 
 ## Getting Started
 
+## Compose automation & Codespaces secrets
+
+This repository includes automation for composing and validating Copilot plugin collections.
+
+- Run a machine-readable dry-run for a plugin:
+
+```bash
+node ./.github/skills/composable-agent-collection/scripts/compose-collection.mjs --name my-plugin --dry-run --format json
+```
+
+- In Codespaces or GitHub Actions provide the ContextStream credentials as secrets (do NOT commit keys):
+
+  - `CONTEXTSTREAM_API_URL` — set to https://api.contextstream.io
+  - `CONTEXTSTREAM_API_KEY` — your ContextStream API key
+
+  In Codespaces: open the Codespace settings -> Secrets -> add the two secrets. They will be available to the workspace environment and referenced by the workspace `mcp.json` via `${env:CONTEXTSTREAM_API_KEY}`.
+
+  In GitHub Actions: add repository secrets and reference them in workflows as `secrets.CONTEXTSTREAM_API_KEY`.
+
+- Devcontainer support: the devcontainer mounts an npm cache at `.devcontainer/.cache/npm` to `/home/vscode/.npm` and runs `corepack enable && npm ci` on create. Rebuild the container after changing `.devcontainer/devcontainer.json`.
+
+Security note: never store API keys in source. Use Codespaces secrets or GitHub repository secrets, or a local `.env` file that is gitignored for local development.
+
+
 ```bash
 npm install -S @modelcontextprotocol/ext-apps
 ```

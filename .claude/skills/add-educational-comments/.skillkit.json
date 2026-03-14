@@ -1,0 +1,9 @@
+{
+  "name": "add-educational-comments",
+  "description": "",
+  "source": "/workspaces/mcapp-ai-starter/plugins/awesome-copilot/skills/add-educational-comments",
+  "sourceType": "local",
+  "subpath": "add-educational-comments",
+  "installedAt": "2026-03-14T05:04:26.209Z",
+  "enabled": true
+}

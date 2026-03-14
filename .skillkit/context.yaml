@@ -1,0 +1,64 @@
+version: 1
+project:
+  name: "@modelcontextprotocol/ext-apps"
+  description: MCP Apps SDK — Enable MCP servers to display interactive user interfaces in conversational clients.
+  type: api
+  path: /workspaces/mcapp-ai-starter
+stack:
+  languages:
+    - name: typescript
+      version: 5.9.3
+      confidence: 100
+      source: tsconfig.json
+  frameworks:
+    - name: react
+      version: 19.2.0
+      confidence: 100
+      source: package.json
+    - name: express
+      version: 5.1.0
+      confidence: 100
+      source: package.json
+  libraries:
+    - name: zod
+      version: 4.1.13
+      confidence: 100
+      source: package.json
+  styling: []
+  testing:
+    - name: playwright
+      version: 1.57.0
+      confidence: 100
+      source: package.json
+  databases: []
+  tools:
+    - name: prettier
+      version: 3.6.2
+      confidence: 100
+      source: package.json
+    - name: husky
+      version: 9.1.7
+      confidence: 100
+      source: package.json
+  runtime:
+    - name: nodejs
+      confidence: 100
+      source: package.json
+patterns:
+  components: functional
+  apiStyle: rest
+  testing: playwright
+  formatting: prettier
+skills:
+  installed: []
+  recommended: []
+  excluded: []
+  autoSync: true
+  securityLevel: medium
+  testingRequired: false
+agents:
+  detected: []
+  synced: []
+  disabled: []
+createdAt: 2026-03-14T04:43:27.883Z
+updatedAt: 2026-03-14T04:43:27.883Z

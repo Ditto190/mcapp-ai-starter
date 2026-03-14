@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
+ 
+# Attach session logging: ensure session-end is called on exit, then log start
+if [ -x ".github/hooks/session-logger/log-session-end.sh" ]; then
+  trap '.github/hooks/session-logger/log-session-end.sh || true' EXIT
+fi
+if [ -x ".github/hooks/session-logger/log-session-start.sh" ]; then
+  .github/hooks/session-logger/log-session-start.sh || true
+fi
 TARGET_DIR="$1"
 TITLE="${2:-Devcontainer updates}"
 TS=$(date --utc +"%Y%m%dT%H%M%SZ")

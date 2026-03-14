@@ -1,3 +1,49 @@
+name: Compose Validate
+
+on:
+  workflow_dispatch:
+    inputs:
+      plugin:
+        description: 'Plugin name to validate'
+        required: true
+        default: ''
+
+jobs:
+  compose-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Cache npm
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            .devcontainer/.cache/npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: |
+          npm ci
+
+      - name: Run compose dry-run (json)
+        id: compose
+        run: |
+          set -o pipefail
+          node ./.github/skills/composable-agent-collection/scripts/compose-collection.mjs --name "${{ github.event.inputs.plugin }}" --dry-run --format json --no-generate > compose-dry.json
+          cat compose-dry.json
+
+      - name: Check compose JSON for validate step
+        run: |
+          node .github/scripts/check-compose-json.mjs compose-dry.json
 name: Compose & Validate Plugins
 
 on:

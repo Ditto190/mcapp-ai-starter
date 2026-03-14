@@ -1,0 +1,9 @@
+{
+  "name": "ai-prompt-engineering-safety-review",
+  "description": "",
+  "source": "/workspaces/mcapp-ai-starter/plugins/awesome-copilot/skills/ai-prompt-engineering-safety-review",
+  "sourceType": "local",
+  "subpath": "ai-prompt-engineering-safety-review",
+  "installedAt": "2026-03-14T05:04:27.504Z",
+  "enabled": true
+}

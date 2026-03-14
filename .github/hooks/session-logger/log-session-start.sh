@@ -1,26 +1,22 @@
-#!/bin/bash
-
-# Log session start event
-
+#!/usr/bin/env bash
 set -euo pipefail
 
-# Skip if logging disabled
-if [[ "${SKIP_LOGGING:-}" == "true" ]]; then
-  exit 0
+LOG_DIR=".session/logs"
+mkdir -p "$LOG_DIR"
+TS=$(date --utc +"%Y-%m-%dT%H:%M:%SZ")
+USER_NAME="${GIT_AUTHOR_NAME:-$(git config user.name || echo unknown)}"
+HOSTNAME="$(hostname 2>/dev/null || echo unknown)"
+
+cat >> "$LOG_DIR/start.log" <<EOF
+$TS | START | user=$USER_NAME host=$HOSTNAME cwd=$(pwd)
+EOF
+
+# spawn autosave in background if configured
+if [ "${ENABLE_SESSION_AUTOSAVE:-0}" = "1" ] && [ -x "./.github/hooks/session-autosave/auto-save.sh" ]; then
+  nohup ./.github/hooks/session-autosave/auto-save.sh >/dev/null 2>&1 &
+else
+  # Autosave disabled by default to avoid large snapshots; enable with ENABLE_SESSION_AUTOSAVE=1
+  :
 fi
 
-# Read input from Copilot
-INPUT=$(cat)
-
-# Create logs directory if it doesn't exist
-mkdir -p logs/copilot
-
-# Extract timestamp and session info
-TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-CWD=$(pwd)
-
-# Log session start (use jq for proper JSON encoding)
-jq -Rn --arg timestamp "$TIMESTAMP" --arg cwd "$CWD" '{"timestamp":$timestamp,"event":"sessionStart","cwd":$cwd}' >> logs/copilot/session.log
-
-echo "📝 Session logged"
-exit 0
+echo "session-start-logged:$TS"

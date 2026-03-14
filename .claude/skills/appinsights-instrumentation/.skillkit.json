@@ -1,0 +1,9 @@
+{
+  "name": "appinsights-instrumentation",
+  "description": "",
+  "source": "/workspaces/mcapp-ai-starter/plugins/awesome-copilot/skills/appinsights-instrumentation",
+  "sourceType": "local",
+  "subpath": "appinsights-instrumentation",
+  "installedAt": "2026-03-14T05:04:27.950Z",
+  "enabled": true
+}

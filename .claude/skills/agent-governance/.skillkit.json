@@ -1,0 +1,9 @@
+{
+  "name": "agent-governance",
+  "description": "",
+  "source": "/workspaces/mcapp-ai-starter/plugins/awesome-copilot/skills/agent-governance",
+  "sourceType": "local",
+  "subpath": "agent-governance",
+  "installedAt": "2026-03-14T05:04:26.646Z",
+  "enabled": true
+}

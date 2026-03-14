@@ -1,5 +1,6 @@
 {
   "enabledPlugins": {
-    "zapier@claude-plugins-official": true
+    "zapier@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true
   }
 }
