@@ -6,7 +6,7 @@
         "type": "command",
         "bash": "session-logger/log-session-start.sh",
         "cwd": ".",
-        "timeoutSec": 5
+        "timeoutSec": 10
       }
     ],
     "sessionEnd": [
@@ -14,7 +14,7 @@
         "type": "command",
         "bash": "session-logger/log-session-end.sh",
         "cwd": ".",
-        "timeoutSec": 5
+        "timeoutSec": 10
       }
     ],
     "userPromptSubmitted": [
@@ -23,7 +23,31 @@
         "bash": "session-logger/log-prompt.sh",
         "cwd": ".",
         "env": { "LOG_LEVEL": "INFO" },
-        "timeoutSec": 5
+        "timeoutSec": 10
+      }
+    ],
+    "sessionAutosave": [
+      {
+        "type": "command",
+        "bash": "session-autosave/auto-save.sh",
+        "cwd": ".",
+        "timeoutSec": 60
+      }
+    ],
+    "sessionAutoCommit": [
+      {
+        "type": "command",
+        "bash": "session-auto-commit/auto-commit.sh",
+        "cwd": ".",
+        "timeoutSec": 60
+      }
+    ],
+    "devcontainerUpdate": [
+      {
+        "type": "command",
+        "bash": "devcontainer-update/check-devcontainer.sh",
+        "cwd": ".",
+        "timeoutSec": 60
       }
     ]
   }
