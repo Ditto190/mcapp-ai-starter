@@ -13,6 +13,41 @@ When interacting with Copilot agents or prompts in this repo:
 - Run linters and tests locally before submitting PRs.
 - Keep prompts specific: always include component name, props, and testing expectations.
 
+## Spec-Kit Workflow (Understand → Specify → RFC → Implement)
+
+This repo includes the **spec-kit** agent suite for structured feature delivery. Use these agents and prompts for any non-trivial change:
+
+### Agents (`.github/agents/`)
+
+| Agent | Role |
+|---|---|
+| `spc-spec-director` | Single entry point — interprets intent, orchestrates the full flow |
+| `spc-spec-intake` | Interviews user to gather requirements |
+| `spc-spec-planner` | Breaks down specs into ordered tasks |
+| `spc-spec-writer` | Writes formal spec documents |
+| `spc-spec-reviewer` | Reviews specs for completeness and correctness |
+| `spc-rfc-writer` | Writes RFC / ADR documents |
+| `spc-rfc-reviewer` | Reviews RFCs before implementation |
+| `spc-codebase-discovery` | Explores codebase to understand context |
+| `spc-imp-backlog-slicer` | Slices implementation into sprint-sized chunks |
+| `spc-imp-task-detailer` | Writes detailed task definitions |
+| `spc-imp-coverage-auditor` | Audits test coverage against specs |
+
+### Prompts (`.github/prompts/`)
+
+| Prompt | Purpose |
+|---|---|
+| `new-spec` | Start a new spec from scratch |
+| `plan-iteration` | Plan an implementation iteration |
+| `write-from-plan` | Generate code from a task plan |
+| `review-and-adr` | Review code and capture decisions |
+| `audit-spec-vs-codebase` | Compare spec to actual implementation |
+| `evidence-pack` | Gather evidence for a feature |
+| `close-iteration` | Close out a completed iteration |
+| `export-docx` | Export spec documents to DOCX |
+
+**Recommended flow:** Start with `@spc-spec-director` — describe what you want to build and it will guide you through the rest.
+
 ## If your project differs from the default stack, update `.github/copilot-instructions.md` and the files under `.github/instructions/` to reflect the correct stack and patterns.
 
 description: "Workspace-level Copilot instructions to bootstrap AI assistants for the MCP Apps SDK workspace."
