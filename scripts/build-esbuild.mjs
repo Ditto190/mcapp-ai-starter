@@ -1,14 +1,33 @@
 import { build } from 'esbuild';
-import babel from 'esbuild-plugin-babel';
 import path from 'path';
 import fs from 'fs';
 
+// Try to load optional babel plugin. If it's not installed, continue without it.
+let babelPlugin = null;
+try {
+  const mod = await import('esbuild-plugin-babel');
+  babelPlugin = mod.default || mod;
+} catch (err) {
+  console.warn('Optional plugin esbuild-plugin-babel not installed; skipping Babel pass.');
+}
+
 const root = process.cwd();
 
-// Configure these to match your repo layout
-const entryPoints = [
-  'src/index.ts' // change to your real entry(s), e.g. 'packages/foo/src/index.ts'
+// Auto-detect entry points from common candidates
+const candidateEntries = [
+  'src/index.ts',
+  'src/index.tsx',
+  'src/app.ts',
+  'src/app.tsx',
+  'src/main.ts',
+  'src/main.tsx'
 ];
+const entryPoints = candidateEntries.filter(p => fs.existsSync(path.join(root, p)));
+if (entryPoints.length === 0) {
+  console.warn('Warning: no entry points found among candidates:', candidateEntries.join(', '));
+  console.warn('Skipping esbuild step. If you want to build, set `entryPoints` in scripts/build-esbuild.mjs to your entry files.');
+  process.exit(0);
+}
 
 const outdir = 'dist';
 const outfile = path.join(outdir, 'index.js');
@@ -35,15 +54,12 @@ try {
     minify: isProd,
     target: ['node18'],
     logLevel: 'info',
-    plugins: [
-      babel({
-        // apply Babel to JS/TS files; tighten to a narrower filter for better perf
+    plugins: babelPlugin ? [
+      babelPlugin({
         filter: babelFilter,
-        // point to the root babel config
         configFile: path.join(root, 'babel.config.json')
-        // Alternatively you can inline babel config via "config" property.
       })
-    ]
+    ] : []
   });
 
   console.log('esbuild + babel build complete');
