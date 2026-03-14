@@ -16,3 +16,6 @@ __pycache__/
 
 # MCPB bundles (built artifacts)
 *.mcpb
+# local envs
+.env
+.session/
