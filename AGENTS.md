@@ -5,6 +5,14 @@ This repository includes workspace-level instruction files to guide Copilot-styl
 - **Primary stack:** TypeScript + React
 - **Key tasks for agents:** code generation, tests scaffolding, example app maintenance, Playwright E2E helpers
 
+Workspace helper profiles
+
+- This workspace provides a Codespace profile helper that configures workspace
+	shell behavior. Use `skillkit_list_profiles` and `skillkit_use_profile` to
+	inspect and switch profiles. Profiles are `safe` (PATH only) and `full` (loads
+	`.env` and enables session logging). See `README.skillkit.md` for details and
+	security guidance.
+
 Recommendations for agents and contributors
 
 - Follow `.github/copilot-instructions.md` for general assistant conventions and quick commands.

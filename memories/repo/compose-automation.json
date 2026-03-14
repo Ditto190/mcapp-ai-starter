@@ -1,0 +1,33 @@
+{
+  "subject": "compose-collection + devcontainer + CI automation plan",
+  "fact": "Added JSON dry-run to compose-collection.mjs; added control flags; planned single-plugin materialize, CI job, devcontainer updates, and dependency automation.",
+  "citations": [
+    ".github/skills/composable-agent-collection/scripts/compose-collection.mjs",
+    "plugins/awesome-copilot/eng/materialize-plugins.mjs (to be updated)",
+    ".devcontainer/devcontainer.json (to be updated)",
+    ".github/workflows/compose-validate.yml (to be added/updated)"
+  ],
+  "reason": "Preserve automation decisions and concrete next steps for compose/CI/devcontainer improvements so future sessions or automated agents can continue implementation.",
+  "category": "devops/automation",
+  "details": {
+    "changes_made": [
+      "--format json dry-run when used with --dry-run",
+      "--no-materialize, --no-validate, --no-generate flags",
+      "runEngScript(script, dryRun, extraArgs) helper"
+    ],
+    "next_steps": [
+      "Implement single-plugin materialize in plugins/awesome-copilot/eng/materialize-plugins.mjs and expose --plugin <name>",
+      "Update compose script to forward --plugin to materialize",
+      "Add CI job that runs compose dry-run JSON for a named plugin and fails on validation errors",
+      "Update devcontainer.json to ensure Node 24 feature, npm cache mount, and postCreateCommand to enable corepack + npm ci",
+      "Create scripts/update-deps.mjs to perform safe dependency bumps, run tests and open PRs"
+    ],
+    "verification": [
+      "Dry-run JSON output has 'steps' array",
+      "--no-* flags skip steps",
+      "Single-plugin materialize only processes specified plugin",
+      "CI job fails on validation errors",
+      "Devcontainer rebuilds and runs npm ci successfully"
+    ]
+  }
+}

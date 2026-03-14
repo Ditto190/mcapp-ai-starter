@@ -6,6 +6,9 @@
             "version": "24"
         }
     },
+    "mounts": [
+        "source=${localWorkspaceFolder}/.devcontainer/.cache/npm,target=/home/vscode/.npm,type=bind"
+    ],
     "customizations": {
         "vscode": {
             "extensions": [
@@ -13,6 +16,7 @@
             ]
         }
     },
-    "postCreateCommand": "npm --version || true",
+    "postCreateCommand": "mkdir -p .devcontainer/.cache/npm && if [ -f package.json ]; then corepack enable && npm ci; else npm --version || true; fi",
+    "postStartCommand": "node --version || true",
     "remoteUser": "vscode"
 }

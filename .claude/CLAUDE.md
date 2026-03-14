@@ -63,3 +63,21 @@ When user asks for a plan, use ContextStream (not EnterPlanMode):
 2. `mcp__contextstream__memory(action="create_task", title="...", plan_id="<id>")`
 
 Full docs: https://contextstream.io/docs/mcp/tools
+
+---
+
+Workspace helper profiles
+
+This repository includes a Codespace profile helper to control workspace
+shell behaviour. From an interactive shell inside the workspace you can:
+
+- Run `skillkit_list_profiles` to list available profiles.
+- Run `skillkit_use_profile <name>` to select `safe` (default) or `full`.
+
+Profiles:
+
+- `safe`: configures `PATH` and `SKILLKIT_HOME` only.
+- `full`: additionally loads `.env` and enables session command logging.
+
+See `README.skillkit.md` for details and a security note about exporting
+`.env` values and recording shell commands when using the `full` profile.

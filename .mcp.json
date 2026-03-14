@@ -9,12 +9,11 @@
         "stdio"
       ],
       "env": {
-        "CONTEXTSTREAM_API_URL": "https://api.contextstream.io",
-        "CONTEXTSTREAM_API_KEY": "cbiq_T20ryJIZ9tAVg2Gd_-wkmVYpXn7DGdWQeihi1YMcAdU",
+        "CONTEXTSTREAM_API_URL": "${env:CONTEXTSTREAM_API_URL}",
+        "CONTEXTSTREAM_API_KEY": "${env:CONTEXTSTREAM_API_KEY}",
         "CONTEXTSTREAM_CONTEXT_PACK": "false"
       }
-    }
-    ,
+    },
     "io.github.contextstreamio/mcp-server": {
       "command": "npx",
       "args": [
@@ -24,8 +23,8 @@
         "stdio"
       ],
       "env": {
-        "CONTEXTSTREAM_API_URL": "https://api.contextstream.io",
-        "CONTEXTSTREAM_API_KEY": "cbiq_T20ryJIZ9tAVg2Gd_-wkmVYpXn7DGdWQeihi1YMcAdU",
+        "CONTEXTSTREAM_API_URL": "${env:CONTEXTSTREAM_API_URL}",
+        "CONTEXTSTREAM_API_KEY": "${env:CONTEXTSTREAM_API_KEY}",
         "CONTEXTSTREAM_CONTEXT_PACK": "false"
       }
     }

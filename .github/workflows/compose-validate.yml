@@ -1,0 +1,34 @@
+name: Compose & Validate Plugins
+
+on:
+  push:
+    paths:
+      - ".github/skills/composable-agent-collection/**"
+      - "plugins/awesome-copilot/**"
+  workflow_dispatch: {}
+
+jobs:
+  compose-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Dry-run compose (list agents)
+        run: |
+          node ./.github/skills/composable-agent-collection/scripts/compose-collection.mjs --list-agents
+
+      - name: Validate plugins (if any)
+        run: |
+          if [ -f plugins/awesome-copilot/eng/validate-plugins.mjs ]; then 
+            node plugins/awesome-copilot/eng/validate-plugins.mjs || exit 1; 
+          else echo "No validate-plugins.mjs found"; fi
