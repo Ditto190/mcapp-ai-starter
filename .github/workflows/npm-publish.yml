@@ -1,7 +1,6 @@
 name: Publish to npm
 
 on:
-  # Only run when a GitHub Release is published.
   release:
     types: [published]
 
@@ -11,64 +10,39 @@ concurrency:
 
 jobs:
   build:
-    name: Build package
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build package
-        run: npm run build
-
-      - name: Run Prettier
-        run: npm run prettier
+      - run: npm ci
+      - run: npm run build
+      - run: npm run prettier
 
   test:
-    name: Run tests
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run test suite
-        run: npm test
+      - run: npm ci
+      - run: npm test
 
   publish:
-    name: Publish core package to npm
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     environment: Release
@@ -79,23 +53,16 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: npm
           registry-url: "https://registry.npmjs.org"
-
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
       - name: Determine npm tag
         id: npm-tag
@@ -113,13 +80,11 @@ jobs:
             echo "tag=" >> $GITHUB_OUTPUT
           fi
 
-      - name: Publish package
-        run: npm publish --provenance --access public ${{ steps.npm-tag.outputs.tag }}
+      - run: npm publish --provenance --access public ${{ steps.npm-tag.outputs.tag }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_SECRET }}
 
   publish-examples:
-    name: Publish example packages to npm
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     environment: Release
@@ -155,23 +120,16 @@ jobs:
           - wiki-explorer-server
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: npm
           registry-url: "https://registry.npmjs.org"
-
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
       - name: Build example
         run: npm run build --workspace examples/${{ matrix.example }}
@@ -182,7 +140,6 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_SECRET }}
 
   publish-mcpb:
-    name: Build & upload MCPB bundle
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     environment: Release
@@ -192,22 +149,15 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
       - name: Build pdf-server
         run: npm run build --workspace examples/pdf-server
