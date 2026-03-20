@@ -9,6 +9,18 @@ echo "✅ Checking Docker..."
 docker --version
 docker compose --version
 
+# Generate .env from .env.codespaces using runtime env vars + workspace .env fallback
+if [ -f scripts/generate-env.sh ]; then
+  echo "🔧 Generating .env from Codespaces secrets and template..."
+  bash scripts/generate-env.sh .env.codespaces .env .env || true
+fi
+
+# Session initialization - load environment vars and setup hooks
+if [ -f ".devcontainer/on-session-start.sh" ]; then
+  echo "🚀 Running session initialization..."
+  bash .devcontainer/on-session-start.sh
+fi
+
 # Create .env file from template if it doesn't exist
 if [ ! -f .env ]; then
   echo "📝 Creating .env file..."
@@ -38,6 +50,23 @@ docker pull postgres:16-alpine &
 docker pull ollama/ollama:latest &
 docker pull qdrant/qdrant &
 wait
+
+# Install global npm packages for development tools
+echo "📦 Installing global npm packages..."
+npm install -g \
+  genkit-cli \
+  claude \
+  claude-code \
+  opencode
+echo "✅ npm global packages installed"
+
+# Install Python development tools
+echo "📦 Installing Python development tools..."
+python -m pip install --user \
+  gh-cli \
+  claude-code \
+  opencode
+echo "✅ Python packages installed"
 
 echo ""
 echo "✅ Setup Complete!"

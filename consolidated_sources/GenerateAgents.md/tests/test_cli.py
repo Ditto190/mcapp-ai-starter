@@ -7,6 +7,7 @@ import argparse
 from autogenerateagentsmd.cli import (
     parse_arguments,
     resolve_repository_target,
+    run_agents_md_pipeline,
     setup_language_model,
 )
 
@@ -91,3 +92,42 @@ def test_resolve_repository_target_interactive_fallback(mock_input):
         assert url is None
         assert local == "/input/path"
         assert name == "path"
+
+
+def test_run_agents_md_pipeline_no_revert_commits_continues():
+    """When --analyze-git-history finds no reverted commits, the pipeline
+    should continue without git insights rather than exiting early."""
+    mock_lm = mock.MagicMock()
+
+    mock_conventions_result = mock.MagicMock()
+    mock_conventions_result.markdown_document = "# Conventions\n"
+
+    mock_agents_result = mock.MagicMock()
+    mock_agents_result.agents_md_content = "# AGENTS\n"
+
+    with (
+        mock.patch('autogenerateagentsmd.cli.load_source_tree', return_value={"file.py": "content"}),
+        mock.patch('autogenerateagentsmd.cli.extract_reverted_commits', return_value=[]) as mock_git,
+        mock.patch('autogenerateagentsmd.cli.CodebaseConventionExtractor') as mock_extractor_cls,
+        mock.patch('autogenerateagentsmd.cli.AgentsMdCreator') as mock_creator_cls,
+        mock.patch('autogenerateagentsmd.cli.save_agents_to_disk') as mock_save,
+    ):
+        mock_extractor_cls.return_value.return_value = mock_conventions_result
+        mock_creator_cls.return_value.return_value = mock_agents_result
+
+        # Should complete without raising SystemExit
+        run_agents_md_pipeline(
+            repo_dir="/tmp/repo",
+            repo_name="myrepo",
+            lm=mock_lm,
+            style="comprehensive",
+            analyze_git_history=500,
+        )
+
+    # extract_reverted_commits was called with the right args
+    mock_git.assert_called_once_with("/tmp/repo", limit=500)
+    # Pipeline continued: extractor and creator were invoked
+    mock_extractor_cls.return_value.assert_called_once()
+    mock_creator_cls.return_value.assert_called_once()
+    # Output was saved
+    mock_save.assert_called_once_with("myrepo", "# AGENTS\n")

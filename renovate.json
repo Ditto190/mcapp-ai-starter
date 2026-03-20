@@ -1,6 +1,33 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ]
+  "extends": ["config:recommended"],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "plugins/awesome-copilot/**",
+    "apps/skillkit/**"
+  ],
+  "packageRules": [
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "auto"
+    },
+    {
+      "matchDepTypes": ["dependencies", "peerDependencies"],
+      "automerge": false
+    },
+    {
+      "matchManagers": ["devcontainer"],
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "automerge": true,
+      "groupName": "devcontainer features"
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"]
+  },
+  "prBodyTemplate": "{{{table}}}{{{notes}}}{{{changelogs}}}"
 }

@@ -1,16 +1,18 @@
 name: A.D.A.M. Playground
 
 on:
-  # Run after code actually lands on main (including merged PRs),
-  # but only when relevant A.D.A.M. files change.
   push:
     branches: [main]
     paths:
       - "examples/adam-server/**"
       - "scripts/scaffold-agent.mjs"
       - ".github/workflows/adam-playground.yml"
-
-  # Allow manual runs from the Actions tab with optional inputs.
+  pull_request:
+    branches: [main]
+    paths:
+      - "examples/adam-server/**"
+      - "scripts/scaffold-agent.mjs"
+      - ".github/workflows/adam-playground.yml"
   workflow_dispatch:
     inputs:
       agent_name:
