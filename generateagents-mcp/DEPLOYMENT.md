@@ -8,7 +8,7 @@
 ### 1. Verify Installation
 
 ```bash
-cd /workspaces/self-hosted-ai-starter-kit
+cd /workspaces/mcapp-ai-starter
 ls -la generateagents-mcp/
 ```
 
@@ -26,7 +26,7 @@ Expected files:
 ### 2. Test the Server (Local Development)
 
 ```bash
-cd /workspaces/self-hosted-ai-starter-kit/GenerateAgents.md
+cd /workspaces/mcapp-ai-starter/GenerateAgents.md
 uv run python ../generateagents-mcp/server.py
 ```
 
@@ -51,7 +51,7 @@ Starting stdio transport (for VS Code Copilot)...
 #### Option A: Automatic Setup (Recommended)
 
 ```bash
-cd /workspaces/self-hosted-ai-starter-kit/generateagents-mcp
+cd /workspaces/mcapp-ai-starter/generateagents-mcp
 python setup.py all
 ```
 

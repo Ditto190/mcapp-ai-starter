@@ -31,7 +31,7 @@ pip install mcp
 
 ### Step 2: Register with Clients (Automatic)
 ```bash
-cd /workspaces/self-hosted-ai-starter-kit/generateagents-mcp
+cd /workspaces/mcapp-ai-starter/generateagents-mcp
 python setup.py all
 ```
 
@@ -230,7 +230,7 @@ uv run autogenerateagentsmd --help
 
 Run health check:
 ```bash
-python /workspaces/self-hosted-ai-starter-kit/generateagents-mcp/verify.py
+python /workspaces/mcapp-ai-starter/generateagents-mcp/verify.py
 ```
 
 ---
@@ -335,7 +335,7 @@ Your GenerateAgents MCP Server is ready to use.
 
 **Quick command to start**:
 ```bash
-cd /workspaces/self-hosted-ai-starter-kit/generateagents-mcp
+cd /workspaces/mcapp-ai-starter/generateagents-mcp
 python setup.py all
 ```
 
