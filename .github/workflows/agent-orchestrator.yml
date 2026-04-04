@@ -1,0 +1,416 @@
+name: Agent Orchestrator Pipeline
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+
+# Minimal permissions at workflow scope; individual jobs elevate as needed.
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-orchestrator-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 1: Analyze PR/issue context and dynamically select which agents to run
+  # ──────────────────────────────────────────────────────────────────────────
+  agent-selector:
+    name: Agent Selector
+    runs-on: ubuntu-latest
+    # Only run on pull_request events (not issue comments that aren't on PRs)
+    if: github.event_name == 'pull_request'
+    outputs:
+      run_security_reviewer: ${{ steps.select.outputs.run_security_reviewer }}
+      run_typescript_expert: ${{ steps.select.outputs.run_typescript_expert }}
+      run_secondary: ${{ steps.select.outputs.run_secondary }}
+      changed_files: ${{ steps.select.outputs.changed_files }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed files and select agents
+        id: select
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # Collect changed file paths
+          CHANGED=$(gh pr view "$PR_NUMBER" --json files --jq '[.files[].path] | join(",")' 2>/dev/null || \
+            git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD | tr '\n' ',')
+          echo "changed_files=${CHANGED}" >> "$GITHUB_OUTPUT"
+
+          RUN_SECURITY=false
+          RUN_TS=false
+          RUN_SECONDARY=false
+
+          # Security reviewer: trigger on auth, security-sensitive, or config files
+          if echo "$CHANGED" | grep -qiE '(auth|secret|crypt|token|password|security|\.env|config|docker|nix|yaml|yml|json)'; then
+            RUN_SECURITY=true
+          fi
+
+          # TypeScript expert: trigger on TS/JS/TSX/JSX files
+          if echo "$CHANGED" | grep -qE '\.(ts|tsx|js|jsx|mjs|cjs)'; then
+            RUN_TS=true
+          fi
+
+          # Secondary (review-chain): run when both primary agents are active
+          if [ "$RUN_SECURITY" = "true" ] && [ "$RUN_TS" = "true" ]; then
+            RUN_SECONDARY=true
+          fi
+
+          echo "run_security_reviewer=${RUN_SECURITY}" >> "$GITHUB_OUTPUT"
+          echo "run_typescript_expert=${RUN_TS}" >> "$GITHUB_OUTPUT"
+          echo "run_secondary=${RUN_SECONDARY}" >> "$GITHUB_OUTPUT"
+          echo "Agent selection: security=${RUN_SECURITY}, typescript=${RUN_TS}, secondary=${RUN_SECONDARY}"
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 2: Mandatory prechecks — tests and linters must pass before agents run
+  # ──────────────────────────────────────────────────────────────────────────
+  prechecks:
+    name: Prechecks (tests & lint)
+    runs-on: ubuntu-latest
+    needs: agent-selector
+    if: needs.agent-selector.result == 'success'
+    outputs:
+      passed: ${{ steps.result.outputs.passed }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build SDK
+        run: npm run build
+
+      - name: Run linter / formatter check
+        id: lint
+        run: npm run prettier -- --check || echo "prettier_failed=true" >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+
+      - name: Run tests
+        id: test
+        run: npm test
+        continue-on-error: true
+
+      - name: Aggregate precheck result
+        id: result
+        run: |
+          LINT_OK="${{ steps.lint.outcome }}"
+          TEST_OK="${{ steps.test.outcome }}"
+          if [ "$LINT_OK" = "success" ] && [ "$TEST_OK" = "success" ]; then
+            echo "passed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "passed=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "lint=${LINT_OK}, test=${TEST_OK}"
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 3: Primary agent — security reviewer
+  # ──────────────────────────────────────────────────────────────────────────
+  agent-security-reviewer:
+    name: Agent — Security Reviewer
+    runs-on: ubuntu-latest
+    needs: [agent-selector, prechecks]
+    if: needs.agent-selector.outputs.run_security_reviewer == 'true'
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install agent dependencies
+        run: npm install gray-matter @octokit/rest js-yaml
+
+      - name: Run security reviewer agent
+        id: run_agent
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          CHANGED_FILES: ${{ needs.agent-selector.outputs.changed_files }}
+        run: |
+          mkdir -p artifacts
+          node .github/scripts/run-agent.mjs \
+            --agent=security-reviewer \
+            --pr="${PR_NUMBER}" \
+            --output=artifacts/security-findings.json \
+            --changed="${CHANGED_FILES}"
+
+      - name: Upload security findings artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-findings
+          path: artifacts/security-findings.json
+          retention-days: 30
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 4: Primary agent — TypeScript expert
+  # ──────────────────────────────────────────────────────────────────────────
+  agent-typescript-expert:
+    name: Agent — TypeScript Expert
+    runs-on: ubuntu-latest
+    needs: [agent-selector, prechecks]
+    if: needs.agent-selector.outputs.run_typescript_expert == 'true'
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install agent dependencies
+        run: npm install gray-matter @octokit/rest js-yaml
+
+      - name: Run TypeScript expert agent
+        id: run_agent
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          CHANGED_FILES: ${{ needs.agent-selector.outputs.changed_files }}
+        run: |
+          mkdir -p artifacts
+          node .github/scripts/run-agent.mjs \
+            --agent=typescript-expert \
+            --pr="${PR_NUMBER}" \
+            --output=artifacts/typescript-findings.json \
+            --changed="${CHANGED_FILES}"
+
+      - name: Upload TypeScript findings artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: typescript-findings
+          path: artifacts/typescript-findings.json
+          retention-days: 30
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 5: Optional secondary (review-chain) agent — only when both primaries ran
+  # ──────────────────────────────────────────────────────────────────────────
+  agent-secondary:
+    name: Agent — Secondary Review Chain
+    runs-on: ubuntu-latest
+    needs: [agent-selector, agent-security-reviewer, agent-typescript-expert]
+    if: |
+      needs.agent-selector.outputs.run_secondary == 'true' &&
+      needs.agent-security-reviewer.result != 'failure' &&
+      needs.agent-typescript-expert.result != 'failure'
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install gray-matter @octokit/rest js-yaml
+
+      - name: Download primary agent artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-findings"
+          path: artifacts/
+
+      - name: Run secondary review-chain agent
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          node -e "
+            import('fs').then(fs => {
+              const secFile = 'artifacts/security-findings/security-findings.json';
+              const tsFile  = 'artifacts/typescript-findings/typescript-findings.json';
+              const secData = fs.existsSync(secFile) ? JSON.parse(fs.readFileSync(secFile, 'utf8')) : {};
+              const tsData  = fs.existsSync(tsFile)  ? JSON.parse(fs.readFileSync(tsFile,  'utf8')) : {};
+
+              const avgConf = ((secData.confidence || 0) + (tsData.confidence || 0)) / 2;
+              const allFindings = [
+                ...(secData.findings  || []),
+                ...(tsData.findings   || []),
+              ];
+              const allRecs = [
+                ...(secData.recommendations || []),
+                ...(tsData.recommendations  || []),
+              ];
+
+              const result = {
+                agent: 'secondary-review-chain',
+                source_agents: ['security-reviewer', 'typescript-expert'],
+                combined_confidence: parseFloat(avgConf.toFixed(4)),
+                total_findings: allFindings.length,
+                findings: allFindings,
+                recommendations: allRecs,
+                timestamp: new Date().toISOString(),
+              };
+
+              fs.mkdirSync('artifacts/secondary', { recursive: true });
+              fs.writeFileSync('artifacts/secondary/secondary-findings.json', JSON.stringify(result, null, 2));
+              console.log(JSON.stringify(result, null, 2));
+            });
+          "
+
+      - name: Upload secondary findings
+        uses: actions/upload-artifact@v4
+        with:
+          name: secondary-findings
+          path: artifacts/secondary/secondary-findings.json
+          retention-days: 30
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 6: Aggregate results, post PR review comment, auto-approve if ≥ 0.90
+  # ──────────────────────────────────────────────────────────────────────────
+  approval-decision:
+    name: Approval Decision
+    runs-on: ubuntu-latest
+    needs:
+      - agent-selector
+      - prechecks
+      - agent-security-reviewer
+      - agent-typescript-expert
+      - agent-secondary
+    # Run if at least one primary agent completed (secondary is optional)
+    if: |
+      always() &&
+      needs.agent-selector.result == 'success' &&
+      needs.prechecks.result == 'success' &&
+      (needs.agent-security-reviewer.result == 'success' || needs.agent-typescript-expert.result == 'success')
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Install Octokit
+        run: npm install @octokit/rest
+
+      - name: Download all findings artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-findings"
+          path: artifacts/
+        continue-on-error: true
+
+      - name: Aggregate findings and decide
+        id: decide
+        run: |
+          node -e "
+            import('fs').then(fs => {
+              const paths = [
+                'artifacts/security-findings/security-findings.json',
+                'artifacts/typescript-findings/typescript-findings.json',
+                'artifacts/secondary-findings/secondary-findings.json',
+              ];
+
+              const allResults = paths
+                .filter(p => fs.existsSync(p))
+                .map(p => JSON.parse(fs.readFileSync(p, 'utf8')));
+
+              if (allResults.length === 0) {
+                console.log('No agent results found.');
+                process.env.APPROVE = 'false';
+                fs.writeFileSync('/tmp/approve', 'false');
+                fs.writeFileSync('/tmp/summary', JSON.stringify({ approve: false, reason: 'No agent results' }));
+                return;
+              }
+
+              const confs   = allResults.map(r => r.confidence || r.combined_confidence || 0);
+              const avgConf = confs.reduce((a, b) => a + b, 0) / confs.length;
+              const findings = allResults.flatMap(r => r.findings || []);
+              const critical  = findings.filter(f => f.severity === 'critical' || f.severity === 'high');
+              const prechecks = '${{ needs.prechecks.outputs.passed }}' === 'true';
+
+              const approve = avgConf >= 0.90 && critical.length === 0 && prechecks;
+
+              const summary = {
+                approve,
+                avg_confidence: parseFloat(avgConf.toFixed(4)),
+                total_findings: findings.length,
+                critical_findings: critical.length,
+                prechecks_passed: prechecks,
+                agents_ran: allResults.map(r => r.agent),
+                timestamp: new Date().toISOString(),
+              };
+
+              console.log(JSON.stringify(summary, null, 2));
+              fs.writeFileSync('/tmp/approve', approve ? 'true' : 'false');
+              fs.writeFileSync('/tmp/summary', JSON.stringify(summary, null, 2));
+            });
+          "
+
+      - name: Set approval output
+        id: approval
+        run: |
+          APPROVE=$(cat /tmp/approve)
+          echo "approve=${APPROVE}" >> "$GITHUB_OUTPUT"
+
+      - name: Post PR review comment
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: |
+          node -e "
+            import('@octokit/rest').then(({ Octokit }) => {
+              import('fs').then(fs => {
+                const octokit  = new Octokit({ auth: process.env.GITHUB_TOKEN });
+                const summary  = JSON.parse(fs.readFileSync('/tmp/summary', 'utf8'));
+                const approve  = summary.approve;
+                const emoji    = approve ? '✅' : '⚠️';
+                const decision = approve ? 'AUTO-APPROVED' : 'HUMAN REVIEW REQUIRED';
+
+                const body = [
+                  '## ' + emoji + ' Agent Pipeline Decision: ' + decision,
+                  '',
+                  '| Metric | Value |',
+                  '|--------|-------|',
+                  '| Average Confidence | ' + (summary.avg_confidence * 100).toFixed(1) + '% |',
+                  '| Total Findings | ' + summary.total_findings + ' |',
+                  '| Critical/High Findings | ' + summary.critical_findings + ' |',
+                  '| Prechecks Passed | ' + summary.prechecks_passed + ' |',
+                  '| Agents Run | ' + (summary.agents_ran || []).join(', ') + ' |',
+                  '',
+                  approve
+                    ? '> **All agents agree**: confidence ≥ 90%, no critical findings, prechecks green. Auto-approving.'
+                    : '> **Manual review required**: confidence < 90% or critical findings present. Please review agent artifacts.',
+                  '',
+                  '_Generated by the Agent Orchestrator Pipeline at ' + summary.timestamp + '_',
+                ].join('\n');
+
+                return octokit.pulls.createReview({
+                  owner: process.env.REPO_OWNER,
+                  repo:  process.env.REPO_NAME,
+                  pull_number: parseInt(process.env.PR_NUMBER, 10),
+                  event: approve ? 'APPROVE' : 'COMMENT',
+                  body,
+                });
+              });
+            });
+          "

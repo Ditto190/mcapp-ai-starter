@@ -7,3 +7,6 @@
 __pycache__/
 *.pyc
 node_modules
+
+# Agent pipeline generated artifacts
+.github/agents/_discovered.json

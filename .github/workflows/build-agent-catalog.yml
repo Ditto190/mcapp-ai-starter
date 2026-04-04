@@ -1,0 +1,50 @@
+name: Build Agent Catalog
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/agents/**"
+      - ".github/scripts/build-catalog.mjs"
+      - ".github/scripts/discover-agents.mjs"
+
+  # Allow manual rebuilds from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-catalog:
+    name: Build & Commit Agent Catalog
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Fetch the full history so the commit step can push
+          token: ${{ github.token }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Install catalog build dependencies
+        run: npm install gray-matter js-yaml
+
+      - name: Run discovery script
+        run: node .github/scripts/discover-agents.mjs
+
+      - name: Build agent catalog
+        run: node .github/scripts/build-catalog.mjs
+
+      - name: Commit updated catalog
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/agents/catalog.json
+          git diff --cached --quiet && echo "No catalog changes." && exit 0
+          git commit -m "chore: rebuild agent catalog [skip ci]"
+          git push
