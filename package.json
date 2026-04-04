@@ -1,5 +1,13 @@
 {
+  "scripts": {
+    "agents:catalog": "node .github/scripts/build-catalog.mjs",
+    "agents:discover": "node .github/scripts/discover-agents.mjs",
+    "agents:run": "node .github/scripts/run-agent.mjs"
+  },
   "devDependencies": {
+    "@octokit/rest": "^20.0.2",
+    "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.0",
     "n8n-mcp": "^2.35.6"
   }
 }
