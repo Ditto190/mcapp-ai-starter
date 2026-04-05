@@ -1,0 +1,13 @@
+skills-report-demo:
+  stage: notify
+  image: python:3.12-slim
+  script:
+    - python3 --version
+    - pip install --upgrade pip
+    - python3 scripts/generate_skills_report.py
+  artifacts:
+    paths:
+      - reports/skills_report.md
+    expire_in: 1 day
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
