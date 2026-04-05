@@ -56,7 +56,7 @@ x-init-ollama: &init-ollama
 
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     hostname: postgres
     networks: [ 'demo' ]
     restart: unless-stopped
