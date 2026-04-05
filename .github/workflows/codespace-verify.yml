@@ -26,7 +26,7 @@ jobs:
     name: Validate devcontainer config
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Validate devcontainer.json syntax
         run: |
@@ -58,7 +58,7 @@ jobs:
     name: Validate Docker Compose
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Validate compose config (cpu profile)
         run: |
@@ -80,7 +80,7 @@ jobs:
     name: Validate shell scripts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install shellcheck
         run: |
