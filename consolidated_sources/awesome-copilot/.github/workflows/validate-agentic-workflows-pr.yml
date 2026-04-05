@@ -49,7 +49,7 @@ jobs:
 
       - name: Comment on PR
         if: failure()
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: workflow-forbidden-files
           message: |
@@ -111,7 +111,7 @@ jobs:
 
       - name: Comment on PR if compilation failed
         if: failure()
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: workflow-validation
           message: |
