@@ -79,7 +79,7 @@ validate:devcontainer:
 
 validate:env-example:
   stage: validate
-  image: alpine:3.19
+  image: alpine:3.23
   before_script: []
   script:
     - |
@@ -145,7 +145,7 @@ validate:shellcheck:
 
 test:python:
   stage: test
-  image: python:3.12-slim
+  image: python:3.14-slim
   <<: *python-cache
   variables:
     UV_SYSTEM_PYTHON: "1"
@@ -250,7 +250,7 @@ audit:npm:
 
 audit:python:
   stage: audit
-  image: python:3.12-slim
+  image: python:3.14-slim
   <<: *python-cache
   before_script:
     - pip install pip-audit uv --quiet
@@ -300,7 +300,7 @@ build:awesome-copilot:
 
 notify:summary:
   stage: notify
-  image: alpine:3.19
+  image: alpine:3.23
   before_script: []
   script:
     - |
