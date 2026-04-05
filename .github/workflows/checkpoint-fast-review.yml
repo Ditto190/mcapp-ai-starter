@@ -50,7 +50,7 @@ jobs:
 
       - name: Upload checkpoint review artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: checkpoint-fast-review-${{ github.run_id }}
           path: .session-state/ci

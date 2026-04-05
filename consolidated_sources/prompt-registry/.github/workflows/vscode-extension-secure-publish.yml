@@ -152,7 +152,7 @@ jobs:
           echo "Package SHA256: $SHA256"
 
       - name: Upload package artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: extension-package
           path: |
@@ -195,7 +195,7 @@ jobs:
           egress-policy: audit
 
       - name: Download package artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: extension-package
 
@@ -258,7 +258,7 @@ jobs:
           egress-policy: audit
 
       - name: Download package artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: extension-package
 
@@ -310,12 +310,12 @@ jobs:
           persist-credentials: false
 
       - name: Download package artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: extension-package
 
       - name: Download provenance
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.provenance.outputs.provenance-name }}
 
@@ -441,7 +441,7 @@ jobs:
           tag_name: ${{ github.event.release.tag_name }}
 
       - name: Upload bundle artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: installation-bundle
           path: ${{env.EXTENSION_NAME}}-vscode-extension-${{ needs.pre-publish-security.outputs.version }}-bundle.zip

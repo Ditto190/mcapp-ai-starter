@@ -55,7 +55,7 @@ jobs:
 
       - name: Upload snapshot artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: session-preservation-dry-run
           path: .session-state/ci/ci-dry-run
