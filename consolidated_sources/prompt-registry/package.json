@@ -852,7 +852,7 @@
   "dependencies": {
     "@prompt-registry/collection-scripts": "file:lib",
     "@types/archiver": "^7.0.0",
-    "@types/glob": "^8.1.0",
+    "@types/glob": "^9.0.0",
     "archiver": "^7.0.1",
     "axios": "^1.6.0",
     "glob": "^11.1.0",
