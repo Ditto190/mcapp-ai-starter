@@ -139,7 +139,7 @@ jobs:
 
     steps:
       - name: Comment PR with analysis
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const changedModules = `${{ needs.analyze-changed-symbols.outputs.changed_modules }}`;
