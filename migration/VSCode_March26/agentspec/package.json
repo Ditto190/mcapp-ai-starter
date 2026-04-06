@@ -1,0 +1,20 @@
+﻿{
+  "name": "agentspec",
+  "version": "0.0.1",
+  "description": "Compiler for composable agent definitions",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/cli/index.ts",
+    "test": "jest",
+    "lint": "eslint src --ext .ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "commander": "^11.0.0",
+    "glob": "^10.3.0",
+    "typescript": "^5.3.0",
+    "yaml": "^2.3.0",
+    "ts-node": "^10.9.0"
+  }
+}

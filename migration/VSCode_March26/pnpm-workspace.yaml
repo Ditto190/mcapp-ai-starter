@@ -1,0 +1,8 @@
+## PNPM workspace manifest to consolidate Node packages in this repository
+## Include top-level packages and the existing typespec monorepo packages
+packages:
+  - "."
+  - "agent-skills"
+  - "agentspec"
+  - "typespec-reference/**"
+  - "packages/**"

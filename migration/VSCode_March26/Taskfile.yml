@@ -1,0 +1,179 @@
+version: "3"
+
+# Unified task runner for the VSCode_March26 monorepo.
+# Install: https://taskfile.dev  (or: choco install go-task / winget install Task.Task)
+# Usage: task <name>   e.g.  task install   task test   task lint
+
+vars:
+  PYTHON: python
+  UV: uv
+  PYTEST_OPTS: "-v --tb=short"
+
+tasks:
+  # ── top-level convenience ────────────────────────────────────────────────
+  default:
+    desc: "List all available tasks"
+    cmds:
+      - task --list
+
+  install:
+    desc: "Install all dependencies (Node + Python)"
+    deps: [install:node, install:python, install:generateagents]
+
+  test:
+    desc: "Run all test suites"
+    deps: [test:python, test:generateagents, test:node]
+
+  lint:
+    desc: "Lint all code"
+    deps: [lint:python, lint:node]
+
+  clean:
+    desc: "Remove build artefacts and caches"
+    deps: [clean:python, clean:node]
+
+  ci:
+    desc: "Full CI pass (install → lint → test)"
+    cmds:
+      - task: install
+      - task: lint
+      - task: test
+
+  # ── Node / pnpm ──────────────────────────────────────────────────────────
+  install:node:
+    desc: "Install Node dependencies via pnpm"
+    cmds:
+      - pnpm install
+    sources:
+      - pnpm-workspace.yaml
+      - "**/package.json"
+      - "!**/node_modules/**"
+
+  test:node:
+    desc: "Run Node/TypeScript tests"
+    cmds:
+      - pnpm --filter agentspec test
+      - pnpm --filter agent-skills test
+    ignore_error: true # some packages may not have test scripts yet
+
+  lint:node:
+    desc: "Lint TypeScript packages"
+    cmds:
+      - pnpm --filter agentspec lint
+      - pnpm --filter agent-skills lint
+    ignore_error: true
+
+  build:node:
+    desc: "Build TypeScript packages"
+    cmds:
+      - pnpm --filter agentspec build
+      - pnpm --filter agent-skills build
+
+  clean:node:
+    desc: "Remove node_modules and dist folders"
+    cmds:
+      - cmd: Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue
+        platforms: [windows]
+      - cmd: rm -rf node_modules
+        platforms: [linux, darwin]
+
+  # ── Python: agents/ ──────────────────────────────────────────────────────
+  install:python:
+    desc: "Create .venv and install agents/ requirements"
+    cmds:
+      - "{{.PYTHON}} -m venv .venv"
+      - cmd: .venv\\Scripts\\pip install -r requirements.txt
+        platforms: [windows]
+      - cmd: .venv/bin/pip install -r requirements.txt
+        platforms: [linux, darwin]
+    sources:
+      - requirements.txt
+    generates:
+      - .venv/**
+
+  test:python:
+    desc: "Run pytest for agents/ and root tests/"
+    dir: "{{.ROOT_DIR}}"
+    cmds:
+      - cmd: .venv\\Scripts\\pytest tests/ {{.PYTEST_OPTS}} -m "not e2e"
+        platforms: [windows]
+      - cmd: .venv/bin/pytest tests/ {{.PYTEST_OPTS}} -m "not e2e"
+        platforms: [linux, darwin]
+    env:
+      DATABASE_URL: ""
+      OPENAI_API_KEY: ""
+
+  lint:python:
+    desc: "Run ruff linter on agents/"
+    cmds:
+      - cmd: .venv\\Scripts\\ruff check agents/
+        platforms: [windows]
+      - cmd: .venv/bin/ruff check agents/
+        platforms: [linux, darwin]
+    ignore_error: true # ruff may not be installed in all envs
+
+  clean:python:
+    desc: "Remove .venv and __pycache__"
+    cmds:
+      - cmd: Remove-Item -Recurse -Force .venv -ErrorAction SilentlyContinue
+        platforms: [windows]
+      - cmd: rm -rf .venv
+        platforms: [linux, darwin]
+      - cmd: Get-ChildItem -Recurse -Include __pycache__,*.pyc | Remove-Item -Recurse -Force
+        platforms: [windows]
+      - cmd: find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null; true
+        platforms: [linux, darwin]
+
+  # ── Python: GenerateAgents/ ───────────────────────────────────────────────
+  install:generateagents:
+    desc: "Install GenerateAgents dependencies via uv"
+    dir: GenerateAgents
+    cmds:
+      - "{{.UV}} sync"
+    sources:
+      - pyproject.toml
+      - uv.lock
+
+  test:generateagents:
+    desc: "Run pytest for GenerateAgents/ (skip e2e)"
+    dir: GenerateAgents
+    cmds:
+      - '{{.UV}} run pytest tests/ {{.PYTEST_OPTS}} -m "not e2e"'
+    env:
+      OPENAI_API_KEY: ""
+
+  build:generateagents:
+    desc: "Build GenerateAgents wheel"
+    dir: GenerateAgents
+    cmds:
+      - "{{.UV}} build"
+
+  # ── n8n ──────────────────────────────────────────────────────────────────
+  n8n:start:
+    desc: "Start n8n server on http://localhost:5678"
+    cmds:
+      - npx n8n
+    env:
+      N8N_USER_DATA_DIR: ./n8n-data
+
+  n8n:start:bg:
+    desc: "Start n8n in background (detached)"
+    cmds:
+      - cmd: Start-Process -NoNewWindow npx -ArgumentList "n8n"
+        platforms: [windows]
+      - cmd: npx n8n &
+        platforms: [linux, darwin]
+
+  # ── typespec-reference ────────────────────────────────────────────────────
+  build:typespec:
+    desc: "Build typespec-reference packages"
+    dir: typespec-reference
+    cmds:
+      - pnpm install
+      - pnpm build
+
+  test:typespec:
+    desc: "Test typespec-reference packages"
+    dir: typespec-reference
+    cmds:
+      - pnpm test

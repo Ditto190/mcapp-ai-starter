@@ -1,0 +1,16 @@
+name: CI Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  powershell-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Run PS tests
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -ExecutionPolicy Bypass -File .\tests\ci\run-tests.ps1

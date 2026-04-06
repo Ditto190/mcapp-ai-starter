@@ -1,0 +1,213 @@
+{
+  "name": "VSCode Project Maintenance Audit",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "command": "pwsh",
+        "arguments": "-NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\dylan.a.thomas\\Projects\\VSCode_March26\\.vscode\\scripts\\mcp-healthcheck.ps1\""
+      },
+      "id": "check-mcp-health",
+      "name": "Check MCP Health",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "command": "pwsh",
+        "arguments": "-NoProfile -Command \"& { Get-ChildItem -Path 'C:\\Users\\dylan.a.thomas\\Projects\\VSCode_March26' -Recurse -File | Where-Object { $_.LastWriteTime -gt (Get-Date).AddHours(-6) } | Select-Object -First 20 | ForEach-Object { $_.FullName } } | ConvertTo-Json\""
+      },
+      "id": "check-recent-changes",
+      "name": "Get Recent File Changes",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "command": "git",
+        "arguments": "-C \"C:\\Users\\dylan.a.thomas\\Projects\\VSCode_March26\" status --porcelain"
+      },
+      "id": "check-git-status",
+      "name": "Check Git Status",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "filePath": "C:\\Users\\dylan.a.thomas\\Projects\\VSCode_March26\\.serena\\memories\\audit-log.md",
+        "fileContent": "=## Audit Report - {{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}\n\n**MCP Health Check:**\n``` \n{{ $node[\"Check MCP Health\"].json.stdout }}\n```\n\n**Recent Changes (last 6 hours):**\n```\n{{ $node[\"Get Recent File Changes\"].json.stdout }}\n```\n\n**Git Status:**\n```\n{{ $node[\"Check Git Status\"].json.stdout }}\n```\n\n**Analysis:**\n- Total MCP servers checked: 4\n- Status: {{ $node[\"Check MCP Health\"].json.stderr ? 'Issues detected' : 'All healthy' }}\n- Files modified: {{ $node[\"Get Recent File Changes\"].json.stdout ? 'Yes' : 'No recent changes' }}\n- Git changes: {{ $node[\"Check Git Status\"].json.stdout ? 'Uncommitted changes present' : 'Clean working directory' }}\n\n---\n\n",
+        "options": {
+          "append": true
+        }
+      },
+      "id": "write-audit-log",
+      "name": "Write Audit Log",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the MCP health check output\nconst healthOutput = $input.first().json.stdout;\nconst hasIssues = healthOutput.includes('[!]') || healthOutput.includes('[X]');\n\n// Parse recent changes\nconst recentChanges = JSON.parse($node[\"Get Recent File Changes\"].json.stdout || '[]');\nconst changedFileCount = recentChanges.length;\n\n// Parse git status\nconst gitStatus = $node[\"Check Git Status\"].json.stdout;\nconst uncommittedChanges = gitStatus ? gitStatus.split('\\n').length : 0;\n\n// Determine if notification is needed\nconst needsAttention = hasIssues || uncommittedChanges > 10 || changedFileCount > 50;\n\nreturn {\n  json: {\n    needsAttention,\n    hasIssues,\n    changedFileCount,\n    uncommittedChanges,\n    timestamp: new Date().toISOString(),\n    message: needsAttention \n      ? `⚠️ Project needs attention: ${hasIssues ? 'MCP issues, ' : ''}${uncommittedChanges} uncommitted changes, ${changedFileCount} files modified` \n      : '✅ Project healthy: All systems operational'\n  }\n};"
+      },
+      "id": "analyze-results",
+      "name": "Analyze Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.needsAttention }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "needs-attention",
+      "name": "Needs Attention?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "filePath": "C:\\Users\\dylan.a.thomas\\Projects\\VSCode_March26\\.serena\\memories\\alert-required.txt",
+        "fileContent": "={{ $json.message }}\n\nTimestamp: {{ $json.timestamp }}\nMCP Issues: {{ $json.hasIssues }}\nFiles Changed: {{ $json.changedFileCount }}\nUncommitted: {{ $json.uncommittedChanges }}\n\n---\nAction Required: Review project status and resolve issues.",
+        "options": {
+          "append": false
+        }
+      },
+      "id": "write-alert",
+      "name": "Write Alert File",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [1650, 200]
+    },
+    {
+      "parameters": {},
+      "id": "no-action-needed",
+      "name": "No Action Needed",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1650, 400]
+    }
+  ],
+  "connections": {
+    "Schedule Every 6 Hours": {
+      "main": [
+        [
+          {
+            "node": "Check MCP Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check MCP Health": {
+      "main": [
+        [
+          {
+            "node": "Get Recent File Changes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Recent File Changes": {
+      "main": [
+        [
+          {
+            "node": "Check Git Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Git Status": {
+      "main": [
+        [
+          {
+            "node": "Write Audit Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Audit Log": {
+      "main": [
+        [
+          {
+            "node": "Analyze Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Results": {
+      "main": [
+        [
+          {
+            "node": "Needs Attention?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs Attention?": {
+      "main": [
+        [
+          {
+            "node": "Write Alert File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Action Needed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-03-05T00:00:00.000Z",
+  "versionId": "1"
+}

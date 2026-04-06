@@ -1,0 +1,201 @@
+{
+  "name": "GenerateAgents - AgentSpec to Multi-Format Compiler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "generate-agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract request parameters\nconst agentspecContent = $input.item.json.body.agentspec;\nconst outputFormat = $input.item.json.body.outputFormat || 'skill-library';\nconst agentName = $input.item.json.body.agentName || 'UnnamedAgent';\n\n// Validate AgentSpec syntax\nif (!agentspecContent || !agentspecContent.includes('agent ')) {\n  throw new Error('Invalid AgentSpec content: must contain agent definition');\n}\n\n// Return parsed configuration\nreturn {\n  agentspecContent,\n  outputFormat,\n  agentName,\n  timestamp: new Date().toISOString(),\n  requestId: `gen-${Date.now()}`\n};"
+      },
+      "id": "parse-request",
+      "name": "Parse Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd C:\\\\Users\\\\dylan.a.thomas\\\\Projects\\\\VSCode_March26\\\\agentspec && echo \"={{$json.agentspecContent}}\" > temp-input.agentspec",
+        "additionalFields": {}
+      },
+      "id": "create-temp-file",
+      "name": "Create Temp File",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd C:\\\\Users\\\\dylan.a.thomas\\\\Projects\\\\VSCode_March26\\\\agentspec && node dist/cli/index.js compile temp-input.agentspec --emit={{$json.outputFormat}} --output=temp-output",
+        "additionalFields": {}
+      },
+      "id": "run-compiler",
+      "name": "Run AgentSpec Compiler",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.code}}",
+              "operation": "equals",
+              "value2": "0"
+            }
+          ]
+        }
+      },
+      "id": "check-compile-success",
+      "name": "Check Compile Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd C:\\\\Users\\\\dylan.a.thomas\\\\Projects\\\\VSCode_March26\\\\agentspec\\\\temp-output && Get-Content -Path */*SKILL.md -Raw",
+        "additionalFields": {}
+      },
+      "id": "read-skill-output",
+      "name": "Read SKILL.md Output",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1250, 200]
+    },
+    {
+      "parameters": {
+        "command": "cd C:\\\\Users\\\\dylan.a.thomas\\\\Projects\\\\VSCode_March26\\\\agent-skills\\\\skills-ref && uv run skills-ref validate C:\\\\Users\\\\dylan.a.thomas\\\\Projects\\\\VSCode_March26\\\\agentspec\\\\temp-output\\\\{{$json.agentName}}",
+        "additionalFields": {}
+      },
+      "id": "validate-skill",
+      "name": "Validate with skills-ref",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1450, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse validation results\nconst validationOutput = $input.item.json.stdout;\nconst isValid = validationOutput.includes('Valid skill');\n\n// Generate result summary\nconst result = {\n  success: true,\n  requestId: $('Parse Request').item.json.requestId,\n  agentName: $('Parse Request').item.json.agentName,\n  outputFormat: $('Parse Request').item.json.outputFormat,\n  validation: {\n    passed: isValid,\n    message: validationOutput\n  },\n  skillContent: $('Read SKILL.md Output').item.json.stdout,\n  timestamp: new Date().toISOString()\n};\n\nreturn result;"
+      },
+      "id": "format-success-response",
+      "name": "Format Success Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle compilation failure\nconst error = $input.item.json.stderr || 'Unknown compilation error';\n\nreturn {\n  success: false,\n  requestId: $('Parse Request').item.json.requestId,\n  error: error,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "format-error-response",
+      "name": "Format Error Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {}
+      },
+      "id": "respond-success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1850, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "respond-error",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1450, 400]
+    },
+    {
+      "parameters": {
+        "command": "cd C:\\\\Users\\\\dylan.a.thomas\\\\Projects\\\\VSCode_March26\\\\agentspec && Remove-Item -Path temp-input.agentspec -Force -ErrorAction SilentlyContinue; Remove-Item -Path temp-output -Recurse -Force -ErrorAction SilentlyContinue",
+        "additionalFields": {}
+      },
+      "id": "cleanup-temp-files",
+      "name": "Cleanup Temp Files",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2050, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[{"node": "Parse Request", "type": "main", "index": 0}]]
+    },
+    "Parse Request": {
+      "main": [[{"node": "Create Temp File", "type": "main", "index": 0}]]
+    },
+    "Create Temp File": {
+      "main": [[{"node": "Run AgentSpec Compiler", "type": "main", "index": 0}]]
+    },
+    "Run AgentSpec Compiler": {
+      "main": [[{"node": "Check Compile Success", "type": "main", "index": 0}]]
+    },
+    "Check Compile Success": {
+      "main": [
+        [{"node": "Read SKILL.md Output", "type": "main", "index": 0}],
+        [{"node": "Format Error Response", "type": "main", "index": 0}]
+      ]
+    },
+    "Read SKILL.md Output": {
+      "main": [[{"node": "Validate with skills-ref", "type": "main", "index": 0}]]
+    },
+    "Validate with skills-ref": {
+      "main": [[{"node": "Format Success Response", "type": "main", "index": 0}]]
+    },
+    "Format Success Response": {
+      "main": [[{"node": "Respond Success", "type": "main", "index": 0}]]
+    },
+    "Format Error Response": {
+      "main": [[{"node": "Respond Error", "type": "main", "index": 0}]]
+    },
+    "Respond Success": {
+      "main": [[{"node": "Cleanup Temp Files", "type": "main", "index": 0}]]
+    },
+    "Respond Error": {
+      "main": [[{"node": "Cleanup Temp Files", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "tags": [
+    {
+      "name": "agent-generation",
+      "id": "1"
+    },
+    {
+      "name": "agentspec",
+      "id": "2"
+    }
+  ]
+}

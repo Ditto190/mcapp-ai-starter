@@ -1,0 +1,50 @@
+// VSCode Workspace Keybindings
+// ==============================
+// Project-specific keyboard shortcuts for automation
+
+[
+  // Ctrl+S: Save file + Run MCP Health Check
+  {
+    "key": "ctrl+s",
+    "command": "runCommands",
+    "args": {
+      "commands": [
+        "workbench.action.files.save",
+        {
+          "command": "workbench.action.tasks.runTask",
+          "args": "MCP Health Check"
+        }
+      ]
+    },
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  
+  // Ctrl+Shift+S: Save All + Catalog Changes
+  {
+    "key": "ctrl+shift+s",
+    "command": "runCommands",
+    "args": {
+      "commands": [
+        "workbench.action.files.saveAll",
+        {
+          "command": "workbench.action.tasks.runTask",
+          "args": "Catalog File Change"
+        }
+      ]
+    }
+  },
+  
+  // Ctrl+Alt+H: Manual Health Check (without save)
+  {
+    "key": "ctrl+alt+h",
+    "command": "workbench.action.tasks.runTask",
+    "args": "MCP Health Check"
+  },
+  
+  // Ctrl+Alt+S: Manual Project Startup
+  {
+    "key": "ctrl+alt+s",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Project Startup"
+  }
+]

@@ -1,0 +1,65 @@
+# Prompt Registry Configuration
+# Links MCP sources including Desktop Commander
+
+registry:
+  version: "1.0"
+  name: "VSCode_March26 Prompt Registry"
+  description: "Integrated prompt registry with n8n and Desktop Commander MCP sources"
+
+sources:
+  - id: "desktop-commander"
+    name: "Desktop Commander"
+    type: "mcp"
+    description: "Desktop automation, file management, and terminal control via MCP"
+    enabled: true
+    package: "@wonderwhy-er/desktop-commander"
+    repository:
+      url: "https://github.com/wonderwhy-er/DesktopCommanderMCP"
+      type: "github"
+    capabilities:
+      - file_management
+      - terminal_commands
+      - system_automation
+      - process_control
+      - clipboard_operations
+    documentation:
+      url: "https://desktopcommander.app/"
+      install_guide: "https://deepwiki.com/wonderwhy-er/DesktopCommanderMCP/2.1-installation-methods"
+    mcp_config:
+      type: "stdio"
+      command: "npx"
+      args:
+        - "@wonderwhy-er/desktop-commander"
+
+  - id: "n8n-mcp"
+    name: "n8n Workflow Automation"
+    type: "mcp"
+    description: "n8n workflow automation and integration MCP"
+    enabled: true
+    package: "n8n-mcp"
+    repository:
+      url: "https://github.com/n8n-io/n8n-mcp"
+      type: "github"
+    capabilities:
+      - workflow_management
+      - template_search
+      - node_validation
+      - workflow_validation
+    mcp_config:
+      type: "stdio"
+      command: "npx"
+      args:
+        - "n8n-mcp"
+      env:
+        MCP_MODE: "stdio"
+        N8N_MODE: "true"
+
+integrations:
+  - name: "Claude Desktop"
+    config: ".vscode/n8n-mcp-config.json"
+    status: "active"
+
+metadata:
+  created: "2026-03-05"
+  modified: "2026-03-05"
+  author: "VSCode_March26 Workspace"

@@ -1,0 +1,179 @@
+{
+  "name": "n8n Execution Logger",
+  "description": "Automatically logs n8n workflow executions and node-level data to PostgreSQL for observability",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "path": "n8n/execution-webhook",
+        "responseMode": "onReceived",
+        "authentication": "none"
+      },
+      "id": "webhook_trigger",
+      "name": "Webhook - Execution Event",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 300],
+      "webhookId": "execution-webhook"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Parse payload from n8n execution webhook\n// Expected: { workflow_id, execution_id, status, nodes_data, duration_ms }\n\nconst payload = items[0].json;\n\n// Add metadata\npayload.logged_at = new Date().toISOString();\npayload.execution_timestamp = new Date().toISOString();\n\n// Ensure arrays exist\nif (!Array.isArray(payload.nodes)) {\n  payload.nodes = [];\n}\n\nreturn [{ json: payload }];"
+      },
+      "id": "function_parse",
+      "name": "Function - Parse Data",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "n8n_executions",
+        "columns": "workflow_id,workflow_name,execution_id,execution_status,started_at,completed_at,duration_ms,triggered_by,execution_data",
+        "additionalFields": {
+          "values": "={{ $json.workflow_id }},{{ $json.workflow_name }},{{ $json.execution_id }},{{ $json.status }},{{ $json.started_at }},{{ $json.completed_at }},{{ $json.duration_ms }},{{ $json.triggered_by }},{{ JSON.stringify($json.data) }}"
+        }
+      },
+      "id": "postgres_log_execution",
+      "name": "Postgres - Log Execution",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [500, 200],
+      "credentials": {
+        "postgresConfigId": "postgres_connection"
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Log each node separately\nconst execution = items[0].json;\nconst nodes = execution.nodes || [];\n\nconst nodeLogItems = nodes.map((node, index) => ({\n  json: {\n    execution_id: execution.execution_id,\n    node_id: node.id,\n    node_name: node.name,\n    node_type: node.type,\n    execution_index: index,\n    execution_status: node.status || 'unknown',\n    input_data: JSON.stringify(node.input || {}),\n    output_data: JSON.stringify(node.output || {}),\n    duration_ms: node.duration_ms || 0,\n    error_message: node.error_message || null,\n    node_parameters: JSON.stringify(node.config || {})\n  }\n}));\n\nreturn nodeLogItems;"
+      },
+      "id": "function_node_logs",
+      "name": "Function - Parse Node Logs",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [500, 350]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "n8n_node_logs",
+        "columns": "execution_id,node_id,node_name,node_type,execution_index,execution_status,input_data,output_data,duration_ms,error_message,node_parameters",
+        "mode": "each"
+      },
+      "id": "postgres_log_nodes",
+      "name": "Postgres - Log Node Executions",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [700, 350],
+      "credentials": {
+        "postgresConfigId": "postgres_connection"
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "n8n_execution_context",
+        "columns": "execution_id,variable_name,variable_value,scope",
+        "mode": "each"
+      },
+      "id": "postgres_log_context",
+      "name": "Postgres - Log Execution Context",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [700, 500],
+      "credentials": {
+        "postgresConfigId": "postgres_connection"
+      }
+    },
+    {
+      "parameters": {
+        "content": "console.log('✅ Workflow execution logged to database');\nreturn true;"
+      },
+      "id": "function_success",
+      "name": "Function - Success Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "respondWithCode": 200,
+        "responseBody": "{\"status\": \"logged\", \"message\": \"Execution recorded in database\"}"
+      },
+      "id": "respond_webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1100, 300]
+    }
+  ],
+  "connections": {
+    "webhook_trigger": {
+      "main": [
+        [
+          {
+            "node": "function_parse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "function_parse": {
+      "main": [
+        [
+          {
+            "node": "postgres_log_execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "postgres_log_execution": {
+      "main": [
+        [
+          {
+            "node": "function_node_logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "function_node_logs": {
+      "main": [
+        [
+          {
+            "node": "postgres_log_nodes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "postgres_log_nodes": {
+      "main": [
+        [
+          {
+            "node": "function_success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "function_success": {
+      "main": [
+        [
+          {
+            "node": "respond_webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

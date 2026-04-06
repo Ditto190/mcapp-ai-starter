@@ -1,0 +1,72 @@
+{
+    "recommendations": [
+        // Python
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-pyright.pyright",
+        "ms-python.debugpy",
+        "ms-python.isort",
+        "charliermarsh.ruff",
+        "donjayamanne.python-environment-manager",
+        "ms-python.vscode-python-envs",
+        "njpwerner.autodocstring",
+        "kevinrose.vsc-python-indent",
+        // Jupyter
+        "ms-toolsai.jupyter",
+        "ms-toolsai.jupyter-keymap",
+        "ms-toolsai.jupyter-renderers",
+        "ms-toolsai.datawrangler",
+        // Git
+        "eamodio.gitlens",
+        "mhutchie.git-graph",
+        "donjayamanne.githistory",
+        // GitHub
+        "github.vscode-pull-request-github",
+        "github.vscode-github-actions",
+        // AI / Copilot
+        "github.copilot-chat",
+        "anthropic.claude-code",
+        "timheuer.awesome-copilot",
+        "digitarald.agent-memory",
+        "visualstudioexptteam.vscodeintellicode",
+        // Remote / WSL
+        "ms-vscode-remote.remote-wsl",
+        "ms-vscode-remote.remote-ssh",
+        "ms-vscode-remote.remote-containers",
+        "ms-vscode.remote-explorer",
+        // Docker / Containers
+        "ms-azuretools.vscode-docker",
+        // Database
+        "mongodb.mongodb-vscode",
+        // Azure
+        "ms-azuretools.vscode-bicep",
+        "ms-azuretools.vscode-azureresourcegroups",
+        // Web / JS / TS
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "christian-kohler.npm-intellisense",
+        "christian-kohler.path-intellisense",
+        // Shell / YAML / Config
+        "foxundermoon.shell-format",
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        "dotjoshjohnson.xml",
+        // Markdown
+        "yzhang.markdown-all-in-one",
+        "davidanson.vscode-markdownlint",
+        "bierner.markdown-mermaid",
+        "shd101wyy.markdown-preview-enhanced",
+        // Utilities
+        "humao.rest-client",
+        "mechatroner.rainbow-csv",
+        "formulahendry.code-runner",
+        "pkief.material-icon-theme",
+        "alefragnani.bookmarks",
+        "alefragnani.project-manager",
+        "codezombiech.gitignore",
+        "qwtel.sqlite-viewer",
+        // MCP / Agents
+        "amadeusitgroup.prompt-registry",
+        "pimzino.spec-workflow-mcp"
+    ]
+}

@@ -1,0 +1,44 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "npm"
+    directory: "/agent-skills"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "npm"
+    directory: "/agentspec"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "npm"
+    directory: "/typespec-reference"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "pip"
+    directory: "/GenerateAgents"
+    schedule:
+      interval: "weekly"
+    # agent-framework-azure-ai and agent-framework-core are pre-release packages;
+    # Dependabot will track them via the root pip ecosystem entry above.
+    ignore:
+      - dependency-name: "agent-framework-azure-ai"
+        update-types: ["version-update:semver-patch"]
+      - dependency-name: "agent-framework-core"
+        update-types: ["version-update:semver-patch"]

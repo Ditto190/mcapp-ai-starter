@@ -1,0 +1,144 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Install CodeQL CLI",
+      "type": "shell",
+      "command": "./scripts/ci/install-codeql.sh",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "n8n: Start",
+      "type": "shell",
+      "command": "npx",
+      "args": [
+        "n8n"
+      ],
+      "options": {
+        "env": {
+          "DB_TYPE": "sqlite",
+          "N8N_PORT": "5678",
+          "N8N_PROTOCOL": "http",
+          "N8N_HOST": "localhost",
+          "N8N_USER_DATA_DIR": "./n8n-data",
+          "NODE_ENV": "production"
+        }
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "isBackground": true,
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "n8n-mcp: Start (stdio)",
+      "type": "shell",
+      "command": "npx",
+      "args": ["n8n-mcp"],
+      "options": {
+        "env": {
+          "MCP_MODE": "stdio",
+          "LOG_LEVEL": "error",
+          "DISABLE_CONSOLE_OUTPUT": "true"
+        }
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "isBackground": false,
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "Project Startup",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/.vscode/scripts/startup.ps1"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": [],
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "isBackground": false
+    },
+    {
+      "label": "MCP Health Check",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/.vscode/scripts/mcp-healthcheck.ps1"
+      ],
+      "presentation": {
+        "echo": false,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "isBackground": false
+    },
+    {
+      "label": "Catalog File Change",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/.vscode/scripts/catalog-changes.ps1",
+        "-FilePath",
+        "${file}"
+      ],
+      "presentation": {
+        "echo": false,
+        "reveal": "never",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "isBackground": false
+    }
+  ]
+}

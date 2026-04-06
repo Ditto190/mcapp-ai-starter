@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "n8n": "^2.10.3",
+    "@wonderwhy-er/desktop-commander": "^0.2.38",
+    "axios": "^1.5.0"
+  },
+  "scripts": {
+    "ci:commit": "node scripts/ci/commit-with-mcp.js",
+    "ci:update-context": "node scripts/ci/update-context.js"
+  }
+}

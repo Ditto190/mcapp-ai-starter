@@ -1,0 +1,66 @@
+{
+  "id": "validateAgent",
+  "name": "validateAgent",
+  "displayName": "Validate Agent Configuration",
+  "version": "1.0.0",
+  "description": "Validate generated AGENTS.md configuration and tool schemas for correctness",
+  "category": "validation",
+  "status": "stable",
+  
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "agentsMarkdown": {
+        "type": "string",
+        "description": "The AGENTS.md content to validate"
+      },
+      "toolDefinitions": {
+        "type": "array",
+        "items": { "type": "object" },
+        "description": "Tool JSON schemas to validate"
+      },
+      "validationLevel": {
+        "type": "string",
+        "enum": ["basic", "standard", "strict"],
+        "default": "standard",
+        "description": "How rigorously to validate"
+      }
+    },
+    "required": ["agentsMarkdown"]
+  },
+  
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "isValid": {
+        "type": "boolean",
+        "description": "Whether the configuration is valid"
+      },
+      "errors": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "List of errors found, if any"
+      },
+      "warnings": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Non-critical warnings"
+      },
+      "suggestions": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Suggestions for improvement"
+      }
+    }
+  },
+  
+  "backend": {
+    "type": "n8n-workflow",
+    "workflowName": "ValidateAgent",
+    "endpoint": "${N8N_API_URL}",
+    "apiKey": "${N8N_API_KEY}",
+    "timeout": 60000
+  },
+  
+  "relatedTools": ["generateAgent"]
+}

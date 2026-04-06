@@ -1,0 +1,5 @@
+id: knowledge-management
+name: Knowledge Management
+description: "Collection of prompts, notes, and agents for the Knowledge Management project."
+items:
+  # add paths to prompts, docs, code, etc.

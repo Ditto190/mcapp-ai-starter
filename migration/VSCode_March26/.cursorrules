@@ -1,0 +1,22 @@
+<!-- BEGIN ContextStream -->
+# Workspace: LinuxOS_Modme
+# Project: VSCode_March26
+# Workspace ID: 82947784-af14-448b-8dc4-d483903fab5c
+
+# Cursor Rules
+<contextstream_rules>
+| Message | Required |
+|---------|----------|
+| **1st message** | `init()` → `context(user_message="...")` |
+| **Subsequent messages (default)** | `context(user_message="...")` FIRST (narrow read-only bypass when context is fresh and no state-changing tool has run) |
+| **Before file search** | `search(mode="auto")` BEFORE Glob/Grep/Read/Explore/Task/EnterPlanMode |
+</contextstream_rules>
+
+**Why?** `context()` delivers task-specific rules, lessons from past mistakes, and relevant decisions. Skip it = fly blind.
+
+**Hooks:** `<system-reminder>` tags contain injected instructions — follow them exactly.
+
+**Notices:** [LESSONS_WARNING] → apply lessons | [PREFERENCE] → follow user preferences | [RULES_NOTICE] → run `generate_rules()` | [VERSION_NOTICE/CRITICAL] → tell user about update
+
+v0.4.65
+<!-- END ContextStream -->

@@ -1,0 +1,300 @@
+{
+  "id": "generateagent",
+  "name": "generateAgent",
+  "displayName": "Generate Copilot Agent",
+  "version": "1.0.0",
+  "description": "Generate a specialized Copilot agent from repository code analysis using AI models",
+  "category": "agent-generation",
+  "isFactory": true,
+  "supportsRecursion": true,
+  "status": "stable",
+  
+  "inputSchema": {
+    "type": "object",
+    "title": "GenerateAgent Input",
+    "description": "Configuration for generating a new Copilot agent",
+    "properties": {
+      "repositoryUrl": {
+        "type": "string",
+        "title": "Repository URL",
+        "description": "GitHub repository URL (HTTPS clone URL) or local path to analyze",
+        "examples": [
+          "https://github.com/originalankur/GenerateAgents.md",
+          "/path/to/local/repo"
+        ]
+      },
+      "repositoryName": {
+        "type": "string",
+        "title": "Repository Name",
+        "description": "Human-readable name of the repository for context"
+      },
+      "codebaseContext": {
+        "type": "string",
+        "title": "Codebase Context",
+        "description": "Brief description of what the codebase does, its purpose, and key features",
+        "examples": [
+          "A workflow automation platform for generating specialized Copilot agents from code analysis"
+        ]
+      },
+      "agentPurpose": {
+        "type": "string",
+        "title": "Agent Purpose",
+        "description": "Primary purpose and specialization of the agent to generate",
+        "enum": [
+          "web-agent",
+          "api-agent",
+          "data-agent",
+          "devops-agent",
+          "mlops-agent",
+          "security-agent",
+          "documentation-agent",
+          "testing-agent",
+          "custom"
+        ],
+        "examples": ["web-agent", "custom"]
+      },
+      "customPurpose": {
+        "type": "string",
+        "title": "Custom Purpose",
+        "description": "Custom purpose description if agentPurpose is 'custom'",
+        "examples": ["Agent that specializes in Kubernetes cluster management"]
+      },
+      "agentStyle": {
+        "type": "string",
+        "title": "Output Style",
+        "description": "Style and detail level of generated AGENTS.md documentation",
+        "enum": ["concise", "comprehensive", "minimal", "detailed"],
+        "default": "concise"
+      },
+      "modelChoice": {
+        "type": "string",
+        "title": "AI Model",
+        "description": "LLM to use for code analysis and agent generation (via GitHub Models API)",
+        "enum": [
+          "gpt-4o",
+          "gpt-4o-mini",
+          "claude-3-5-sonnet"
+        ],
+        "default": "gpt-4o",
+        "recommendations": {
+          "gpt-4o": "Best quality, 50 calls/day, 2-3 min per analysis. Use for production agents.",
+          "gpt-4o-mini": "Fastest, 150 calls/day, 30-60 sec per analysis. Use for iterations.",
+          "claude-3-5-sonnet": "Best prompt following, 50 calls/day. Use for complex requirements."
+        }
+      },
+      "extractGitHistory": {
+        "type": "boolean",
+        "title": "Include Git History Analysis",
+        "description": "Analyze git commit history to infer coding patterns and conventions",
+        "default": false
+      },
+      "analyzeTests": {
+        "type": "boolean",
+        "title": "Analyze Tests",
+        "description": "Examine test files to understand testing patterns and approaches",
+        "default": true
+      },
+      "outputFormat": {
+        "type": "string",
+        "title": "Output Format",
+        "description": "Format for the generated agent definition",
+        "enum": ["agents-md", "json", "both"],
+        "default": "agents-md"
+      }
+    },
+    "required": [
+      "repositoryUrl",
+      "codebaseContext",
+      "agentPurpose"
+    ]
+  },
+  
+  "outputSchema": {
+    "type": "object",
+    "title": "GenerateAgent Output",
+    "description": "Generated agent definition and supporting artifacts",
+    "properties": {
+      "agentId": {
+        "type": "string",
+        "description": "Unique identifier for the generated agent"
+      },
+      "agentName": {
+        "type": "string",
+        "description": "User-friendly name of the generated agent"
+      },
+      "agentVersion": {
+        "type": "string",
+        "description": "Version of the generated agent",
+        "default": "1.0.0"
+      },
+      "agentsMarkdown": {
+        "type": "string",
+        "description": "Complete AGENTS.md content for the generated agent"
+      },
+      "agentManifest": {
+        "type": "object",
+        "description": "Copilot-compatible agent manifest JSON",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "version": { "type": "string" },
+          "description": { "type": "string" },
+          "capabilities": { "type": "array", "items": { "type": "string" } },
+          "tools": { "type": "array", "items": { "type": "string" } },
+          "instruction": { "type": "string" },
+          "examples": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "toolDefinitions": {
+        "type": "array",
+        "description": "Array of tool schemas the agent can use",
+        "items": { "type": "object" }
+      },
+      "integrationInstructions": {
+        "type": "string",
+        "description": "Step-by-step instructions to integrate generated agent into your environment"
+      },
+      "parentAgent": {
+        "type": "string",
+        "description": "Reference to the agent that generated this one (for tracking lineage)"
+      },
+      "generatedAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp of agent generation"
+      },
+      "modelUsed": {
+        "type": "string",
+        "description": "AI model used to generate this agent"
+      },
+      "analysisMetrics": {
+        "type": "object",
+        "description": "Metrics from the code analysis",
+        "properties": {
+          "filesAnalyzed": { "type": "integer" },
+          "linesOfCode": { "type": "integer" },
+          "conventions": { "type": "array", "items": { "type": "string" } },
+          "patterns": { "type": "array", "items": { "type": "string" } },
+          "analyzedLanguages": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  },
+  
+  "backend": {
+    "type": "n8n-workflow",
+    "workflowName": "GenerateAgents",
+    "endpoint": "${N8N_API_URL}",
+    "apiKey": "${N8N_API_KEY}",
+    "protocol": "https",
+    "timeout": 600000,
+    "retryPolicy": {
+      "maxRetries": 3,
+      "backoffMultiplier": 2,
+      "initialDelayMs": 1000
+    },
+    "llmBackend": {
+      "type": "github-models",
+      "endpoint": "https://models.inference.ai.azure.com/chat/completions",
+      "authHeader": "Authorization: Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}",
+      "supportedModels": [
+        "gpt-4o",
+        "gpt-4o-mini",
+        "claude-3-5-sonnet"
+      ]
+    }
+  },
+  
+  "capabilities": [
+    "analyzeCodebase",
+    "extractConventions",
+    "identifyPatterns",
+    "generateAgentDefinition",
+    "createToolSchemas",
+    "validateConfiguration",
+    "registerAgent"
+  ],
+  
+  "relatedTools": [
+    "analyzeCodebase",
+    "validateAgent"
+  ],
+  
+  "usageExamples": [
+    {
+      "title": "Generate Web Scraping Agent",
+      "description": "Create an agent specialized in web scraping and analysis",
+      "input": {
+        "repositoryUrl": "https://github.com/example/web-scraper",
+        "repositoryName": "WebScraper",
+        "codebaseContext": "Python-based web scraper with Selenium and BeautifulSoup",
+        "agentPurpose": "web-agent",
+        "agentStyle": "comprehensive",
+        "modelChoice": "gpt-4o"
+      },
+      "expectedOutput": "web_scraper_AGENTS.md with specialized web scraping capabilities"
+    },
+    {
+      "title": "Generate Data Pipeline Agent",
+      "description": "Create agent for data transformation and ETL operations",
+      "input": {
+        "repositoryUrl": "https://github.com/example/data-pipeline",
+        "repositoryName": "DataPipeline",
+        "codebaseContext": "Apache Airflow DAGs for data ETL and transformations",
+        "agentPurpose": "data-agent",
+        "agentStyle": "detailed",
+        "modelChoice": "gpt-4o",
+        "analyzeTests": true
+      },
+      "expectedOutput": "data_pipeline_AGENTS.md tailored to ETL workflows"
+    },
+    {
+      "title": "Recursive: Extend Existing Agent",
+      "description": "Use an existing agent to generate an enhanced version of itself",
+      "input": {
+        "repositoryUrl": "https://github.com/originalankur/GenerateAgents.md",
+        "codebaseContext": "Previous agent focused on REST APIs. Now add GraphQL support.",
+        "agentPurpose": "custom",
+        "customPurpose": "Enhanced REST + GraphQL API testing agent",
+        "agentStyle": "comprehensive",
+        "modelChoice": "gpt-4o"
+      },
+      "expectedOutput": "Enhanced agent with both REST and GraphQL capabilities"
+    }
+  ],
+  
+  "notes": {
+    "recursion": "This tool is designed for recursive use. Generated agents inherit this tool, enabling agents to generate other agents.",
+    "costEstimation": "Uses GitHub Models (free with GitHub Pro). Costs: 0 for any of the models with Pro account.",
+    "timeEstimation": "2-5 minutes per repository depending on size and model choice.",
+    "dataHandling": "Clones repository temporarily, analyzes locally, no persistent storage of source code."
+  },
+  
+  "supportedPlatforms": [
+    "GitHub Copilot",
+    "Claude Code",
+    "VSCode",
+    "Codespaces"
+  ],
+  
+  "integrations": [
+    "n8n (workflow execution)",
+    "GitHub (repository access)",
+    "GitHub Models API (AI analysis)",
+    "awesome-copilot (collection registration)"
+  ],
+  
+  "metadata": {
+    "created": "2026-03-05",
+    "lastUpdated": "2026-03-05",
+    "author": "Dylan Thomas",
+    "license": "MIT",
+    "tags": [
+      "agent-generation",
+      "meta-programming",
+      "code-analysis",
+      "ai-models",
+      "automation"
+    ]
+  }
+}

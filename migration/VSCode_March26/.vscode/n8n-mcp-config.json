@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "n8n-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "n8n-mcp"
+      ],
+      "env": {
+        "MCP_MODE": "stdio",
+        "N8N_MODE": "true",
+        "LOG_LEVEL": "error",
+        "DISABLE_CONSOLE_OUTPUT": "true",
+        "N8N_API_URL": "${env:N8N_API_URL}",
+        "N8N_API_KEY": "${env:N8N_API_KEY}"
+      }
+    },
+    "desktop-commander": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "@wonderwhy-er/desktop-commander"
+      ],
+      "disabled": false
+    }
+  },
+  "notes": {
+    "ui_first_mode": "Use localhost/codespace URL for manual UI editing and debugging.",
+    "agent_first_mode": "Use direct cloud/API URL for headless MCP workflow build/run.",
+    "important": "Codespace tunnel URLs may redirect API calls to GitHub sign-in and are not reliable for headless MCP from local desktop."
+  }
+}

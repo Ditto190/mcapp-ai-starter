@@ -1,0 +1,78 @@
+name: Python Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-agents:
+    name: Test agents/ (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@0b93645e9fea7318ecaed2be81c90ffbe8a07b0a # v5.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Smoke-test imports
+        run: |
+          python -c "from agents.tracing_config import configure_tracing; print('tracing_config OK')"
+          python -c "from agents.trace_database import TraceDatabase; print('trace_database OK')"
+          python -c "from agents.document_manager import DocumentManager; print('document_manager OK')"
+
+      - name: Run pytest (agents + root tests)
+        run: |
+          pytest tests/ -v --tb=short
+        env:
+          DATABASE_URL: ""
+          OPENAI_API_KEY: ""
+
+  test-generateagents:
+    name: Test GenerateAgents (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@0b93645e9fea7318ecaed2be81c90ffbe8a07b0a # v5.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install GenerateAgents dependencies
+        working-directory: GenerateAgents
+        run: uv sync
+
+      - name: Smoke-test GenerateAgents imports
+        working-directory: GenerateAgents
+        run: |
+          uv run python -c "from autogenerateagentsmd.modules import CodebaseConventionExtractor, AgentsMdCreator; print('modules OK')"
+          uv run python -c "from autogenerateagentsmd.cli import parse_arguments; print('cli OK')"
+
+      - name: Run pytest (GenerateAgents, skip e2e)
+        working-directory: GenerateAgents
+        run: |
+          uv run pytest tests/ -v --tb=short -m "not e2e"

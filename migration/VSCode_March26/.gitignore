@@ -1,0 +1,64 @@
+# Environment and configuration
+.env
+.env.local
+.env.*.local
+.env.cloud
+
+# n8n data directory (contains workflows, credentials, execution data)
+/n8n-data/
+/n8n-data/**
+
+# pm2 logs
+/logs/
+logs/
+
+# Node modules (if any local setup)
+node_modules/
+**/node_modules/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Python virtual environments / caches
+.venv/
+venv/
+**/.venv/
+**/venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/settings.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Local agent/runtime state
+.contextstream/
+.serena/
+.playwright-mcp/
+local-bare.git/
+
+# Temp files
+*.tmp
+.temp/
+
+# Build outputs
+dist/
+build/
+**/dist/
+**/build/
+
+# Local documents/priorities chat exports
+/Documents/Priorities/Chats/
+

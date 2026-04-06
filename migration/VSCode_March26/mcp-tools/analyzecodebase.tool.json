@@ -1,0 +1,81 @@
+{
+  "id": "analyzeCodebase",
+  "name": "analyzeCodebase",
+  "displayName": "Analyze Codebase",
+  "version": "1.0.0",
+  "description": "Extract patterns, conventions, and architecture from a codebase for agent generation",
+  "category": "code-analysis",
+  "status": "stable",
+  
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "repositoryUrl": {
+        "type": "string",
+        "description": "GitHub repository URL or local path",
+        "examples": ["https://github.com/example/repo"]
+      },
+      "analysisDepth": {
+        "type": "string",
+        "enum": ["shallow", "standard", "deep"],
+        "default": "standard",
+        "description": "How thoroughly to analyze the codebase"
+      },
+      "focusAreas": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Specific areas to focus analysis on",
+        "examples": ["architecture", "patterns", "testing", "documentation"]
+      },
+      "includeGitHistory": {
+        "type": "boolean",
+        "default": false,
+        "description": "Analyze git commit history for patterns"
+      }
+    },
+    "required": ["repositoryUrl"]
+  },
+  
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "conventions": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Discovered code conventions and practices"
+      },
+      "patterns": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Architectural and design patterns identified"
+      },
+      "frameworks": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Frameworks and libraries used"
+      },
+      "architecture": {
+        "type": "object",
+        "description": "High-level architecture overview"
+      },
+      "metrics": {
+        "type": "object",
+        "properties": {
+          "filesAnalyzed": { "type": "integer" },
+          "linesOfCode": { "type": "integer" },
+          "languages": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  },
+  
+  "backend": {
+    "type": "n8n-workflow",
+    "workflowName": "AnalyzeCodebase",
+    "endpoint": "${N8N_API_URL}",
+    "apiKey": "${N8N_API_KEY}",
+    "timeout": 300000
+  },
+  
+  "relatedTools": ["generateAgent", "validateAgent"]
+}

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "timeout": 5
+      }
+    ],
+    "beforeSubmitPrompt": [
+      {
+        "type": "command",
+        "timeout": 5
+      },
+      {
+        "type": "command",
+        "timeout": 5
+      }
+    ]
+  }
+}

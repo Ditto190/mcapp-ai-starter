@@ -1,0 +1,323 @@
+{
+  "name": "GenerateAgents - AGENTS.md Generator (Basic)",
+  "nodes": [
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "github_url",
+              "value": "https://github.com/pallets/flask"
+            },
+            {
+              "name": "style",
+              "value": "comprehensive"
+            }
+          ],
+          "boolean": [
+            {
+              "name": "analyze_git_history",
+              "value": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "repo_name",
+              "value": "={{ $json.github_url.split('/').pop().replace('.git', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "repo_path",
+              "value": "=/tmp/repo_{{ $now.toUnixInteger() }}",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "4",
+              "name": "github_url",
+              "value": "={{ $json.github_url }}",
+              "type": "string"
+            },
+            {
+              "id": "5",
+              "name": "style",
+              "value": "={{ $json.style }}",
+              "type": "string"
+            },
+            {
+              "id": "6",
+              "name": "analyze_git_history",
+              "value": "={{ $json.analyze_git_history }}",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "id": "2",
+      "name": "Set Variables",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "none",
+        "operation": "clone",
+        "sourceRepository": "={{ $json.github_url }}",
+        "repositoryPath": "={{ $json.repo_path }}"
+      },
+      "id": "3",
+      "name": "Git Clone",
+      "type": "n8n-nodes-base.git",
+      "typeVersion": 1.1,
+      "position": [650, 300],
+      "continueOnFail": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.analyze_git_history }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "4",
+      "name": "IF - Check Git History",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd {{ $json.repo_path }} && git log --grep=revert -n 500 --format='%H|%ai|%s|%an' --name-status"
+      },
+      "id": "5",
+      "name": "Git History Extract",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1050, 200],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "mode": "runOnceForAllItems",
+        "pythonCode": "import os\nfrom pathlib import Path\n\ndef load_source_tree(repo_path):\n    \"\"\"\n    Load all relevant source files into a dictionary.\n    Returns: {relative_path: file_content}, stats\n    \"\"\"\n    \n    # File extensions to include\n    EXTENSIONS = {\n        '.py', '.js', '.ts', '.tsx', '.jsx', \n        '.java', '.go', '.rs', '.cpp', '.c', '.h',\n        '.md', '.yaml', '.yml', '.json', '.toml',\n        '.css', '.html', '.vue', '.rb', '.php',\n        '.sql', '.sh', '.bash'\n    }\n    \n    # Directories to exclude\n    EXCLUDE_DIRS = {\n        'node_modules', '.git', '__pycache__', \n        'venv', '.venv', 'env', '.env',\n        'build', 'dist', 'target', 'out',\n        '.pytest_cache', '.mypy_cache', '.tox',\n        'coverage', '.coverage', 'htmlcov',\n        'vendor', 'bower_components'\n    }\n    \n    # Files to exclude by name\n    EXCLUDE_FILES = {\n        'package-lock.json', 'yarn.lock', \n        'Cargo.lock', 'poetry.lock',\n        '.DS_Store', 'Thumbs.db'\n    }\n    \n    source_tree = {}\n    repo_path = Path(repo_path)\n    \n    if not repo_path.exists():\n        raise FileNotFoundError(f\"Repository path does not exist: {repo_path}\")\n    \n    total_files = 0\n    loaded_files = 0\n    skipped_files = 0\n    \n    for root, dirs, files in os.walk(repo_path):\n        # Filter out excluded directories in-place\n        dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS and not d.startswith('.')]\n        \n        for file in files:\n            total_files += 1\n            file_path = Path(root) / file\n            \n            # Skip excluded files\n            if file in EXCLUDE_FILES or file.startswith('.'):\n                skipped_files += 1\n                continue\n            \n            # Check if file extension is in our list\n            if file_path.suffix.lower() not in EXTENSIONS:\n                skipped_files += 1\n                continue\n            \n            # Skip files larger than 1MB (likely binary or generated)\n            try:\n                if file_path.stat().st_size > 1_000_000:\n                    skipped_files += 1\n                    continue\n            except:\n                skipped_files += 1\n                continue\n            \n            # Read file content\n            try:\n                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:\n                    content = f.read()\n                \n                # Store relative path and content\n                rel_path = file_path.relative_to(repo_path)\n                source_tree[str(rel_path)] = content\n                loaded_files += 1\n                \n            except Exception as e:\n                # Skip files that can't be read\n                skipped_files += 1\n                continue\n    \n    return source_tree, {\n        'total_files': total_files,\n        'loaded_files': loaded_files,\n        'skipped_files': skipped_files\n    }\n\n# n8n execution context\nitems = $input.all()\nitem = items[0].json\n\nrepo_path = item.get('repo_path')\nrepo_name = item.get('repo_name')\nstyle = item.get('style', 'comprehensive')\nanalyze_git_history = item.get('analyze_git_history', False)\n\n# Load source tree\nsource_tree, stats = load_source_tree(repo_path)\n\n# Check if we have git history data\ngit_history_raw = item.get('stdout', '')  # From Execute Command node\n\n# Return consolidated result\nreturn [{\n    'json': {\n        'source_tree': source_tree,\n        'repo_path': repo_path,\n        'repo_name': repo_name,\n        'style': style,\n        'git_history_raw': git_history_raw,\n        'stats': stats,\n        'file_count': len(source_tree)\n    }\n}]"
+      },
+      "id": "6",
+      "name": "Load Source Tree",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "mode": "runOnceForAllItems",
+        "pythonCode": "import json\n\ndef create_analysis_prompt(source_tree, repo_name, style):\n    \"\"\"\n    Create prompt for LLM convention extraction.\n    \"\"\"\n    \n    # Create file tree structure\n    file_list = \"\\n\".join([f\"- {path}\" for path in sorted(source_tree.keys())])\n    \n    # Select representative files for detailed analysis\n    key_files = {}\n    for path, content in source_tree.items():\n        # Prioritize important files\n        if any(name in path.lower() for name in [\n            'readme', 'setup', 'package.json', 'pyproject.toml',\n            'cargo.toml', 'go.mod', '__init__', 'main', 'index'\n        ]):\n            key_files[path] = content\n        \n        # Stop at 10 key files to avoid overwhelming LLM\n        if len(key_files) >= 10:\n            break\n    \n    # Add sample of regular files\n    remaining = [item for item in source_tree.items() if item[0] not in key_files]\n    for path, content in remaining[:5]:\n        key_files[path] = content\n    \n    # Format files for prompt\n    files_content = \"\"\n    for path, content in key_files.items():\n        # Truncate very long files\n        truncated = content[:2000] + \"...(truncated)\" if len(content) > 2000 else content\n        files_content += f\"\\n\\n### File: {path}\\n```\\n{truncated}\\n```\"\n    \n    if style == \"strict\":\n        prompt_template = f\"\"\"Analyze this codebase and extract ONLY critical constraints, anti-patterns, and undocumented quirks.\n\n**Repository:** {repo_name}\n**Total Files:** {len(source_tree)}\n\n**File Structure:**\n{file_list}\n\n**Sample Files for Analysis:**\n{files_content}\n\n**TASK:** Extract information that an AI coding agent CANNOT easily determine by reading the code itself. Focus on:\n\n1. **CRITICAL CONSTRAINTS:** Things that MUST be true or MUST NOT be done\n2. **ANTI-PATTERNS:** Specific patterns to avoid, deprecated approaches, security concerns\n3. **UNDOCUMENTED QUIRKS:** Hidden gotchas, implicit assumptions, edge cases\n4. **TESTING REQUIREMENTS:** Mandatory tests, testing conventions that must be followed\n\n**OUTPUT FORMAT:** Structured markdown with clear sections. Be specific and actionable.\n\nBegin analysis:\"\"\"\n    else:\n        prompt_template = f\"\"\"Analyze this codebase and extract comprehensive documentation for an AI coding agent.\n\n**Repository:** {repo_name}\n**Total Files:** {len(source_tree)}\n\n**File Structure:**\n{file_list}\n\n**Sample Files for Analysis:**\n{files_content}\n\n**TASK:** Extract the following information:\n\n1. **Project Overview:** Purpose, domain, key features\n2. **Tech Stack:** Languages, frameworks, libraries, tools (be specific with versions if visible)\n3. **Architecture:** High-level patterns, module organization, data flow\n4. **Code Style:** Naming conventions, formatting, import ordering, documentation style\n5. **Anti-Patterns & Restrictions:** Things to avoid, deprecated patterns, security concerns\n6. **Database & State:** Data storage, state management, schema conventions\n7. **Error Handling:** Exception patterns, logging conventions\n8. **Testing:** Test frameworks, commands, coverage requirements\n\n**OUTPUT FORMAT:** Structured markdown with clear sections. Include specific examples from the code.\n\nBegin analysis:\"\"\"\n    \n    return prompt_template\n\n# n8n execution\nitems = $input.all()\nitem = items[0].json\n\nsource_tree = item['source_tree']\nrepo_name = item['repo_name']\nstyle = item['style']\n\n# Create analysis prompt\nprompt = create_analysis_prompt(source_tree, repo_name, style)\n\nreturn [{\n    'json': {\n        'prompt': prompt,\n        'source_tree': source_tree,\n        'repo_name': repo_name,\n        'style': style,\n        'repo_path': item['repo_path'],\n        'file_count': item['file_count'],\n        'stats': item['stats']\n    }\n}]"
+      },
+      "id": "7",
+      "name": "Prepare LLM Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:11434/api/generate",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama3.2\",\n  \"prompt\": {{ $json.prompt }},\n  \"stream\": false,\n  \"options\": {\n    \"temperature\": 0.7,\n    \"top_p\": 0.9,\n    \"num_predict\": 4096\n  }\n}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "8",
+      "name": "Ollama Convention Extraction",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1650, 300],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 30000
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "mode": "runOnceForAllItems",
+        "pythonCode": "import json\nfrom datetime import datetime\n\ndef compile_agents_md(conventions_text, repo_name, style, stats):\n    \"\"\"\n    Compile extracted conventions into final AGENTS.md format.\n    \"\"\"\n    \n    timestamp = datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\")\n    \n    header = f\"\"\"# AGENTS.md — {repo_name}\n\n> **Generated:** {timestamp}  \n> **Style:** {style}  \n> **Files Analyzed:** {stats.get('loaded_files', 0)} / {stats.get('total_files', 0)}  \n> **Generator:** n8n + Ollama (llama3.2)\n\n---\n\"\"\"\n    \n    # Add conventions from LLM\n    body = conventions_text\n    \n    # Add footer with metadata\n    footer = f\"\"\"\n\n---\n\n## Generation Metadata\n\n**Source Repository:** {repo_name}  \n**Analysis Date:** {timestamp}  \n**Style Mode:** {style}  \n**Total Files:** {stats.get('total_files', 0)}  \n**Analyzed Files:** {stats.get('loaded_files', 0)}  \n**Skipped Files:** {stats.get('skipped_files', 0)}  \n**LLM Model:** Ollama llama3.2  \n**Generator:** n8n workflow automation  \n\n---\n\n*This document was automatically generated. Review and adjust as needed for your specific use case.*\n\"\"\"\n    \n    agents_md = header + body + footer\n    return agents_md\n\n# n8n execution\nitems = $input.all()\nitem = items[0].json\n\n# Get previous context\nprev_item = $node[\"Prepare LLM Context\"].json\n\n# Extract LLM response\nollama_body = item.get('body', {})\nif isinstance(ollama_body, str):\n    ollama_body = json.loads(ollama_body)\n\nollama_response = ollama_body.get('response', '')\n\nrepo_name = prev_item['repo_name']\nstyle = prev_item['style']\nstats = prev_item.get('stats', {})\n\n# Compile final AGENTS.md\nagents_md_content = compile_agents_md(ollama_response, repo_name, style, stats)\n\nreturn [{\n    'json': {\n        'agents_md_content': agents_md_content,\n        'repo_name': repo_name,\n        'style': style,\n        'file_count': prev_item['file_count'],\n        'output_path': f\"./projects/{repo_name}/AGENTS.md\"\n    }\n}]"
+      },
+      "id": "9",
+      "name": "Compile AGENTS.md",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1850, 300]
+    },
+    {
+      "parameters": {
+        "command": "=mkdir -p ./projects/{{ $json.repo_name }} && cat > ./projects/{{ $json.repo_name }}/AGENTS.md << 'AGENTS_EOF'\n{{ $json.agents_md_content }}\nAGENTS_EOF"
+      },
+      "id": "10",
+      "name": "Save File",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2050, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variables": {
+      "main": [
+        [
+          {
+            "node": "Git Clone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Git Clone": {
+      "main": [
+        [
+          {
+            "node": "IF - Check Git History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - Check Git History": {
+      "main": [
+        [
+          {
+            "node": "Git History Extract",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Load Source Tree",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Git History Extract": {
+      "main": [
+        [
+          {
+            "node": "Load Source Tree",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Source Tree": {
+      "main": [
+        [
+          {
+            "node": "Prepare LLM Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare LLM Context": {
+      "main": [
+        [
+          {
+            "node": "Ollama Convention Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Convention Extraction": {
+      "main": [
+        [
+          {
+            "node": "Compile AGENTS.md",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compile AGENTS.md": {
+      "main": [
+        [
+          {
+            "node": "Save File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2026-03-05T00:00:00.000Z",
+      "updatedAt": "2026-03-05T00:00:00.000Z",
+      "id": "1",
+      "name": "ai-automation"
+    },
+    {
+      "createdAt": "2026-03-05T00:00:00.000Z",
+      "updatedAt": "2026-03-05T00:00:00.000Z",
+      "id": "2",
+      "name": "code-analysis"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-03-05T00:00:00.000Z",
+  "versionId": "1"
+}
