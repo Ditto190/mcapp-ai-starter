@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Print TMP/TEMP (custom env)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/print_temp_env.py",
+      "console": "integratedTerminal",
+      "env": {
+        "TMP": "C:\\Users\\dylan.a.thomas\\AppData\\Local\\Temp",
+        "TEMP": "C:\\Users\\dylan.a.thomas\\AppData\\Local\\Temp"
+      }
+    }
+  ]
+}

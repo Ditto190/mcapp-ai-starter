@@ -1,0 +1,170 @@
+{
+  "workbench.iconTheme": "material-icon-theme",
+  "geminicodeassist.project": "modifyme-project",
+  "chat.agent.maxRequests": 30,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": true,
+    "scminput": false
+  },
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true,
+    "${workspaceFolder}/.aitk/instructions/": true
+  },
+  "explorer.confirmDelete": false,
+  "chat.mcp.gallery.enabled": true,
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "editor.accessibilitySupport": "on",
+  "explorer.confirmDragAndDrop": false,
+  "terminal.integrated.stickyScroll.enabled": false,
+  "files.autoSave": "afterDelay",
+  "chat.emptyState.history.enabled": true,
+  "chat.checkpoints.showFileChanges": true,
+  "python.analysis.typeCheckingMode": "standard",
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "github.copilot.chat.codesearch.enabled": true,
+  "github.copilot.chat.edits.temporalContext.enabled": true,
+  "github.copilot.chat.editor.temporalContext.enabled": true,
+  "github.copilot.chat.languageContext.inline.typescript.enabled": true,
+  "github.copilot.chat.languageContext.typescript.enabled": true,
+  "window.newWindowProfile": "Data Science",
+  "gitlens.ai.experimental.composer.enabled": true,
+  "github.copilot.chat.historyLocation": "cloud",
+  "security.workspace.trust.untrustedFiles": "open",
+  "workbench.editorAssociations": {
+    "*.copilotmd": "vscode.markdown.preview.editor",
+    "*.zip": "default"
+  },
+  "codeQL.cli.executablePath": "${workspaceFolder}/.tools/codeql/codeql",
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  "diffEditor.codeLens": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.js",
+    "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
+    "*.jsx": "${capture}.js",
+    "*.tsx": "${capture}.ts",
+    "tsconfig.json": "tsconfig.*.json",
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, bun.lock",
+    "pubspec.yaml": "pubspec.lock,pubspec_overrides.yaml,.packages,.flutter-plugins,.flutter-plugins-dependencies,.metadata",
+    "*.dart": "${capture}.g.dart",
+    "*.cs": "${capture}.designer.cs,${capture}.g.cs,${capture}.generated.cs,${capture}.run.json,${capture}.settings.json,${capture}.settings.*.json",
+    "*.csproj": "${capture}.csproj.user",
+    "appsettings.json": "appsettings.*.json",
+    "*.cshtml": "${capture}.cshtml.cs,${capture}.cshtml.css",
+    "*.razor": "${capture}.razor.cs,${capture}.razor.css",
+    "*.resx": "${capture}.Designer.cs",
+    "*.xaml": "${capture}.xaml.cs",
+    "*.sqlite": "${capture}.${extname}-*",
+    "*.db": "${capture}.${extname}-*",
+    "*.sqlite3": "${capture}.${extname}-*",
+    "*.db3": "${capture}.${extname}-*",
+    "*.sdb": "${capture}.${extname}-*",
+    "*.s3db": "${capture}.${extname}-*"
+  },
+  "python.createEnvironment.trigger": "off",
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "mssql.connectionGroups": [
+    {
+      "name": "ROOT",
+      "id": "CF17C769-449C-45A5-B930-45C0D72D1849"
+    }
+  ],
+  "chat.customAgentInSubagent.enabled": true,
+  "inlineChat.notebookAgent": true,
+  "sonarlint.focusOnNewCode": true,
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "terminal.integrated.profiles.windows": {
+    "Copilot Agent": {
+      "source": "PowerShell",
+      "args": ["-NoLogo", "-NoProfile", "-NonInteractive"],
+      "env": {
+        "COPILOT_AGENT": "1"
+      },
+      "icon": "terminal-powershell",
+      "color": "terminal.ansiCyan",
+      "overrideName": true
+    }
+  },
+  "chat.tools.terminal.terminalProfile": {
+    "windows": "Copilot Agent"
+  },
+  "chatgpt.runCodexInWindowsSubsystemForLinux": false,
+  "chatgpt.openOnStartup": true,
+  "[markdown]": {
+    "diffEditor.ignoreTrimWhitespace": true
+  },
+  "chat.mcp.autostart": "newAndOutdated",
+  "chat.promptFilesRecommendations": {},
+  "chat.useNestedAgentsMdFiles": true,
+  "chat.tools.edits.autoApprove": {
+    "**/.vscode/*.json": true
+  },
+  "chat.tools.terminal.blockDetectedFileWrites": "never",
+  "chat.tools.terminal.terminalProfile.linux": {},
+  "workbench.settings.applyToAllProfiles": [
+    "windowsaistudio.extendCopilotInstructions",
+    "gitlab.duoAgentPlatform.defaultNamespace"
+  ],
+  "github.copilot.chat.agent.autoFix": true,
+  "github.copilot.chat.customAgents.showOrganizationAndEnterpriseAgents": true,
+  "github.copilot.chat.githubMcpServer.enabled": true,
+  "github.copilot.chat.alternateGptPrompt.enabled": true,
+  "github.copilot.chat.languageContext.fix.typescript.enabled": true,
+  "github.copilot.chat.languageContext.typescript.includeDocumentation": true,
+  "github.copilot.chat.newWorkspace.useContext7": true,
+  "github.copilot.chat.notebook.enhancedNextEditSuggestions.enabled": true,
+  "github.copilot.chat.notebook.followCellExecution.enabled": true,
+  "M365AgentsToolkit.enableLaunchAgentForTeamsInCopilot": true,
+  "python.analysis.aiCodeActions": {
+    "analyzers": {
+      "core": {
+        "rules": {
+          "no-unused-params": {
+            "level": "warning"
+          }
+        }
+      }
+    },
+    "implementAbstractClasses": true,
+    "generateSymbol": true,
+    "convertFormatString": true
+  },
+  "python.analysis.aiHoverSummaries": true,
+  "chat.plugins.marketplaces": [
+    "github/copilot-plugins",
+    "github/awesome-copilot",
+    "Ditto190/mcapp-ai-starter/plugins",
+    "Ditto190/mcapp-ai-starter/plugins/awesome-copilot",
+    "Ditto190/mcapp-ai-starter/plugins/supabase-agent-skills",
+    "Ditto190/mcapp-ai-starter/plugins/awesome-copilot/plugins/spec-kit"
+  ],
+  "settingsSync.ignoredExtensions": [],
+  "remote.SSH.remotePlatform": {
+    "172.29.248.95": "linux"
+  },
+  "gitlab.duoAgentPlatform.defaultNamespace": "Modifyme_glabs",
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.venv": true
+  },
+  "github.copilot.chat.agentDebugLog.enabled": true,
+  "chat.tools.terminal.autoApprove": {
+    "/^where wasp$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  }
+}

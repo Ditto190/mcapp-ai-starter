@@ -1,0 +1,14 @@
+M  .contextstream/config.json
+M  .devcontainer/devcontainer.json
+M  .git-hooks/pre-commit
+D  .github/codeql/ql-modme-actions/codeql-custom-queries-actions/example.ql
+M  .github/instructions/copilot-custom-agent-subagent-instructions.md
+M  .gitlab-ci.yml
+M  .vscode/extensions.json
+M  .vscode/mcp.json
+M  .vscode/settings.json
+M  DEMO_README.md
+M  docs/agentspec-implementation-roadmap.md
+M  docs/health-check-task-setup.md
+A  logs/openn-code_session-ses_2a19.md
+?? .memories/

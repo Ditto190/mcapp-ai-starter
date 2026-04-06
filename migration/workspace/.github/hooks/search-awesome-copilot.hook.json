@@ -1,0 +1,6 @@
+{
+  "name": "search-awesome-copilot",
+  "description": "Hook descriptor for the Search Awesome-Copilot workflow. Configure your CI or hook runner to call scripts/search_hook.ps1 when you want to prompt the team to fetch or review awesome-copilot instructions.",
+  "script": "scripts/search_hook.ps1",
+  "events": ["pre-tool-use", "post-tool-use"]
+}

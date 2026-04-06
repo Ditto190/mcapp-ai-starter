@@ -1,0 +1,142 @@
+{
+  "generatedAt": "2026-04-03T18:21:31.934206+00:00",
+  "root": "C:\\Users\\dylan.a.thomas\\Projects\\workspace",
+  "reason": "watch-start",
+  "changedPath": "",
+  "counts": {
+    "awesome-cache": 1,
+    "skill": 5,
+    "agent": 2,
+    "hook": 3,
+    "instruction": 2,
+    "prompt": 1
+  },
+  "assets": [
+    {
+      "path": ".agents/registry/awesome/hooks/session-logger/README.md",
+      "assetType": "awesome-cache",
+      "sha256": "4e236ea64b27f7605bfe711c6848ce03cda4fae818c17cd7ecaaaa54e194b769",
+      "bytes": 545,
+      "modifiedUtc": "2026-04-03T17:21:47.607102+00:00",
+      "name": "Session Logger",
+      "description": "Logs all Copilot coding agent session activity for audit and analysis"
+    },
+    {
+      "path": ".agents/skills/add-feature/SKILL.md",
+      "assetType": "skill",
+      "sha256": "e2e3e8b2402215bfedff8322a66fd9e8a9df7ef92a6c371da18f0b47561b743f",
+      "bytes": 3184,
+      "modifiedUtc": "2026-04-03T15:12:25.261720+00:00",
+      "name": "add-feature",
+      "description": "Add Wasp's built-in features to your app — auth, email, jobs, and more. These are full-stack, batteries-included features that Wasp handles for you. Use when the user wants to add meta tags, authentication (email, social auth providers), email sending, database setup, styling (tailwind, shadcn), or other Wasp-powered functionality."
+    },
+    {
+      "path": ".agents/skills/expert-advice/SKILL.md",
+      "assetType": "skill",
+      "sha256": "7e7702934059b5a53f1478e24c4891ba6192d402140b300f79a7842dbf8cdb29",
+      "bytes": 661,
+      "modifiedUtc": "2026-04-03T15:12:25.270558+00:00",
+      "name": "expert-advice",
+      "description": "Get advice on app improvements and functionality from a Wasp expert. Takes optional arguments for more specific requests e.g. `/expert-advice how can I improve account management?`."
+    },
+    {
+      "path": ".agents/skills/start-dev-server/SKILL.md",
+      "assetType": "skill",
+      "sha256": "258924d6f0e737b48f646e2cccacfcfaf01a87a54aae29c8705183baf1f88164",
+      "bytes": 3771,
+      "modifiedUtc": "2026-04-03T15:12:25.272226+00:00",
+      "name": "start-dev-server",
+      "description": "Start the Wasp dev server and set up full debugging visibility. This includes running the server (with access to logs), and connecting browser console access so the agent can see client-side errors. Essential for any development or debugging work."
+    },
+    {
+      "path": ".agents/skills/wasp-plugin-help/SKILL.md",
+      "assetType": "skill",
+      "sha256": "c14d2cbf225fe4f5c3ff841a4fb69c7ceb3a454015df1d36a741a476dd2f94af",
+      "bytes": 2898,
+      "modifiedUtc": "2026-04-03T15:12:25.273359+00:00",
+      "name": "wasp-plugin-help",
+      "description": "Shows the Wasp plugin's available features, commands, and skills."
+    },
+    {
+      "path": ".agents/skills/wasp-plugin-init/SKILL.md",
+      "assetType": "skill",
+      "sha256": "e7393c91f73f76dbee8b90c5d81ee26bdb0f829c1933c1984a0185baf7cbefbc",
+      "bytes": 3561,
+      "modifiedUtc": "2026-04-03T15:12:25.274475+00:00",
+      "name": "wasp-plugin-init",
+      "description": "Adds Wasp knowledge, LLM-friendly documentation fetching instructions, and best practices to your project's CLAUDE.md or AGENTS.md file"
+    },
+    {
+      "path": ".github/agents/awesome-copilot-search.agent.md",
+      "assetType": "agent",
+      "sha256": "f8f328edd17cb43f11bdd235ad88f114885079d5572c1fe980a0717aba44e95e",
+      "bytes": 1690,
+      "modifiedUtc": "2026-04-03T15:47:26.089731+00:00",
+      "name": "awesome-copilot-search",
+      "description": "Search the awesome-copilot instruction/agent index and load candidate agents/instructions. Trigger with: 'search awesome-copilot', 'find agent', 'load agent'"
+    },
+    {
+      "path": ".github/agents/copilot-chat.agent.md",
+      "assetType": "agent",
+      "sha256": "43a19545f6af94d5b1fa262d278e535931a01982fd66449e3c3f2e51415a23ec",
+      "bytes": 859,
+      "modifiedUtc": "2026-04-03T15:30:07.047220+00:00",
+      "name": "copilot-chat",
+      "description": "Project-scoped Copilot Chat agent. Use when: code comprehension, refactor suggestions, adding tests, creating PR descriptions, and repository-specific guidance. Trigger phrases: 'copilot', 'agent', 'review', 'refactor', 'tests'"
+    },
+    {
+      "path": ".github/hooks/awesome/session-logger/README.md",
+      "assetType": "hook",
+      "sha256": "4e236ea64b27f7605bfe711c6848ce03cda4fae818c17cd7ecaaaa54e194b769",
+      "bytes": 545,
+      "modifiedUtc": "2026-04-03T17:21:47.607102+00:00",
+      "name": "Session Logger",
+      "description": "Logs all Copilot coding agent session activity for audit and analysis"
+    },
+    {
+      "path": ".github/hooks/pipeline-sync.hook.json",
+      "assetType": "hook",
+      "sha256": "e6e6465ceb625a16654e96521b58848d5a02368038e78f6892833c48222311da",
+      "bytes": 684,
+      "modifiedUtc": "2026-04-03T17:55:48.865059+00:00",
+      "name": null,
+      "description": null
+    },
+    {
+      "path": ".github/hooks/search-awesome-copilot.hook.json",
+      "assetType": "hook",
+      "sha256": "dc6aee6d28f9a71b59da36cbc29ce72ddcd773d5b661b548753e4ee0fbe4ded6",
+      "bytes": 355,
+      "modifiedUtc": "2026-04-03T16:10:08.303456+00:00",
+      "name": null,
+      "description": null
+    },
+    {
+      "path": ".github/instructions/copilot-instructions.md",
+      "assetType": "instruction",
+      "sha256": "ae8c54d49cf49279159ad783a3f53c8dbf66888773d0067e0cc878fb037d7a2c",
+      "bytes": 717,
+      "modifiedUtc": "2026-04-03T15:30:07.064854+00:00",
+      "name": "workspace-copilot-instructions",
+      "description": "Workspace-wide Copilot Chat instructions: provide consistent coding style, testing guidance, and repository conventions. Use when: 'how do I', 'please refactor', 'write tests', 'explain this file'"
+    },
+    {
+      "path": ".github/instructions/search-awesome-copilot.instructions.md",
+      "assetType": "instruction",
+      "sha256": "59264d09b1180e5eb2029e10a87be3a94a9aa2070bd05b0aec456ff2c36a8c73",
+      "bytes": 4730,
+      "modifiedUtc": "2026-04-03T17:24:39.604113+00:00",
+      "name": "search-awesome-copilot",
+      "description": "Instructions to search and load agent/instruction templates from the awesome-copilot index and recommended workflows to use them from Copilot Chat, a task, or a hook."
+    },
+    {
+      "path": ".github/prompts/copilot-chat.prompt.md",
+      "assetType": "prompt",
+      "sha256": "34eb91b6300104f58720593c71a02b0d00eff2518c6235364aeb0919923ff26e",
+      "bytes": 427,
+      "modifiedUtc": "2026-04-03T15:30:07.060626+00:00",
+      "name": "copilot-chat-workspace-prompt",
+      "description": null
+    }
+  ]
+}

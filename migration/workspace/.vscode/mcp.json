@@ -1,0 +1,17 @@
+{
+  "servers": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "--prefer-online",
+        "-y",
+      ],
+      "env": {
+        "CONTEXTSTREAM_API_KEY": "cbiq_T20ryJIZ9tAVg2Gd_-wkmVYpXn7DGdWQeihi1YMcAdU",
+        "CONTEXTSTREAM_CONTEXT_PACK": "true"
+      }
+    }
+  }
+}

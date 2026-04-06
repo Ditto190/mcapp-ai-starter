@@ -1,0 +1,83 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Print TMP/TEMP (task env)",
+      "type": "shell",
+      "command": "python scripts/print_temp_env.py",
+      "options": {
+        "env": {
+          "TMP": "C:\\Users\\dylan.a.thomas\\AppData\\Local\\Temp",
+          "TEMP": "C:\\Users\\dylan.a.thomas\\AppData\\Local\\Temp"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Search Awesome-Copilot",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}\\scripts\\run_search_instructions.ps1"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build Agent Index",
+      "type": "shell",
+      "command": "python",
+      "args": ["scripts/build_agent_index.py", "--reason", "manual-task"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "Watch Agent Index",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}\\scripts\\watch_agent_index.ps1",
+        "-RootPath",
+        "${workspaceFolder}"
+      ],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "Regenerate Assets From Registry",
+      "type": "shell",
+      "command": "python",
+      "args": ["scripts/regenerate_from_registry.py"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "group": "none",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "workspace-dev",
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
+  "features": {},
+  "postCreateCommand": "bash /workspaces/${localWorkspaceFolderBasename}/scripts/install-wasp-linux.sh"
+}

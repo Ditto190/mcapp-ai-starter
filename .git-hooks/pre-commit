@@ -35,15 +35,16 @@ if [ ! -d "$SKILLS_REF_DIR" ]; then
 fi
 
 if [ ! -d "$SKILLS_REF_DIR/.venv" ]; then
-    echo -e "${YELLOW}⚠️  skills-ref not installed, installing now...${NC}"
+    echo -e "${YELLOW}⚠️  skills-ref not installed, attempting install...${NC}"
     cd "$SKILLS_REF_DIR"
     if ! command -v uv &> /dev/null; then
-        echo -e "${RED}❌ Error: uv package manager not found${NC}"
-        echo "Install uv: curl -LsSf https://astral.sh/uv/install.sh | sh"
-        exit 1
+        echo -e "${YELLOW}⚠️  uv package manager not found; skipping AgentSkills install.${NC}"
+        echo "To enable automated validation, install uv: curl -LsSf https://astral.sh/uv/install.sh | sh"
+        cd - > /dev/null || true
+    else
+        uv sync
+        cd - > /dev/null
     fi
-    uv sync
-    cd - > /dev/null
 fi
 
 # Get list of modified skill directories

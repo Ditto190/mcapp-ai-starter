@@ -1,0 +1,5 @@
+NAME                          IMAGE                COMMAND                  SERVICE      CREATED        STATUS                    PORTS
+mcapp-ai-starter-postgres-1   postgres:16-alpine   "docker-entrypoint.s…"   postgres     44 hours ago   Up 4 hours (healthy)      5432/tcp
+n8n                           n8nio/n8n:latest     "tini -- /docker-ent…"   n8n          44 hours ago   Up 4 hours                0.0.0.0:5678->5678/tcp, [::]:5678->5678/tcp
+n8n-import                    n8nio/n8n:latest     "/bin/sh -c 'if [ -z…"   n8n-import   44 hours ago   Exited (0) 44 hours ago   
+qdrant                        qdrant/qdrant        "./entrypoint.sh"        qdrant       44 hours ago   Up 4 hours                0.0.0.0:6333->6333/tcp, [::]:6333->6333/tcp, 6334/tcp

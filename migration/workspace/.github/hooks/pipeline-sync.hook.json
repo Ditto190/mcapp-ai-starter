@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python scripts/pipeline_sync.py",
+        "windows": "python scripts\\pipeline_sync.py",
+        "cwd": "${workspaceFolder}",
+        "timeout": 60,
+        "env": {
+          "PIPELINE_TRIGGER": "Stop"
+        }
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "python scripts/pipeline_sync.py --steps build",
+        "windows": "python scripts\\pipeline_sync.py --steps build",
+        "cwd": "${workspaceFolder}",
+        "timeout": 30,
+        "env": {
+          "PIPELINE_TRIGGER": "PostToolUse"
+        }
+      }
+    ]
+  }
+}

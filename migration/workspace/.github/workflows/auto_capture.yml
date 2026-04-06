@@ -1,0 +1,63 @@
+name: ContextStream Auto-Capture Decision
+on:
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+
+jobs:
+  capture_decision:
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'issues' && contains(github.event.label.name, 'capture:decision') ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/capture'))
+    steps:
+      - name: Checkout (for tools)
+        uses: actions/checkout@v4
+
+      - name: Prepare payload
+        run: |
+          python3 - <<'PY'
+          import os, json
+          ev = os.environ['GITHUB_EVENT_PATH']
+          with open(ev) as f:
+            e = json.load(f)
+          if 'issue' in e:
+            issue = e['issue']
+            title = issue['title']
+            body = issue.get('body','') or ''
+            user = issue['user']['login']
+            url = issue['html_url']
+          else:
+            issue = e['issue']
+            title = issue['title']
+            body = e['comment']['body']
+            user = e['comment']['user']['login']
+            url = e['comment']['html_url']
+          payload = {
+            "title": f"Decision: {title}",
+            "severity": "medium",
+            "category": "decision",
+            "trigger": f"Auto-captured from GitHub ({url})",
+            "impact": body[:1200],
+            "prevention": "",
+            "keywords": ["github", "auto-capture"],
+            "metadata": {"repo": os.environ.get('GITHUB_REPOSITORY'), "author": user, "url": url}
+          }
+          open('payload.json','w').write(json.dumps(payload))
+          PY
+
+      - name: Send to ContextStream
+        env:
+          CONTEXTSTREAM_API_KEY: ${{ secrets.CONTEXTSTREAM_API_KEY }}
+          CONTEXTSTREAM_PROJECT_ID: ${{ secrets.CONTEXTSTREAM_PROJECT_ID }}
+        run: |
+          if [ -z "${CONTEXTSTREAM_API_KEY}" ] || [ -z "${CONTEXTSTREAM_PROJECT_ID}" ]; then
+            echo "Missing ContextStream secrets: set CONTEXTSTREAM_API_KEY and CONTEXTSTREAM_PROJECT_ID in repo secrets"
+            exit 1
+          fi
+          cat payload.json
+          curl -sS -X POST "https://api.contextstream.io/v1/projects/${CONTEXTSTREAM_PROJECT_ID}/events" \
+            -H "Authorization: Bearer ${CONTEXTSTREAM_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d @payload.json

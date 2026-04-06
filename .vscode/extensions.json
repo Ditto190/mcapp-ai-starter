@@ -54,6 +54,7 @@
     "davidanson.vscode-markdownlint",
     // --- Productivity ---
     "streetsidesoftware.code-spell-checker",
-    "usernamehw.errorlens"
+    "usernamehw.errorlens",
+    "ms-windows-ai-studio.microsoft-ai-tools-pack"
   ]
 }

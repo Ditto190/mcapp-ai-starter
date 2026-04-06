@@ -1,3 +1,5 @@
+# TODO format with frontmatter and sections like other instruction files, and add more examples but succint in other areas by using docs-action dropdowns to expand for more details and examples and symlinks to maake it atomic and reusable across other docs pages. Also add more links to related docs pages. @openai-code-agent
+
 # Use custom instructions in VS Code
 
 Custom instructions enable you to define common guidelines and rules that automatically influence how AI generates code and handles other development tasks. Instead of manually including context in every chat prompt, specify custom instructions in a Markdown file to ensure consistent AI responses that align with your coding practices and project requirements.

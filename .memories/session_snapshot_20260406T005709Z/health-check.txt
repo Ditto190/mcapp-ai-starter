@@ -1,0 +1,34 @@
+
+── Docker ──────────────────────────────────
+  ✅ Docker daemon running
+  ✅ Docker Compose available
+
+── Running containers ──────────────────────────────────
+  ✅ Container 'n8n' is running
+  ⚠️  Container 'postgres' not running (start with: docker compose --profile cpu up -d)
+  ✅ Container 'qdrant' is running
+
+── Port connectivity ──────────────────────────────────
+  ✅ n8n (port 5678)
+  ⚠️  Ollama not responding on port 11434 (may not be started)
+  ✅ Qdrant (port 6333)
+
+── Toolchain ──────────────────────────────────
+  ✅ Docker: Docker version 29.3.1-1, build c2be9ccfc3cf0b4c4c4f0a3d5c91dd759ab21256
+  ✅ Node.js: v20.20.2
+  ✅ npm: 11.12.1
+  ✅ Python: Python 3.12.13
+  ✅ uv (Python package manager): uv 0.11.3 (x86_64-unknown-linux-gnu)
+  ✅ Git: git version 2.51.1
+
+── Key files ──────────────────────────────────
+  ✅ .env
+  ✅ docker-compose.yml
+  ✅ llm.config.json
+
+── Memory ──────────────────────────────────
+  ✅ RAM: 7GB free of 16GB (44% available)
+
+══════════════════════════════════════════
+  Health Check: 16 passed, 0 failed
+══════════════════════════════════════════

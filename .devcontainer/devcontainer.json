@@ -86,7 +86,8 @@
         "yzhang.markdown-all-in-one",
         "digitarald.agent-memory",
         "blackbox.blackbox",
-        "vscodevim.vim"
+        "vscodevim.vim",
+        "ms-windows-ai-studio.microsoft-ai-tools-pack"
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash",

@@ -139,6 +139,7 @@
     "matchCommandLine": true,
     "/^set -e\ncd /workspaces/mcapp-ai-starter\nprintf \"Repo status before maintenance:\\\\n\"\ngit status --short\nprintf \"\\\\nCurrent branch: \"\ngit branch --show-current\nprintf \"\\\\nNode/npm: \"\nnode -v && npm -v\n$/": {
       "approve": true,
+      b
       "matchCommandLine": true
     }
   },

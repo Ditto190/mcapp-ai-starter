@@ -1,0 +1,20 @@
+70ea71a chore(demo): add skills report generator + demo GitLab job
+834920c chore(ci): disable PR triggers on noisy/experimental workflows
+14f8024 chore(ci): disable noisy PR triggers + remove broken workflows
+947c907 ci: throttle workflows to PR-to-main only + add concurrency gates
+e31a665 chore(ci): maintenance pass - audit fixes, recycle pipeline, gitignore updates
+4575e40 chore(skills): add skills tree mermaid diagram\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+6458a7a chore(devcontainer): set MCAPP_NO_VENV=1 in terminal env and remoteEnv
+fb7669d chore(dev): prefer UV, skip exporting GH tokens in dev profile, enable MCAPP_NO_VENV
+1a10b9e chore: ignore migration/repodumps and untrack existing files
+5e613f1 fixed contextstream mcp
+4894f25 fix(mcp): switch ContextStream from stdio to HTTP transport
+db75662 fix(mcp.json): replace broken placeholder version with 'latest' for ContextStream
+13c117d fix(devcontainer): automate ContextStream MCP + n8n setup + git safe.directory
+8282b73 chore(devcontainer): prefer GH_PAT (Codespaces secret) for gh CLI with fallback to GITHUB_PERSONAL_ACCESS_TOKEN
+04b9eb5 fix(devcontainer): prefer full PAT over limited Codespaces GITHUB_TOKEN for gh CLI
+ba00d51 fix(devcontainer): guard Nix installer against systemd errors in Codespaces
+e419288 fix: resolve container startup crash from circular containerEnv PATH
+c766ef7 fix(devcontainer): guard docker checks and fix codeql PATH append
+04b8155 chore(devcontainer): add gh pre-install validation and onCreate hook
+f66606d chore(dev-env): update environment setup, docs, and agentspec tests

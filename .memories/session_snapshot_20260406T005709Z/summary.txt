@@ -1,0 +1,5 @@
+timestamp: 20260406T005709Z
+workspace: /workspaces/mcapp-ai-starter
+branch: demo/skills-ci
+commit: 70ea71a814ab5ef02ff4bb2cc456b96bcda182eb
+no uncommitted changes

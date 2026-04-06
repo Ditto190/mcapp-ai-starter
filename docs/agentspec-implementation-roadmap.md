@@ -254,6 +254,7 @@ Create 2-3 example AgentSpecs demonstrating different use cases:
 3. **`data-pipeline.agentspec.json`** - ETL and data processing agents
 
 Each example includes:
+
 - Multiple agents with different archetypes
 - Capability definitions with inputs/outputs
 - Constraints and tools
@@ -1139,4 +1140,3 @@ By end of Phase 5, measure success by:
 3. **Build example AgentSpecs** to validate ergonomics
 4. **Gather team feedback** before full rollout
 5. **Plan Awesome Copilot integration** strategy
-
