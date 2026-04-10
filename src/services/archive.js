@@ -9,6 +9,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { ARCHIVES_DIR } from '../core/constants.js';
+import { traceArchiveOperation, addSpanEvent, setSpanAttribute } from './tracing.js';
 
 /**
  * Generates the next archive directory name for today.
@@ -99,62 +100,110 @@ export async function countArchives(cwd) {
  * @returns {Promise<{archivePath: string, runtimeEntries: string[]}>} Archive path and list of runtime entries not in _apm.
  */
 export async function createArchive(cwd, options = {}) {
-  const apmDir = path.join(cwd, '.apm');
-  const archivesDir = path.join(cwd, ARCHIVES_DIR);
+  return await traceArchiveOperation(
+    'create',
+    options.name || 'auto-generated',
+    { 'archive.reason': options.reason },
+    async () => {
+      const apmDir = path.join(cwd, '.apm');
+      const archivesDir = path.join(cwd, ARCHIVES_DIR);
 
-  const archiveName = options.name || await generateArchiveName(archivesDir);
-  const archivePath = path.join(archivesDir, archiveName);
+      const archiveName = options.name || await generateArchiveName(archivesDir);
+      const archivePath = path.join(archivesDir, archiveName);
 
-  await fs.ensureDir(archivePath);
+      addSpanEvent('archive.name_generated', { name: archiveName });
+      await fs.ensureDir(archivePath);
 
-  // Read metadata to determine which entries are tracked vs runtime-created
-  const metadataSrc = path.join(apmDir, 'metadata.json');
-  let metadata = {};
-  if (await fs.pathExists(metadataSrc)) {
-    metadata = await fs.readJson(metadataSrc);
-  }
+      // Read metadata to determine which entries are tracked vs runtime-created
+      const metadataSrc = path.join(apmDir, 'metadata.json');
+      let metadata = {};
+      if (await fs.pathExists(metadataSrc)) {
+        metadata = await fs.readJson(metadataSrc);
+      }
 
-  // Build set of top-level .apm/ entries that came from the template
-  const trackedTopLevel = new Set();
-  const apmFiles = metadata.installedFiles?._apm || [];
-  for (const file of apmFiles) {
-    // e.g. ".apm/plan.md" → "plan.md", ".apm/memory/index.md" → "memory"
-    const relative = file.replace(/^\.apm\//, '');
-    const topLevel = relative.split(/[\\/]/)[0];
-    trackedTopLevel.add(topLevel);
-  }
-  trackedTopLevel.add('metadata.json');
+      // Build set of top-level .apm/ entries that came from the template
+      const trackedTopLevel = new Set();
+      const apmFiles = metadata.installedFiles?._apm || [];
+      for (const file of apmFiles) {
+        // e.g. ".apm/plan.md" → "plan.md", ".apm/memory/index.md" → "memory"
+        const relative = file.replace(/^\.apm\//, '');
+        const topLevel = relative.split(/[\\/]/)[0];
+        trackedTopLevel.add(topLevel);
+      }
+      trackedTopLevel.add('metadata.json');
 
-  // Copy everything in .apm/ except archives/ into the archive snapshot
-  const entries = await fs.readdir(apmDir);
-  const runtimeEntries = [];
-  for (const entry of entries) {
-    if (entry === 'archives') continue;
-    const src = path.join(apmDir, entry);
-    const dest = path.join(archivePath, entry);
-    await fs.copy(src, dest);
-    if (!trackedTopLevel.has(entry)) {
-      runtimeEntries.push(entry);
+      // Copy everything in .apm/ except archives/ into the archive snapshot
+      const entries = await fs.readdir(apmDir);
+      const runtimeEntries = [];
+      let totalSize = 0;
+      for (const entry of entries) {
+        if (entry === 'archives') continue;
+        const src = path.join(apmDir, entry);
+        const dest = path.join(archivePath, entry);
+        await fs.copy(src, dest);
+        const stats = await fs.stat(dest);
+        if (stats.isDirectory()) {
+          // Estimate directory size
+          const dirSize = await getDirSize(dest);
+          totalSize += dirSize;
+        } else {
+          totalSize += stats.size;
+        }
+        if (!trackedTopLevel.has(entry)) {
+          runtimeEntries.push(entry);
+        }
+      }
+
+      setSpanAttribute('archive.size_bytes', totalSize);
+      setSpanAttribute('archive.runtime_entries_count', runtimeEntries.length);
+      addSpanEvent('archive.files_copied', { 
+        entries_count: entries.length - 1,  // exclude archives/
+        runtime_entries: runtimeEntries.join(', ')
+      });
+
+      // Stamp archival info on the archived metadata copy
+      const archivedMetaPath = path.join(archivePath, 'metadata.json');
+      if (await fs.pathExists(archivedMetaPath)) {
+        metadata.archivedAt = new Date().toISOString();
+        if (options.reason) {
+          metadata.reason = options.reason;
+        }
+        await fs.writeJson(archivedMetaPath, metadata, { spaces: 2 });
+      }
+
+      // Clean originals from .apm/ (keep archives/ and metadata.json)
+      for (const entry of entries) {
+        if (entry === 'archives' || entry === 'metadata.json') continue;
+        await fs.remove(path.join(apmDir, entry));
+      }
+
+      addSpanEvent('archive.cleanup_completed');
+
+      return { archivePath, runtimeEntries };
     }
-  }
+  );
+}
 
-  // Stamp archival info on the archived metadata copy
-  const archivedMetaPath = path.join(archivePath, 'metadata.json');
-  if (await fs.pathExists(archivedMetaPath)) {
-    metadata.archivedAt = new Date().toISOString();
-    if (options.reason) {
-      metadata.reason = options.reason;
+/**
+ * Helper function to calculate directory size recursively.
+ */
+async function getDirSize(dirPath) {
+  let size = 0;
+  try {
+    const entries = await fs.readdir(dirPath, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dirPath, entry.name);
+      if (entry.isDirectory()) {
+        size += await getDirSize(fullPath);
+      } else {
+        const stats = await fs.stat(fullPath);
+        size += stats.size;
+      }
     }
-    await fs.writeJson(archivedMetaPath, metadata, { spaces: 2 });
+  } catch {
+    // Ignore errors in size calculation
   }
-
-  // Clean originals from .apm/ (keep archives/ and metadata.json)
-  for (const entry of entries) {
-    if (entry === 'archives' || entry === 'metadata.json') continue;
-    await fs.remove(path.join(apmDir, entry));
-  }
-
-  return { archivePath, runtimeEntries };
+  return size;
 }
 
 /**
@@ -165,12 +214,22 @@ export async function createArchive(cwd, options = {}) {
  * @returns {Promise<boolean>} Whether the archive was found and removed.
  */
 export async function removeArchive(cwd, name) {
-  const archivePath = path.join(cwd, ARCHIVES_DIR, name);
-  if (await fs.pathExists(archivePath)) {
-    await fs.remove(archivePath);
-    return true;
-  }
-  return false;
+  return await traceArchiveOperation(
+    'delete',
+    name,
+    {},
+    async () => {
+      const archivePath = path.join(cwd, ARCHIVES_DIR, name);
+      if (await fs.pathExists(archivePath)) {
+        addSpanEvent('archive.removing', { path: archivePath });
+        await fs.remove(archivePath);
+        addSpanEvent('archive.removed');
+        return true;
+      }
+      addSpanEvent('archive.not_found');
+      return false;
+    }
+  );
 }
 
 /**
@@ -180,18 +239,31 @@ export async function removeArchive(cwd, name) {
  * @returns {Promise<number>} Number of archives removed.
  */
 export async function clearArchives(cwd) {
-  const archivesDir = path.join(cwd, ARCHIVES_DIR);
-  if (!await fs.pathExists(archivesDir)) return 0;
+  return await traceArchiveOperation(
+    'clear_all',
+    path.join(cwd, ARCHIVES_DIR),
+    {},
+    async () => {
+      const archivesDir = path.join(cwd, ARCHIVES_DIR);
+      if (!await fs.pathExists(archivesDir)) {
+        addSpanEvent('archives_dir.not_found');
+        return 0;
+      }
 
-  const entries = await fs.readdir(archivesDir, { withFileTypes: true });
-  let count = 0;
-  for (const entry of entries) {
-    if (entry.isDirectory()) {
-      await fs.remove(path.join(archivesDir, entry.name));
-      count++;
+      const entries = await fs.readdir(archivesDir, { withFileTypes: true });
+      let count = 0;
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          await fs.remove(path.join(archivesDir, entry.name));
+          count++;
+        }
+      }
+      
+      setSpanAttribute('archives.cleared_count', count);
+      addSpanEvent('archives.cleared', { count });
+      return count;
     }
-  }
-  return count;
+  );
 }
 
 export default {

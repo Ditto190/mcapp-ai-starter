@@ -17,9 +17,32 @@ import { archiveCommand } from './commands/archive.js';
 import { addCommand } from './commands/add.js';
 import { removeCommand } from './commands/remove.js';
 import { statusCommand } from './commands/status.js';
+import { tracesCommand } from './commands/traces.js';
 import { CLI_VERSION } from './core/constants.js';
 import { CLIError } from './core/errors.js';
 import logger from './ui/logger.js';
+import { initializeTracing, shutdownTracing, traceCommand } from './services/tracing.js';
+
+// Initialize OpenTelemetry tracing
+initializeTracing({
+  serviceName: 'agentic-pm',
+  serviceVersion: CLI_VERSION,
+});
+
+// Ensure tracing is properly shutdown on exit
+process.on('beforeExit', async () => {
+  await shutdownTracing();
+});
+
+process.on('SIGINT', async () => {
+  await shutdownTracing();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  await shutdownTracing();
+  process.exit(0);
+});
 
 /**
  * Checks for stray positional arguments and suggests using -a.
@@ -51,6 +74,7 @@ function displayHelp() {
   console.log(`  ${chalk.bold('add')}               Add assistant(s) to existing installation`);
   console.log(`  ${chalk.bold('remove')}            Remove assistant(s) from installation`);
   console.log(`  ${chalk.bold('status')}            Show installation status`);
+  console.log(`  ${chalk.bold('traces')}            Query and analyze OpenTelemetry traces`);
   console.log('');
   console.log(chalk.cyan.bold('Shared Options:'));
   console.log(`  ${chalk.bold('-a, --assistant <id...>')}   Target assistant(s) ${chalk.dim('(init, custom, add, remove)')}`);
@@ -108,7 +132,7 @@ program
   });
 
 // Known command names for typo suggestions
-const KNOWN_COMMANDS = ['init', 'custom', 'update', 'archive', 'add', 'remove', 'status'];
+const KNOWN_COMMANDS = ['init', 'custom', 'update', 'archive', 'add', 'remove', 'status', 'traces'];
 
 // Default action (no command or unknown command)
 program.action(() => {
@@ -137,7 +161,9 @@ program
   .action(async (extras, options) => {
     checkStrayArgs(extras, 'init');
     try {
-      await initCommand(options);
+      await traceCommand('init', options, async () => {
+        await initCommand(options);
+      });
     } catch (err) {
       handleError(err);
     }
@@ -158,7 +184,9 @@ program
   .action(async (extras, options) => {
     checkStrayArgs(extras, 'custom');
     try {
-      await customCommand(options);
+      await traceCommand('custom', options, async () => {
+        await customCommand(options);
+      });
     } catch (err) {
       handleError(err);
     }
@@ -171,7 +199,9 @@ program
   .option('-n, --name <name>', 'Custom archive name')
   .action(async (options) => {
     try {
-      await updateCommand(options);
+      await traceCommand('update', options, async () => {
+        await updateCommand(options);
+      });
     } catch (err) {
       handleError(err);
     }
@@ -187,7 +217,9 @@ program
   .option('--clear', 'Delete all archives')
   .action(async (options) => {
     try {
-      await archiveCommand(options);
+      await traceCommand('archive', options, async () => {
+        await archiveCommand(options);
+      });
     } catch (err) {
       handleError(err);
     }
@@ -201,7 +233,9 @@ program
   .action(async (extras, options) => {
     checkStrayArgs(extras, 'add');
     try {
-      await addCommand(options);
+      await traceCommand('add', options, async () => {
+        await addCommand(options);
+      });
     } catch (err) {
       handleError(err);
     }
@@ -216,7 +250,9 @@ program
   .action(async (extras, options) => {
     checkStrayArgs(extras, 'remove');
     try {
-      await removeCommand(options);
+      await traceCommand('remove', options, async () => {
+        await removeCommand(options);
+      });
     } catch (err) {
       handleError(err);
     }
@@ -227,11 +263,16 @@ program
   .description('Show installation status')
   .action(async () => {
     try {
-      await statusCommand();
+      await traceCommand('status', {}, async () => {
+        await statusCommand();
+      });
     } catch (err) {
       handleError(err);
     }
   });
+
+// Add traces command
+program.addCommand(tracesCommand);
 
 /**
  * Handles CLI errors and exits the process.

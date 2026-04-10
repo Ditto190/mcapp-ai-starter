@@ -10,6 +10,7 @@ import { execSync } from 'child_process';
 import axios from 'axios';
 import { GITHUB_API_BASE } from '../core/constants.js';
 import { CLIError } from '../core/errors.js';
+import { traceGitHubOperation, addSpanEvent } from './tracing.js';
 
 /**
  * Gets GitHub authentication token.
@@ -61,17 +62,30 @@ function createClient() {
  * @throws {CLIError} On network failure.
  */
 export async function fetchJSON(path) {
-  const client = createClient();
+  return await traceGitHubOperation(
+    'fetch_api',
+    'github-api',
+    { 'http.url': `${GITHUB_API_BASE}${path}`, 'http.method': 'GET' },
+    async () => {
+      const client = createClient();
 
-  try {
-    const response = await client.get(path);
-    return response.data;
-  } catch (err) {
-    const reason = err.response?.status
-      ? `HTTP ${err.response.status}`
-      : err.message;
-    throw CLIError.networkError(`${GITHUB_API_BASE}${path}`, reason);
-  }
+      try {
+        addSpanEvent('request.started', { path });
+        const response = await client.get(path);
+        addSpanEvent('request.completed', { 
+          status: response.status,
+          data_size: JSON.stringify(response.data).length 
+        });
+        return response.data;
+      } catch (err) {
+        const reason = err.response?.status
+          ? `HTTP ${err.response.status}`
+          : err.message;
+        addSpanEvent('request.failed', { reason });
+        throw CLIError.networkError(`${GITHUB_API_BASE}${path}`, reason);
+      }
+    }
+  );
 }
 
 /**
@@ -82,30 +96,44 @@ export async function fetchJSON(path) {
  * @throws {CLIError} On download failure.
  */
 export async function fetchAsset(url) {
-  const token = getToken();
-  const headers = {
-    Accept: 'application/octet-stream',
-    'User-Agent': 'apm-cli'
-  };
+  return await traceGitHubOperation(
+    'download_asset',
+    'github-asset',
+    { 'http.url': url, 'http.method': 'GET' },
+    async () => {
+      const token = getToken();
+      const headers = {
+        Accept: 'application/octet-stream',
+        'User-Agent': 'apm-cli'
+      };
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
 
-  try {
-    const response = await axios.get(url, {
-      headers,
-      responseType: 'arraybuffer',
-      timeout: 120000,
-      maxRedirects: 5
-    });
-    return Buffer.from(response.data);
-  } catch (err) {
-    const reason = err.response?.status
-      ? `HTTP ${err.response.status}`
-      : err.message;
-    throw CLIError.downloadFailed(url, reason);
-  }
+      try {
+        addSpanEvent('download.started', { url });
+        const response = await axios.get(url, {
+          headers,
+          responseType: 'arraybuffer',
+          timeout: 120000,
+          maxRedirects: 5
+        });
+        const buffer = Buffer.from(response.data);
+        addSpanEvent('download.completed', { 
+          size_bytes: buffer.length,
+          status: response.status 
+        });
+        return buffer;
+      } catch (err) {
+        const reason = err.response?.status
+          ? `HTTP ${err.response.status}`
+          : err.message;
+        addSpanEvent('download.failed', { reason });
+        throw CLIError.downloadFailed(url, reason);
+      }
+    }
+  );
 }
 
 export default {
