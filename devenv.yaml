@@ -1,0 +1,13 @@
+# devenv.yaml - Project-specific devenv configuration
+# See https://devenv.sh/ for full documentation
+
+# Use specific devenv inputs version for reproducibility
+inputs:
+  nixpkgs:
+    url: github:NixOS/nixpkgs/nixpkgs-unstable
+
+# Allow unfree packages if needed (e.g., VS Code extensions)
+allowUnfree: false
+
+# Devenv version constraint (optional)
+# version: "1.0"

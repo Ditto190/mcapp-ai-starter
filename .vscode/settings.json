@@ -9,7 +9,7 @@
     "editor.quickSuggestions": {
       "other": true,
       "comments": false,
-      "strings": false
+      "strings": true
     }
   },
   "git.enableSmartCommit": true,
@@ -18,5 +18,7 @@
     "_site/**": true
   },
   "files.insertFinalNewline": true,
-  "markdown.styles": [".vscode/custom-tag-style.css"]
+  "markdown.styles": [".vscode/custom-tag-style.css"],
+  "deepnote.debugpyDistPath": "",
+  "deepnote.notebookFileRoot": "${fileDirname}"
 }
