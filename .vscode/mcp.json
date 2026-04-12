@@ -1,29 +1,12 @@
 {
-  "servers": {
-    "contextstream": {
-      "type": "http",
-      "url": "https://api.contextstream.io",
-      "headers": {
-        "Authorization": "Bearer cbiq_sWeB1_-Oj3cx-7nbKhAq3WcLQJQzm3rNd7Bh4coDpX0"
-      }
+    "server": {
+        "host": "localhost",
+        "port": 8080,
+        "protocol": "http"
     },
-    "n8n-docs": {
-      "type": "http",
-      "url": "https://n8n.mcp.kapa.ai/"
+    "authentication": {
+        "type": "none"
     },
-    "n8n-mcp": {
-      "args": [
-        "n8n-mcp"
-      ],
-      "command": "npx",
-      "env": {
-        "DISABLE_CONSOLE_OUTPUT": "false",
-        "LOG_LEVEL": "info",
-        "MCP_MODE": "stdio",
-        "N8N_MODE": "true"
-      },
-      "envFile": "${workspaceFolder}/.env",
-      "type": "stdio"
-    }
-  }
+    "timeout": 30000,
+    "retryAttempts": 3
 }
