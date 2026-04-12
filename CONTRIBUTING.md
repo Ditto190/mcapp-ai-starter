@@ -1,114 +1,137 @@
-# Self-hosted AI Starter Kit - Vision & Contribution Guidelines
+# Contributing to Agentic Project Management (APM)
 
-Awesome that you're interested in contributing to the Self-hosted AI Starter
-Kit! These specific guidelines are in addition to the general [n8n
-contribution
-guidelines](https://github.com/n8n-io/n8n/blob/master/CONTRIBUTING.md).
+Thank you for considering contributing to APM! Your contributions help build a better framework for AI-assisted project management.
 
-## Vision Statement
+## Ways to Contribute
 
-The Self-hosted AI Starter Kit is designed to be **the fastest path from zero
-to working AI workflows** for developers and organizations who want to
-experiment with local, private AI solutions. It provides a curated,
-pre-configured foundation that "just works" out of the box, enabling users to
-focus on building AI workflows rather than wrestling with infrastructure
-setup.
+### Reporting Bugs & Workflow Issues
 
-## Core Principles
+- **Search existing issues** first: [GitHub Issues](https://github.com/sdi2200262/agentic-project-management/issues)
+- **For new bug reports**, include:
+  - APM CLI version (run `apm --version` or `npm list -g agentic-pm`)
+  - Node.js and npm versions (run `node --version` and `npm --version`)
+  - AI assistant used (Claude Code, Cursor, Copilot, Gemini CLI, or OpenCode)
+  - Agent type experiencing issues (Planner, Manager, or Worker)
+  - Step-by-step reproduction of the issue (if possible, otherwise a detailed description)
+  - Expected vs actual behavior
 
-### 1. Simplicity Over Completeness
+### Suggesting Features & Improvements
 
-The starter kit should prioritize ease of use and quick setup over
-comprehensive feature coverage. It's better to do fewer things well than to
-attempt to solve every possible use case.
+- Workflow improvements: procedures, coordination patterns, memory system optimizations
+- Documentation improvements: clearer explanations, additional examples, missing use cases
+- Platform support: better integration with supported assistants
+- Build system: placeholder additions, platform-specific enhancements
 
-### 2. Learning-Focused, Not Production-Ready
+### High-Priority Areas
 
-This is explicitly a **learning and experimentation platform**. Users should
-be able to go from `git clone` to working AI workflows in minutes, not hours.
-Production-grade concerns like high availability, advanced security, and
-scalability are intentionally out of scope.
+**Workflow Testing & Feedback**
+- Run APM sessions on real projects and report issues via [GitHub Issues](https://github.com/sdi2200262/agentic-project-management/issues)
+- Test across different assistants and model combinations
+- Identify edge cases in coordination, Handoff, and session continuation
 
-### 3. Opinionated but Extensible
+**Template Standards**
+- Help improve the template authoring standards in `templates/_standards/`
+- Resources: WORKFLOW.md, TERMINOLOGY.md, STRUCTURE.md, WRITING.md
+- Contributions needed: compliance findings, writing improvements, structural refinements
 
-We make opinionated choices about the core stack (n8n + Ollama + Qdrant +
-PostgreSQL) to reduce decision paralysis, while providing clear paths for
-users to extend and customize as they learn.
+**Standalone Skills**
+- The `skills/` directory contains standalone skills installed independently from APM bundles
+- Current skills: [apm-assist](skills/apm-assist/) (APM assistant, migration, docs), [apm-customization](skills/apm-customization/) (repo customization)
+- Contributions welcome for new standalone skills that complement the APM workflow
 
-### 4. Privacy-First Local Development
+### Community Contributions
 
-Everything should work completely offline and locally by default. External
-dependencies should be minimal and optional.
+- Share adaptations: domain-specific customizations via custom repositories
+- Best practices: cost optimization strategies, effective coordination patterns
+- Case studies: real project examples using APM
 
-## What Belongs in the Starter Kit
+### Community Extensions
 
-### Core Components
+APM officially supports Claude Code, Codex CLI, Cursor, GitHub Copilot, Gemini CLI, and OpenCode. For other assistants (e.g. Windsurf, Kilo Code, Roo Code), community members may develop and maintain unofficial extensions.
 
-- **n8n**: The workflow automation platform
-- **Ollama**: Local LLM inference
-- **Qdrant**: Vector database for embeddings
-- **PostgreSQL**: Persistent data storage
-- **Basic networking**: Simple Docker networking to connect components
+Community extensions are not officially supported, may lag behind releases, and should be tested thoroughly before use. If you're interested in developing or maintaining an extension, please open an issue to discuss.
 
-### Essential Configuration
+## Contribution Process
 
-This includes:
-- Pre-configured environment variables with sensible defaults
-- Basic Docker Compose profiles for different hardware (CPU, GPU-Nvidia, GPU-AMD)
-- Minimal volume mounts for data persistence
-- Sample workflow demonstrating the core capabilities
+### Setting Up Your Development Environment
 
-### Getting Started Materials
+1. **Fork and clone the repository:**
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/agentic-project-management.git
+   cd agentic-project-management
+   ```
 
-This includes:
-- Clear installation instructions for different platforms
-- A demo workflow showcasing AI capabilities
-- Basic documentation for accessing local files
-- Links to relevant n8n documentation and templates
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-## What Doesn't Belong in the Starter Kit
+3. **Create a feature branch:**
+   ```bash
+   git checkout -b feature/description-of-change
+   ```
 
-### Production Infrastructure
+### Making Changes
 
-Including:
-- Reverse proxies
-- SSL/TLS termination
-- Load balancers
-- Advanced monitoring and logging
-- Backup and recovery systems
-- Container orchestration beyond basic Docker Compose
+APM uses a build system that processes source templates into platform-specific bundles. Understanding where to make changes is important:
 
-### Advanced Networking
+#### File Locations
 
-Including:
-- Custom network configurations
-- VPN integrations
-- Multiple environment setups
-- Advanced security hardening
+- **Templates (commands, guides, skills, agents):** Edit files in `templates/`. This is the core deliverable. All template changes must comply with `templates/_standards/`.
+- **Build system:** Edit files in `build/` for processors, config, and generators.
+- **CLI source:** Edit files in `src/` for CLI command behavior.
+- **Standalone skills:** Edit files in `skills/` for independently installable skills.
+- **Documentation:** Docs live in a separate repository: [apm-website](https://github.com/sdi2200262/apm-website) (`docs/` directory). Video walkthroughs covering the v1 workflow are needed. See the apm-website README for details.
 
-### Alternative Technology Stacks
+**Important:** Template changes follow a top-down propagation. Workflow changes start in `WORKFLOW.md`, then propagate to affected commands, guides, and skills. See the change propagation rules in [CLAUDE.md](CLAUDE.md).
 
-Including:
-- Different vector databases
-- Alternative workflow platforms
-- Multiple LLM backends beyond Ollama
-- Different databases for the core setup
+#### Building
 
-### Enterprise Features
+After modifying files in `templates/` or `build/`, run:
 
-Including:
-- Authentication systems
-- Multi-tenancy
-- Advanced access controls
-- Compliance tooling
+```bash
+npm run build:release
+```
 
-## PR specific requirements
+This processes templates and creates platform-specific bundles in `dist/`.
 
-- Small PRs Only:
-  - Focus on a single feature or fix per PR.
-- Typo-Only PRs:
-  - Typos are not sufficient justification for a PR and will be rejected.
+### Testing Your Changes
 
+**For template changes** (`templates/`):
+- Run `npm run build:release` to verify the build completes
+- Test with actual AI assistants in a real project
+- Include example interactions or observations in your PR to speed review
 
-Remember: **It's better to be an excellent starting point than a mediocre
-everything-solution.**
+**For CLI or build system changes** (`src/` or `build/`):
+- Run `npm run build:release` to verify build output
+- Test CLI commands manually
+- Verify generated output in `dist/` is correct
+
+### Pull Requests
+
+1. Ensure your changes are tested.
+2. Commit with clear messages following the conventions in [CLAUDE.md](CLAUDE.md).
+3. Push your branch and create a Pull Request with a clear description.
+4. Reference related issues if applicable.
+5. Include test instructions for template changes.
+
+### Versioning Considerations
+
+APM uses a decoupled versioning system where the CLI and templates version independently but share the same major version number. See [VERSIONING.md](VERSIONING.md) for details.
+
+## License Requirements
+
+APM uses Mozilla Public License 2.0 (MPL-2.0). By contributing, you agree that:
+- Your contributions will be licensed under MPL-2.0
+- Improvements to core APM files will remain open source
+- Proper attribution is maintained
+
+## Questions & Discussion
+
+- Technical questions: open a GitHub issue
+- General inquiries: reach out on Discord at `cobuter_man`
+- Collaboration: mention @sdi2200262 in relevant issues or PRs
+
+---
+
+Your contributions help make APM better for everyone. Thank you for being part of the community!

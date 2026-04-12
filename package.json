@@ -1,13 +1,64 @@
 {
+  "name": "agentic-pm",
+  "version": "1.0.1",
+  "description": "Agentic Project Management CLI",
   "scripts": {
-    "session:pre-end": "bash scripts/session-pre-end.sh",
-    "session:end": "bash scripts/session-end.sh",
-    "session:bundle": "bash scripts/session-end.sh --archive",
-    "session:checkpoint": "bash scripts/session-checkpoint.sh",
-    "ci:checkpoint-fast-review": "bash scripts/checkpoint-fast-review.sh",
-    "install:blackbox": "bash scripts/install-blackbox.sh"
+    "build": "node build/index.js",
+    "build:release": "node build/index.js",
+    "delivery:init": "bash delivery/_scripts/init-engagement.sh",
+    "delivery:inbox": "bash delivery/_scripts/inbox-classifier.sh",
+    "delivery:inbox:ai": "python3 delivery/_scripts/inbox-classifier.py",
+    "delivery:status": "bash delivery/_scripts/status-rollup.sh",
+    "delivery:validate": "bash delivery/_scripts/validate-frontmatter.sh",
+    "delivery:tags": "bash delivery/_scripts/tag-manager.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sdi2200262/agentic-project-management.git"
+  },
+  "keywords": [
+    "agentic",
+    "project-management",
+    "cli",
+    "apm"
+  ],
+  "author": "CobuterMan <haidemenoss@gmail.com>",
+  "contributors": [],
+  "license": "MPL-2.0",
+  "type": "module",
+  "bin": {
+    "apm": "src/index.js",
+    "agentic-pm": "src/index.js"
+  },
+  "bugs": {
+    "url": "https://github.com/sdi2200262/agentic-project-management/issues"
+  },
+  "homepage": "https://github.com/sdi2200262/agentic-project-management#readme",
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "7.9.0",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/sdk-trace-node": "^1.28.0",
+    "@opentelemetry/sdk-trace-base": "^1.28.0",
+    "@opentelemetry/resources": "^1.28.0",
+    "@opentelemetry/semantic-conventions": "^1.28.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.55.0",
+    "@opentelemetry/instrumentation": "^0.55.0",
+    "@opentelemetry/core": "^1.28.0",
+    "adm-zip": "0.5.16",
+    "axios": "1.14.0",
+    "better-sqlite3": "^11.8.1",
+    "chalk": "5.6.2",
+    "commander": "11.1.0",
+    "fs-extra": "11.3.2"
   },
   "devDependencies": {
-    "n8n-mcp": "^2.35.6"
+    "archiver": "^7.0.1",
+    "js-yaml": "^4.1.1"
   }
 }
