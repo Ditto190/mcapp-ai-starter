@@ -1,5 +1,7 @@
 # AGENTS.md — SOW Knowledge Base Onboarding Guide
+
 / #ToDo create a template for #foam-templates based on this @AGENTS.md  and create an agent onboarding template for project managememt activity reports (i.e. end of day, mid-day,continuous updates, post-meeting, start of day, weekly, priority)
+
 ## Project-tree
 
 project-files/
@@ -52,6 +54,7 @@ project-files/
         └── [reserved for future derived mapping files]
 
 ## Purpose
+
 This workspace is a document-first operating environment for generating, reviewing, repairing, and assembling contract-ready Statements of Work (SOWs) and adjacent consulting outputs. Treat it as a knowledge base for SOW orchestration, proposal support, workplanning, role mapping, and milestone-based delivery design.
 
 This file is written to onboard an agent seeing the workspace for the first time and to reduce unnecessary searching. Trust this file first, then the project index, and only search further when these instructions are incomplete or the task needs deeper evidence.
@@ -59,6 +62,7 @@ This file is written to onboard an agent seeing the workspace for the first time
 ---
 
 ## Start-of-Conversation Warm Start
+
 At the start of every new conversation, do this in order:
 
 1. Read `AGENTS.md`.
@@ -76,6 +80,7 @@ At the start of every new conversation, do this in order:
 ---
 
 ## Workspace Profile
+
 - Current workspace type: document and dataset pack, not a runnable software repository.
 - Main artifact types present: text prompts, one Markdown prompt, CSV mappings, PowerPoint decks, one Word document, and one live SOW draft.
 - The pack is organized around a SOW meta-architecture:
@@ -91,18 +96,22 @@ Important: with the currently uploaded materials, do not assume there is a build
 ---
 
 ## Short Knowledge Base Index
+
 Use this as the default routing map.
 
 ### Core orchestration and rules
+
 - `system-instruction.txt` — master SOW orchestration rules, generation order, template assembly order, and optional section inclusion logic.
 - `create-agentsmd-prompt.md.prompt.txt` — design brief for what AGENTS.md must cover.
 - `AGENT.md Creation Guide.txt` — prior project-specific baseline for SOW-agent onboarding.
 - `first-ask.prompt.md` — clarification-first workflow; useful when the task is ambiguous.
 
 ### Current working artifact
+
 - `SOW_Currentdraft01-04-deIID.txt` — live working draft of the Modern Airline Retailing SOW; use for current narrative, existing section text, and known structural issues.
 
 ### Section prompt library
+
 - `1.1-summary-prompt.txt` — summary rules
 - `1.2_Inscope_Services.txt` — in-scope structure and verb-led mapping
 - `1.3_OutofScopeServices.txt` — exclusions and boundary setting
@@ -114,6 +123,7 @@ Use this as the default routing map.
 - `Section4_Roles-and-responsibilities.txt` — governance-level accountability only
 
 ### Data, mapping, and role evidence
+
 - `proposalsummaryworkpackages.csv` — core scope / task / workpackage summary
 - `workpackages_heatmap.csv` — milestone and ownership heatmap
 - `proposalareas-risks-assumptions.csv` — risks and assumptions by area
@@ -124,6 +134,7 @@ Use this as the default routing map.
 - `roles-draft-targets.csv` — draft target role mapping
 
 ### Examples and reference decks
+
 - `05-01_e2open_Sales&Solutioning_Proposal Template_SI_V1.1.pptx` — best reference deck for proposal and solutioning patterns, workplans, governance, testing, deployment, and change management.
 - `deploy 01 - deployment playbook.pptx` — deployment reference deck.
 - `session 04 - workplanning and dependency management v1.2.pptx` — workplanning and dependency reference deck.
@@ -133,6 +144,7 @@ Use this as the default routing map.
 ---
 
 ## Short Filetree
+
 ```text
 project-files/
 ├── 00_indexes/
@@ -176,6 +188,7 @@ project-files/
 ---
 
 ## Source-of-Truth Hierarchy
+
 Use this hierarchy whenever files conflict.
 
 1. `system-instruction.txt`
@@ -198,9 +211,11 @@ If facts are still unclear after reading the files above, surface the gap explic
 ---
 
 ## Default Operating Pattern
+
 Use this pattern unless the user explicitly asks for something else.
 
 ### 1. Orient first
+
 - Identify the task type:
   - SOW drafting
   - SOW review / critique
@@ -212,12 +227,15 @@ Use this pattern unless the user explicitly asks for something else.
 - Confirm the source of truth for narrative and numbers before drafting.
 
 ### 2. Load only the relevant files
+
 - For SOW section work, do not open everything. Load the master instruction, current draft, and only the section prompts needed.
 - For staffing or role work, add the relevant CSVs.
 - For deck or workplanning tasks, add the proposal deck, workflow guide, and playbook deck(s).
 
 ### 3. Draft in dependency order
+
 For SOW work, generate logically in this order even if the final document assembles differently:
+
 1. Summary
 2. In Scope Services
 3. Out of Scope Services
@@ -230,7 +248,9 @@ For SOW work, generate logically in this order even if the final document assemb
 10. Optional technical sections if applicable
 
 ### 4. Validate before finalizing
+
 Always check:
+
 - Scope -> Deliverables -> Acceptance -> Pricing traceability
 - no responsibilities hidden inside scope
 - no dependencies that are actually responsibilities
@@ -240,6 +260,7 @@ Always check:
 - no unpriced in-scope work
 
 ### 5. Only then assemble or export
+
 - Preserve template order and numbering.
 - Use placeholders like `[REQUIRED]` or `[TBC]` instead of fabricating missing facts.
 - Prefer concise, contract-ready wording.
@@ -247,14 +268,17 @@ Always check:
 ---
 
 ## Core SOW Rules
+
 These rules are non-negotiable in this workspace.
 
 ### Contract-first rules
+
 - Services, not outcomes.
 - No guarantees, promises of success, or implied business results.
 - Keep supplier obligations bounded and testable.
 
 ### Section separation rules
+
 - Scope != Responsibilities
 - Dependencies != Responsibilities
 - Assumptions != Dependencies
@@ -263,18 +287,22 @@ These rules are non-negotiable in this workspace.
 - Acceptance != New Scope
 
 ### Deliverable rules
+
 - Every deliverable must be tangible.
 - Every deliverable must have a testable description.
 - Every deliverable must map back to in-scope activity.
 - Every deliverable should be independently reviewable for acceptance.
 
 ### Pricing rules
+
 - Pricing model must match the delivery model.
 - No orphan deliverables or activities without commercial treatment.
 - For capacity-based work, align fees to resource profile, rate card, and change-control mechanism.
 
 ### Language rules
+
 Prefer:
+
 - define
 - develop
 - prepare
@@ -285,6 +313,7 @@ Prefer:
 - review
 
 Avoid unless tightly qualified:
+
 - support
 - assist
 - ensure
@@ -295,14 +324,18 @@ Avoid unless tightly qualified:
 ---
 
 ## Workflow Routing Guide
+
 Use the workflow guide deliberately.
 
 ### If the task is messy or ambiguous
+
 Use `first-ask.prompt.md` and refine before drafting.
 
 ### If the task is a consulting workflow rather than a SOW section
+
 Use `enterprise_chatgpt_8_workflows_guide_v2.txt`.
 Typical mappings:
+
 - Problem framing and workplan design -> scope shaping, milestone framing, workstream planning
 - Research, analysis, and synthesis -> draft review, insight synthesis, current-state assessment
 - Storyline, memo, and deck drafting -> proposal sections, solutioning narratives, executive summaries
@@ -311,7 +344,9 @@ Typical mappings:
 - Technology investment profile and rationalization -> application portfolio and role/staffing analysis
 
 ### If the task needs proposal or delivery examples
+
 Use the e2open proposal deck first. It contains reference patterns for:
+
 - transformation framing
 - phased delivery
 - project governance
@@ -322,9 +357,11 @@ Use the e2open proposal deck first. It contains reference patterns for:
 ---
 
 ## Validation in This Workspace
+
 Because this is not currently a buildable code repository, validation is document-based.
 
 ### Always validate against
+
 - `system-instruction.txt`
 - relevant section prompt files
 - `SOW_Currentdraft01-04-deIID.txt`
@@ -332,6 +369,7 @@ Because this is not currently a buildable code repository, validation is documen
 - the template-aware structure implied by the current SOW draft
 
 ### Consider the output acceptable only when
+
 - wording is contract-ready
 - section boundaries are clean
 - traceability is intact
@@ -340,6 +378,7 @@ Because this is not currently a buildable code repository, validation is documen
 - milestone logic is coherent
 
 ### If you need stronger confidence
+
 - cross-check the current draft against the workpackage and heatmap CSVs
 - cross-check roles against validated role files
 - cross-check milestone or change activities against the proposal deck and workflow guide
@@ -347,6 +386,7 @@ Because this is not currently a buildable code repository, validation is documen
 ---
 
 ## Practical File Usage Notes
+
 - `project_file_navigation_index.txt` is the fastest routing artifact in the workspace. Read it early.
 - Use the current draft for what is already written, not for what is necessarily correct.
 - Use the section prompt files to repair the draft, not merely to summarize it.
@@ -357,6 +397,7 @@ Because this is not currently a buildable code repository, validation is documen
 ---
 
 ## Recent Working Context Snapshot
+
 Load this context at the beginning of related conversations.
 
 - The active artifact is the MAR SOW draft.
@@ -379,7 +420,9 @@ Read `MEMENTO.md` for fuller recent-context notes before continuing similar work
 ---
 
 ## Instruction Priority
+
 If there is a conflict, use this order:
+
 1. Direct user instruction
 2. `system-instruction.txt`
 3. Relevant section prompt
@@ -388,4 +431,3 @@ If there is a conflict, use this order:
 6. Reference decks, playbooks, and historical guides
 
 If the instructions in this file are incomplete or clearly wrong for the current task, say so and then inspect the next-most-relevant source.
-

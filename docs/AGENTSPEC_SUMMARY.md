@@ -13,11 +13,13 @@ Microsoft's **TypeSpec** is a formal language for defining cloud service APIs wi
 We can apply this same architectural pattern to **composable AI agents**, creating **AgentSpec**—a formal specification language that transforms agent definitions from documentation-focused to **specification-driven, multi-format, version-controlled, and composable**.
 
 **Current State**:
+
 ```
 Codebase → GenerateAgents.md (RLM) → AGENTS.md → Manual agent packaging → Agents scattered across systems
 ```
 
 **Proposed State**:
+
 ```
 Codebase → GenerateAgents.md (RLM) → AgentSpec → Emitters → AGENTS.md, n8n workflows, VS Code configs, OpenAPI, MCP
                                                                     ↓
@@ -44,9 +46,11 @@ Codebase → GenerateAgents.md (RLM) → AgentSpec → Emitters → AGENTS.md, n
 ## Three Comprehensive Deliverables
 
 ### 📄 Document 1: TypeSpec-Inspired Agent Integration Analysis
+
 **File**: `/docs/typespec-agent-integration-analysis.md`
 
 Comprehensive strategic analysis covering:
+
 - What TypeSpec is and how it works
 - Proposed AgentSpec framework design
 - Multi-format emitter architecture
@@ -60,6 +64,7 @@ Comprehensive strategic analysis covering:
 ---
 
 ### 🛣️ Document 2: AgentSpec Implementation Roadmap
+
 **File**: `/docs/agentspec-implementation-roadmap.md`
 
 Concrete, phased implementation plan across 5 weeks:
@@ -97,6 +102,7 @@ Concrete, phased implementation plan across 5 weeks:
 ---
 
 ### 💡 Document 3: Real-World Use Cases & Examples
+
 **File**: `/docs/agentspec-use-cases.md`
 
 Six production use cases demonstrating immediate business value:
@@ -109,6 +115,7 @@ Six production use cases demonstrating immediate business value:
 6. **CI/CD Agent Synchronization** - Automatic artifact generation and sync
 
 Each use case includes:
+
 - Problem statement
 - Solution approach
 - Working code examples
@@ -170,6 +177,7 @@ agents:
 **Today**: Manually drag agents into n8n, wire connections, configure constraints.
 
 **With AgentSpec**: One command generates complete, ready-to-use workflow:
+
 ```bash
 uv run autogenerateagentsmd --agentspec-file agents.agentspec \
   --emit n8n-workflow > workflow.json
@@ -185,6 +193,7 @@ uv run autogenerateagentsmd --agentspec-file agents.agentspec \
 **Today**: Developers accidentally create agents that violate constraints (not idempotent, no input validation, etc.).
 
 **With AgentSpec Linting**:
+
 ```bash
 uv run autogenerateagentsmd --agentspec-file agents.agentspec --lint
 
@@ -202,6 +211,7 @@ uv run autogenerateagentsmd --agentspec-file agents.agentspec --lint
 **Today**: 50+ agents across teams with inconsistent definitions.
 
 **With AgentSpec**:
+
 ```yaml
 # Org standard
 dependencies:
@@ -263,18 +273,21 @@ agents:
 ## Key Opportunities
 
 ### Short Term (Weeks 1-5)
+
 - ✅ MVP AgentSpec schema (fully designed)
 - ✅ n8n workflow auto-generation (high ROI)
 - ✅ Linting framework (anti-pattern detection)
 - ✅ GenerateAgents.md integration
 
 ### Medium Term (Weeks 6-12)
+
 - Awesome Copilot multi-format support
 - Agent library versioning & marketplace
 - VS Code + Claude Desktop integration
 - Prompt Registry discovery enhancement
 
 ### Long Term (3-6 months+)
+
 - MCP server auto-generation
 - Cross-org agent composition
 - Agent performance profiling
@@ -323,24 +336,28 @@ By end of Phase 5:
 ## Alignment with Existing Systems
 
 ### GenerateAgents.md Impact
+
 - **Additive**: Adds new DSPy module (`CodebaseToAgentSpec`)
 - **Backward-Compatible**: Existing RLM logic unchanged
 - **Extension**: New CLI flags for AgentSpec output
 - **Benefit**: LLM-driven agent architecture discovery
 
 ### Awesome Copilot Impact
+
 - **Enhanced**: Supports both `.agent.md` (legacy) and `.agentspec` (new)
 - **Automation**: Auto-generates all agent formats
 - **Composition**: Enables versioned library composition
 - **Benefit**: True reusability at scale
 
 ### n8n Ecosystem
+
 - **Direct Benefit**: Auto-generated workflows, zero setup
 - **Integration**: agents.agentspec → n8n workflow.json
 - **Orchestration**: Formal data contracts between agents
 - **Benefit**: Instant, correct, maintainable workflows
 
 ### VS Code / Claude Desktop
+
 - **UI Support**: Auto-generated agent configs
 - **Discovery**: OpenAPI-based agent marketplace
 - **Composition**: Drag-compose agents from library
@@ -373,4 +390,3 @@ TypeSpec demonstrated that **formal specification languages enable powerful comp
 ---
 
 **Ready for design review and approval.**
-
