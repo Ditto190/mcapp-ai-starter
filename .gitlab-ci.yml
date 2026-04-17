@@ -62,7 +62,7 @@ variables:
 
 validate:devcontainer:
   stage: validate
-  image: node:20-alpine
+  image: node:24-alpine
   before_script: []
   script:
     - |
@@ -185,7 +185,7 @@ test:python:
 
 test:npm:
   stage: test
-  image: node:20-alpine
+  image: node:24-alpine
   <<: *node-cache
   before_script: []
   script:
@@ -214,7 +214,7 @@ test:npm:
 
 lint:prompt-registry:
   stage: test
-  image: node:20-alpine
+  image: node:24-alpine
   allow_failure: true
   before_script: []
   script:
@@ -235,7 +235,7 @@ lint:prompt-registry:
 
 audit:npm:
   stage: audit
-  image: node:20-alpine
+  image: node:24-alpine
   <<: *node-cache
   before_script: []
   script:
@@ -278,7 +278,7 @@ audit:python:
 
 build:awesome-copilot:
   stage: build
-  image: node:20-alpine
+  image: node:24-alpine
   before_script: []
   script:
     - |
