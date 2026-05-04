@@ -17,9 +17,9 @@
     gh  # GitHub CLI
     
     # Node.js ecosystem (for any build tools or extensions)
-    nodejs_20
-    nodePackages.npm
-    nodePackages.yarn
+    nodejs_20  # includes npm — no separate nodePackages.npm needed
+    bun        # fast JS package manager + runtime
+    yarn       # top-level yarn (nodePackages.yarn was removed from nixpkgs)
     
     # Markdown tools
     mdl  # Markdown linter

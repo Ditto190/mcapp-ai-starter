@@ -42,7 +42,7 @@ High-value, production-grade implementations ready for extraction:
    - Natural language → SQL queries
    - Schema understanding
    - Self-correction for invalid queries
-   - Use case: BI tools, data exploration, self-service analytics
+   - Use case: BI tools, data exploration, self-service analytics, building advanced dashboards (beyond HTML - i.e. heroUI or MaterialUI)
 
 4. **Summarization** (187 KB guide)
    - Multi-document synthesis
@@ -59,19 +59,23 @@ High-value, production-grade implementations ready for extraction:
 Advanced patterns and multimodal examples:
 
 - **Agent Orchestration** (3 workflow patterns)
-  - Basic workflows
+  - End to End repo maintenance and development workflows 
   - Orchestrator-workers coordination
-  - Evaluator-optimizer self-improvement loop
+  - Evaluator-optimizer self-improvement loop 
 
 - **Multimodal Capabilities** (6 implementations)
   - Vision analysis best practices
-  - Image cropping automation
-  - Audio/text transcription
-  - Chart and graph interpretation
+  - Image cropping automation? Or SVG icon creation or importing
+  - text transcription from all doc formats and convert to semantically meaningful memos or notes
+  - Chart and graph interpretation with GraphQL
   - Sub-agent orchestration
 
 - **Frontend Design** (1 implementation)
   - CSS/UI generation from prompts
+  - TypedScript or Typescript friendly
+  - zod schema friendly
+  - composability 
+  - LSPs to support agents
 
 ---
 
@@ -96,6 +100,7 @@ Advanced patterns and multimodal examples:
   - FinancialRatioCalculator class (25+ ratio types)
   - DCFModel class (enterprise valuation)
   - BrandFormatter class (multi-format styling)
+  - these are only example skills
   
 - ✅ Conversion patterns for two skill types
   - Class-based utilities (financial)
@@ -142,15 +147,15 @@ All analyzed source code is **production-grade**:
 
 ### Dependency Overlap
 Multiple skills will share:
-- **Claude API client** (universal)
-- **Vector database** (Qdrant - already in n8n stack)
-- **Document processors** (PDF, Excel, PowerPoint)
-- **Embedding generation** (VoyageAI, OpenAI)
+- **AgentSkills or Claude API client** (universal)
+- **Schema driven Vector database** (Prisma)
+- **Document processors** (PDF, Excel, PowerPoint, outputs to Markdown with possible reconverting into powerpoint)
+- **Embedding generation** (Local only - highly performative)
 
 ### Integration Points
 Skills naturally integrate with the existing tech stack:
-- ✅ n8n workflows (all skills)
-- ✅ Qdrant vector database (RAG, Classification, Embeddings)
+- ✅ multi-agent workflows
+- ✅ Prisma or Drizzle ORM (Concepts=Web Asset Library with Rapid Composition) and lightweight fast databases (RAG over notes with data protection - filters client data if detected and replaces with placeholder values, Classification of notes into relevant project management areas, error logs extracted trimmed and compressed, Embeddings - uses relevant dimensions and local high performance models to perform)
 - ✅ Claude API (all AI skills)
 - ✅ Document processing libraries (Brand, Vision)
 
