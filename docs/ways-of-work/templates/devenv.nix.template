@@ -1,0 +1,55 @@
+{ pkgs, lib, config, inputs, ... }:
+
+{
+  # Project metadata
+  name = "CHANGE_ME";
+
+  # Environment variables
+  env = {
+    # Add project-specific env vars here
+  };
+
+  # Packages available in the development environment
+  packages = with pkgs; [
+    # Version control
+    git
+    gh  # GitHub CLI
+
+    # Node.js ecosystem
+    nodejs_20  # includes npm — never add nodePackages.npm separately
+    bun        # preferred JS package manager (v1.3.13+)
+    yarn       # top-level yarn (NOT nodePackages.yarn — that was removed from nixpkgs)
+
+    # Python (if needed)
+    # python312
+    # uv  # Python package manager
+
+    # Utilities
+    ripgrep
+    fd
+    jq
+  ];
+
+  # Languages (activates language-specific tooling)
+  languages = {
+    # Uncomment as needed:
+    # javascript.enable = true;
+    # typescript.enable = true;
+    # python = {
+    #   enable = true;
+    #   version = "3.12";
+    # };
+  };
+
+  # Shell hooks run on `devenv shell` activation
+  enterShell = ''
+    echo "--- devenv: CHANGE_ME ---"
+    node --version
+    bun --version
+  '';
+
+  # Pre-commit hooks (optional)
+  # pre-commit.hooks = {
+  #   biome.enable = true;
+  # };
+}

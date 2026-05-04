@@ -1,0 +1,94 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ─── Track-agnostic Knowledge Item ───────────────────────────────────────────
+model KnowledgeItem {
+  id               String             @id @default(cuid())
+  title            String
+  content          String
+  // Original adam-server type: "code" | "doc" | "schema" | "workflow"
+  type             String             @default("doc")
+  // Classification track
+  track            String             // "capability" | "task-bundle"
+  status           String             @default("raw") // "raw" | "processed" | "deliverable"
+  source           String?            // "foam-note" | "github-issue" | "sublime-import" | "m365-meeting"
+  // Track A — Dynamic Capabilities
+  capabilityPhase  String?            // "sensing" | "seizing" | "transforming" | "integrative-learning"
+  // Track B — Project Delivery
+  domain           String?
+  artifactType     String?            // "rfi-section" | "action-item" | "decision" | "status-report" | "deliverable"
+  m365Source       String?
+  dashboardStatus  String?
+  // Shared
+  project          String?
+  clientFacing     Boolean            @default(false)
+  tags             KnowledgeItemTag[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
+
+// ─── Tag (many-to-many via explicit join) ────────────────────────────────────
+model Tag {
+  id    String             @id @default(cuid())
+  name  String             @unique
+  items KnowledgeItemTag[]
+}
+
+model KnowledgeItemTag {
+  knowledgeItem   KnowledgeItem @relation(fields: [knowledgeItemId], references: [id], onDelete: Cascade)
+  knowledgeItemId String
+  tag             Tag           @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId           String
+
+  @@id([knowledgeItemId, tagId])
+}
+
+// ─── Meeting Note (Track B source) ───────────────────────────────────────────
+model MeetingNote {
+  id           String     @id @default(cuid())
+  title        String
+  content      String
+  processed    String?
+  domain       String?
+  m365Source   String?
+  artifacts    Artifact[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+// ─── Artifact (Track B structured output) ────────────────────────────────────
+model Artifact {
+  id            String       @id @default(cuid())
+  title         String
+  artifactType  String       // "rfi-section" | "action-item" | "decision" | "status-report" | "deliverable"
+  status        String       @default("draft")
+  domain        String?
+  percentDone   Int?
+  assignee      String?
+  dueDate       DateTime?
+  clientFacing  Boolean      @default(false)
+  meetingNote   MeetingNote? @relation(fields: [meetingNoteId], references: [id])
+  meetingNoteId String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+// ─── Inbox Item (staging area before classification) ─────────────────────────
+model InboxItem {
+  id              String   @id @default(cuid())
+  filename        String
+  rawContent      String
+  mimeType        String?
+  source          String?
+  piisStripped    Boolean  @default(false)
+  processed       Boolean  @default(false)
+  knowledgeItemId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

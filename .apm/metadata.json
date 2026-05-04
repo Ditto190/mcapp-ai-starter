@@ -1,0 +1,37 @@
+{
+  "project": "foam-modme-knowledge-platform",
+  "version": "0.1.0",
+  "created": "2026-05-04",
+  "modified": "2026-05-04",
+  "status": "phase-1-in-progress",
+  "phase": 1,
+  "planner_session": "4f4d7c9b-d167-431f-adc4-09bbdcde0663",
+  "architecture": "option-c",
+  "persistence": "prisma-postgresql",
+  "primary_workspace": "/home/wsl-vm/projects/foam-modme",
+  "apps": {
+    "mcp_server": "examples/adam-server",
+    "wasp_app": "knowledge-platform"
+  },
+  "docker_services": {
+    "postgres": {
+      "image": "postgres:16-alpine",
+      "internal_host": "postgres",
+      "port": 5432,
+      "credentials": ".env"
+    }
+  },
+  "tracks": ["capability", "task-bundle"],
+  "capability_phases": [
+    "sensing",
+    "seizing",
+    "transforming",
+    "integrative-learning"
+  ],
+  "pii_rules": {
+    "file": ".pii-rules.csv",
+    "committed": false,
+    "agent_readable": false,
+    "note": "User-maintained. Chmod 600. Never committed. Agents must not read."
+  }
+}

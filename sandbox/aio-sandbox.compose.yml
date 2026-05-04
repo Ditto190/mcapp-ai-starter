@@ -1,0 +1,22 @@
+services:
+  aio-sandbox:
+    container_name: foam-aio-sandbox
+    image: ghcr.io/agent-infra/sandbox:${AIO_SANDBOX_VERSION:-latest}
+    security_opt:
+      - seccomp:unconfined
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    shm_size: "2gb"
+    ports:
+      - "${AIO_SANDBOX_HOST_PORT:-8080}:8080"
+    environment:
+      WORKSPACE: ${AIO_SANDBOX_WORKSPACE:-/home/gem/workspace}
+      TZ: ${AIO_SANDBOX_TZ:-UTC}
+      DISABLE_JUPYTER: ${AIO_SANDBOX_DISABLE_JUPYTER:-false}
+      DISABLE_CODE_SERVER: ${AIO_SANDBOX_DISABLE_CODE_SERVER:-false}
+      PROXY_SERVER: ${AIO_SANDBOX_PROXY_SERVER:-}
+      JWT_PUBLIC_KEY: ${AIO_SANDBOX_JWT_PUBLIC_KEY:-}
+      AIO_SKILLS_PATH: ${AIO_SANDBOX_SKILLS_PATH:-}
+    volumes:
+      - ${AIO_SANDBOX_MOUNT_PATH:-/home/wsl-vm/projects/foam-modme}:/home/gem/workspace

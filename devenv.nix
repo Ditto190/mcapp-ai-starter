@@ -7,7 +7,8 @@
   # Environment variables
   env = {
     FOAM_PROJECT = "foam-modme";
-    EDITOR = "code";
+    EDITOR = "zeditor";
+    VISUAL = "zeditor";
   };
 
   # Packages available in the development environment
@@ -17,12 +18,16 @@
     gh  # GitHub CLI
     
     # Node.js ecosystem (for any build tools or extensions)
-    nodejs_20
-    nodePackages.npm
-    nodePackages.yarn
+    nodejs_20  # includes npm
+    bun        # preferred JS package manager
+    yarn
     
     # Markdown tools
     mdl  # Markdown linter
+
+    # Editor (Nix-managed)
+    zed-editor  # Zed via Nix
+    vulkan-tools    # Helpful for GPU/Vulkan diagnostics (vulkaninfo)
     
     # Text processing
     ripgrep  # Fast grep alternative
@@ -78,6 +83,15 @@
     code.exec = ''
       command code . || echo "VS Code not in PATH"
     '';
+
+    # Open in Zed (Nix package provides `zeditor`)
+    zed.exec = ''
+      if command -v zeditor >/dev/null 2>&1; then
+        zeditor .
+      else
+        echo "zeditor not found. Re-enter the environment with: devenv shell"
+      fi
+    '';
   };
 
   # Git hooks (optional)
@@ -99,11 +113,15 @@
     echo "  search     - Search through notes"
     echo "  new-note   - Create a new note"
     echo "  code       - Open in VS Code"
+    echo "  zed        - Open in Zed (Nix)"
     echo ""
     echo "Tools available:"
     echo "  • Git: $(git --version | cut -d' ' -f3)"
     echo "  • Node.js: $(node --version)"
     echo "  • Ripgrep: $(rg --version | head -1 | cut -d' ' -f2)"
+    if command -v zeditor >/dev/null 2>&1; then
+      echo "  • Zed: $(zeditor --version | head -1)"
+    fi
     echo ""
     echo "Type 'status' to see project information"
     echo ""

@@ -1,0 +1,397 @@
+import React, { useState } from 'react';
+import { View, Text, ScrollView } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import {
+  Avatar,
+  Button,
+  Card,
+  Chip,
+  ScrollShadow,
+  Tabs,
+} from 'heroui-native';
+import { Ionicons } from '@expo/vector-icons';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+
+// Mock data for dashboard
+const userData = {
+  name: 'Dylan Chen',
+  role: 'Senior Consultant',
+  company: 'Accenture',
+  avatar: 'https://i.pravatar.cc/150?img=12',
+};
+
+const statsData = [
+  { id: 1, label: 'Active Projects', value: '12', change: '+2.5%', trend: 'up' },
+  { id: 2, label: 'Deliverables', value: '47', change: '+12%', trend: 'up' },
+  { id: 3, label: 'Team Members', value: '8', change: '0%', trend: 'neutral' },
+  { id: 4, label: 'Avg. Rating', value: '4.8', change: '+0.2', trend: 'up' },
+];
+
+const projectsData = [
+  {
+    id: 1,
+    title: 'Digital Transformation',
+    client: 'Fortune 500 Client',
+    status: 'active',
+    progress: 68,
+    dueDate: 'May 15, 2026',
+    team: 12,
+  },
+  {
+    id: 2,
+    title: 'Requirements Traceability',
+    client: 'Tech Startup',
+    status: 'review',
+    progress: 92,
+    dueDate: 'Apr 30, 2026',
+    team: 5,
+  },
+  {
+    id: 3,
+    title: 'Cloud Migration',
+    client: 'Healthcare Corp',
+    status: 'active',
+    progress: 45,
+    dueDate: 'Jun 20, 2026',
+    team: 8,
+  },
+];
+
+const activitiesData = [
+  {
+    id: 1,
+    title: 'Updated RTM slide deck',
+    time: '2 hours ago',
+    type: 'update',
+    icon: 'document-text',
+  },
+  {
+    id: 2,
+    title: 'Client presentation completed',
+    time: '5 hours ago',
+    type: 'complete',
+    icon: 'checkmark-circle',
+  },
+  {
+    id: 3,
+    title: 'New team member onboarded',
+    time: '1 day ago',
+    type: 'team',
+    icon: 'people',
+  },
+  {
+    id: 4,
+    title: 'Proposal submitted to SWF',
+    time: '2 days ago',
+    type: 'milestone',
+    icon: 'trophy',
+  },
+];
+
+const upcomingTasks = [
+  { id: 1, title: 'Review stakeholder feedback', priority: 'high', due: 'Today' },
+  { id: 2, title: 'Prepare Q2 deliverables', priority: 'medium', due: 'Tomorrow' },
+  { id: 3, title: 'Team sync meeting', priority: 'low', due: 'Apr 24' },
+];
+
+export default function Dashboard() {
+  const [activeTab, setActiveTab] = useState('overview');
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'success';
+      case 'review':
+        return 'warning';
+      case 'completed':
+        return 'accent';
+      default:
+        return 'default';
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high':
+        return 'danger';
+      case 'medium':
+        return 'warning';
+      case 'low':
+        return 'accent';
+      default:
+        return 'default';
+    }
+  };
+
+  const renderOverviewTab = () => (
+    <Animated.View
+      entering={FadeIn.duration(200)}
+      exiting={FadeOut.duration(200)}
+      className="gap-6"
+    >
+      {/* User Profile Header */}
+      <Card variant="secondary">
+        <Card.Body className="gap-4">
+          <View className="flex-row items-center gap-4">
+            <Avatar size="lg" color="accent">
+              <Avatar.Image source={{ uri: userData.avatar }} />
+              <Avatar.Fallback>DC</Avatar.Fallback>
+            </Avatar>
+            <View className="flex-1">
+              <Card.Title className="text-xl">{userData.name}</Card.Title>
+              <Card.Description className="text-base">
+                {userData.role} • {userData.company}
+              </Card.Description>
+            </View>
+            <Button size="sm" variant="tertiary" isIconOnly>
+              <Ionicons name="settings-outline" size={20} />
+            </Button>
+          </View>
+        </Card.Body>
+      </Card>
+
+      {/* Stats Grid */}
+      <View>
+        <Text className="text-lg font-semibold text-foreground mb-3 px-1">
+          Performance Metrics
+        </Text>
+        <ScrollShadow LinearGradientComponent={LinearGradient}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerClassName="gap-3 px-1"
+          >
+            {statsData.map((stat) => (
+              <Card key={stat.id} variant="default" className="w-36">
+                <Card.Body className="gap-2">
+                  <View className="flex-row items-center justify-between">
+                    <Text className="text-2xl font-bold text-foreground">
+                      {stat.value}
+                    </Text>
+                    <Chip
+                      size="sm"
+                      variant="soft"
+                      color={stat.trend === 'up' ? 'success' : 'default'}
+                    >
+                      <Chip.Label className="text-xs">{stat.change}</Chip.Label>
+                    </Chip>
+                  </View>
+                  <Text className="text-sm text-muted">{stat.label}</Text>
+                </Card.Body>
+              </Card>
+            ))}
+          </ScrollView>
+        </ScrollShadow>
+      </View>
+
+      {/* Recent Activity */}
+      <View>
+        <View className="flex-row items-center justify-between mb-3 px-1">
+          <Text className="text-lg font-semibold text-foreground">
+            Recent Activity
+          </Text>
+          <Button size="sm" variant="ghost">
+            <Button.Label>View All</Button.Label>
+          </Button>
+        </View>
+        <View className="gap-3">
+          {activitiesData.slice(0, 3).map((activity) => (
+            <Card key={activity.id} variant="default">
+              <Card.Body>
+                <View className="flex-row items-center gap-3">
+                  <View className="size-10 items-center justify-center rounded-full bg-accent/10">
+                    <Ionicons
+                      name={activity.icon as any}
+                      size={20}
+                      className="text-accent"
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <Card.Title className="text-base">
+                      {activity.title}
+                    </Card.Title>
+                    <Card.Description className="text-sm">
+                      {activity.time}
+                    </Card.Description>
+                  </View>
+                </View>
+              </Card.Body>
+            </Card>
+          ))}
+        </View>
+      </View>
+    </Animated.View>
+  );
+
+  const renderProjectsTab = () => (
+    <Animated.View
+      entering={FadeIn.duration(200)}
+      exiting={FadeOut.duration(200)}
+      className="gap-4"
+    >
+      {projectsData.map((project) => (
+        <Card key={project.id} variant="secondary">
+          <Card.Body className="gap-4">
+            <View className="flex-row items-start justify-between">
+              <View className="flex-1">
+                <Card.Title className="text-lg mb-1">
+                  {project.title}
+                </Card.Title>
+                <Card.Description>{project.client}</Card.Description>
+              </View>
+              <Chip
+                size="sm"
+                variant="soft"
+                color={getStatusColor(project.status)}
+              >
+                <Chip.Label className="capitalize">{project.status}</Chip.Label>
+              </Chip>
+            </View>
+
+            {/* Progress Bar */}
+            <View className="gap-2">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-xs text-muted">Progress</Text>
+                <Text className="text-xs font-medium text-foreground">
+                  {project.progress}%
+                </Text>
+              </View>
+              <View className="h-2 bg-default rounded-full overflow-hidden">
+                <View
+                  className="h-full bg-accent rounded-full"
+                  style={{ width: `${project.progress}%` }}
+                />
+              </View>
+            </View>
+
+            <View className="flex-row items-center gap-4">
+              <View className="flex-row items-center gap-1.5">
+                <Ionicons name="calendar-outline" size={14} className="text-muted" />
+                <Text className="text-xs text-muted">{project.dueDate}</Text>
+              </View>
+              <View className="flex-row items-center gap-1.5">
+                <Ionicons name="people-outline" size={14} className="text-muted" />
+                <Text className="text-xs text-muted">{project.team} members</Text>
+              </View>
+            </View>
+          </Card.Body>
+          <Card.Footer className="gap-2">
+            <Button variant="primary" size="sm" className="flex-1">
+              <Button.Label>View Details</Button.Label>
+            </Button>
+            <Button variant="outline" size="sm" isIconOnly>
+              <Ionicons name="ellipsis-horizontal" size={18} />
+            </Button>
+          </Card.Footer>
+        </Card>
+      ))}
+    </Animated.View>
+  );
+
+  const renderTasksTab = () => (
+    <Animated.View
+      entering={FadeIn.duration(200)}
+      exiting={FadeOut.duration(200)}
+      className="gap-4"
+    >
+      <Card variant="secondary">
+        <Card.Body className="gap-1">
+          <Card.Title className="text-base">Upcoming Tasks</Card.Title>
+          <Card.Description>
+            {upcomingTasks.length} tasks require your attention
+          </Card.Description>
+        </Card.Body>
+      </Card>
+
+      {upcomingTasks.map((task) => (
+        <Card key={task.id} variant="default">
+          <Card.Body>
+            <View className="flex-row items-center gap-3">
+              <View className="size-5 border-2 border-border rounded" />
+              <View className="flex-1">
+                <Card.Title className="text-base mb-1">{task.title}</Card.Title>
+                <View className="flex-row items-center gap-2">
+                  <Chip
+                    size="sm"
+                    variant="soft"
+                    color={getPriorityColor(task.priority)}
+                  >
+                    <Chip.Label className="text-xs capitalize">
+                      {task.priority}
+                    </Chip.Label>
+                  </Chip>
+                  <Text className="text-xs text-muted">Due: {task.due}</Text>
+                </View>
+              </View>
+              <Button variant="ghost" size="sm" isIconOnly>
+                <Ionicons name="chevron-forward" size={18} />
+              </Button>
+            </View>
+          </Card.Body>
+        </Card>
+      ))}
+
+      <Button variant="outline" className="mt-2">
+        <Ionicons name="add" size={20} />
+        <Button.Label>Add New Task</Button.Label>
+      </Button>
+    </Animated.View>
+  );
+
+  return (
+    <View className="flex-1 bg-background">
+      {/* Dashboard Header */}
+      <View className="pt-14 pb-4 px-5 border-b border-border bg-surface">
+        <View className="flex-row items-center justify-between">
+          <View>
+            <Text className="text-2xl font-bold text-foreground">Dashboard</Text>
+            <Text className="text-sm text-muted mt-0.5">
+              Wednesday, April 22, 2026
+            </Text>
+          </View>
+          <Button variant="primary" size="sm" isIconOnly>
+            <Ionicons name="notifications-outline" size={20} />
+          </Button>
+        </View>
+      </View>
+
+      {/* Tabs Navigation */}
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        variant="primary"
+        className="flex-1"
+      >
+        <View className="border-b border-border bg-surface">
+          <Tabs.List>
+            <Tabs.ScrollView scrollAlign="start" contentContainerClassName="px-5">
+              <Tabs.Indicator />
+              <Tabs.Trigger value="overview">
+                <Ionicons name="grid-outline" size={16} />
+                <Tabs.Label>Overview</Tabs.Label>
+              </Tabs.Trigger>
+              <Tabs.Trigger value="projects">
+                <Ionicons name="briefcase-outline" size={16} />
+                <Tabs.Label>Projects</Tabs.Label>
+              </Tabs.Trigger>
+              <Tabs.Trigger value="tasks">
+                <Ionicons name="checkbox-outline" size={16} />
+                <Tabs.Label>Tasks</Tabs.Label>
+              </Tabs.Trigger>
+            </Tabs.ScrollView>
+          </Tabs.List>
+        </View>
+
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="p-5"
+          showsVerticalScrollIndicator={false}
+        >
+          <Tabs.Content value="overview">{renderOverviewTab()}</Tabs.Content>
+          <Tabs.Content value="projects">{renderProjectsTab()}</Tabs.Content>
+          <Tabs.Content value="tasks">{renderTasksTab()}</Tabs.Content>
+        </ScrollView>
+      </Tabs>
+    </View>
+  );
+}

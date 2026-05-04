@@ -58,16 +58,21 @@ new-note my-topic
 
 # Open project in VS Code
 code
+
+# Open project in Zed (Nix-managed)
+zed
 ```
 
 #### Standard Tools
 
 - `git` - Version control
 - `gh` - GitHub CLI
+- `zeditor` - Zed editor (from Nix)
 - `node` / `npm` / `yarn` - JavaScript tooling
 - `rg` (ripgrep) - Fast text search
 - `fd` - Fast file finder
 - `jq` - JSON processor
+- `vulkaninfo` - Vulkan diagnostic command (from `vulkan-tools`)
 
 ### 4. Start Services (Optional)
 
@@ -84,6 +89,7 @@ Press `Ctrl+C` to stop all services.
 ### `devenv.nix`
 
 Main configuration file defining:
+
 - **Packages** - Tools available in the environment
 - **Scripts** - Custom commands
 - **Environment variables**
@@ -103,6 +109,7 @@ packages = with pkgs; [
 ### `devenv.yaml`
 
 Project metadata and settings:
+
 - Nixpkgs version/channel
 - Global settings
 - Permissions (unfree packages, etc.)
@@ -118,6 +125,9 @@ devenv shell
 
 # 2. Check status
 status
+
+# 2b. Open in Zed (optional)
+zed
 
 # 3. Make changes to your notes
 # ... edit files ...
@@ -151,6 +161,23 @@ Then reload the environment:
 ```bash
 exit                # Exit current shell
 devenv shell        # Re-enter with new packages
+```
+
+### Switching from previous Zed install to Nix Zed
+
+If you previously installed Zed via the upstream script, prefer launching Zed from this environment (`zed` or `zeditor`) so the Nix-managed binary is used first in `PATH`.
+
+To verify:
+
+```bash
+which zeditor
+zeditor --version
+```
+
+Optional Vulkan sanity check (helpful in WSLg):
+
+```bash
+vulkaninfo --summary
 ```
 
 ### Creating Custom Scripts

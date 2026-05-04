@@ -56,6 +56,14 @@ Next agent task ready | ContextStream persists entire workflow history
 - ⚠️ **Session persistence:** Use ContextStream (see [contextstream-knowledge-management.instructions.md](.github/instructions/contextstream-knowledge-management.instructions.md)) — state carries across sessions
 - ⚠️ **Codebase context:** See [.github/copilot-instructions.md](.github/copilot-instructions.md) — project conventions and tool access rules
 
+### WSL Shell Setup Reference (for local automation)
+
+- Shell profile baseline: `/home/wsl-vm/.zshrc`
+- Shell env bootstrap: `/home/wsl-vm/.zshenv`
+- Rust toolchain PATH bootstrap: `/home/wsl-vm/.cargo/env`
+
+These are useful when troubleshooting PATH/runtime issues (`nvm`, `fnm`, `bun`, `dotnet`, Homebrew, Cargo) or using workspace aliases like `foam`, `apm`, and `mcpws`.
+
 ---
 
 ### What’s included
@@ -66,8 +74,7 @@ integrations and advanced AI components
 ✅ [**Ollama**](https://ollama.com/) - Cross-platform LLM platform to install
 and run the latest local LLMs
 
-✅ [**Qdrant**](https://qdrant.tech/) - Open-source, high performance vector
-store with an comprehensive API
+// PRISMA [todo] Add PRISMA info
 
 ✅ [**PostgreSQL**](https://www.postgresql.org/) -  Workhorse of the Data
 Engineering world, handles large amounts of data safely.

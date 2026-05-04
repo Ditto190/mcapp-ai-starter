@@ -98,6 +98,16 @@ A #recipe is a guide, tip or strategy for getting the most out of your Foam work
 
 Creative ideas welcome!
 
+## Knowledge Management
+
+Recipes for classifying, organising, and processing notes using the foam-modme Knowledge Management Platform.
+
+See [`docs/knowledge-platform/taxonomy.md`](../knowledge-platform/taxonomy.md) for the full classification reference.
+
+- [Classify a knowledge item](knowledge-management/classify-knowledge-item.md)
+- [Process meeting notes from M365 Copilot](knowledge-management/process-meeting-notes.md)
+- [Set up the inbox ingestion pipeline](knowledge-management/inbox-ingestion-setup.md)
+
 - Support [Anki](https://apps.ankiweb.net/) cards from notes like [Remnote](https://www.remnote.io/) [[todo]]
 
 _See [[contribution-guide]] and [[how-to-write-recipes]]._
@@ -113,14 +123,12 @@ _See [[contribution-guide]] and [[how-to-write-recipes]]._
 [todo]: ../../dev/todo.md "Todo"
 [web-clipper]: web-clipper.md "Web Clipper"
 [markup-converter]: markup-converter.md "Markup Converter"
-[graph-visualization]: ../features/graph-visualization.md "Graph Visualization"
 [backlinking]: ../features/backlinking.md "Backlinking"
 [unlinked-references]: ../../dev/unlinked-references.md "Unlinked references (stub)"
 [wikilinks]: ../features/wikilinks.md "Wikilinks"
 [commands]: ../features/commands.md "Foam Commands"
 [daily-notes]: ../features/daily-notes.md "Daily Notes"
 [tags]: ../features/tags.md "Tags"
-[note-templates]: ../features/templates.md "Note Templates"
 [orphans]: ../tools/orphans.md "Orphaned Notes"
 [diagrams-in-markdown]: diagrams-in-markdown.md "Diagrams in Markdown"
 [automatically-expand-urls-to-well-titled-links]: automatically-expand-urls-to-well-titled-links.md "Automatically Expand URLs to Well-Titled Links"
@@ -128,7 +136,6 @@ _See [[contribution-guide]] and [[how-to-write-recipes]]._
 [add-images-to-notes]: add-images-to-notes.md "Add images to your notes"
 [shows-image-preview-on-hover]: shows-image-preview-on-hover.md "Shows Image Preview on Hover"
 [good-first-task]: ../../dev/good-first-task.md "Good First Task"
-[including-notes]: ../features/including-notes.md "Including notes in a note"
 [write-your-notes-in-github-gist]: write-your-notes-in-github-gist.md "Write your notes in GitHub Gist"
 [automatic-git-syncing]: automatic-git-syncing.md "Automatically Sync with Git"
 [publish-to-github-pages]: ../publishing/publish-to-github-pages.md "GitHub Pages"

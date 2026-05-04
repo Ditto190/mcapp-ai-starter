@@ -1,24 +1,44 @@
 {
-  "files.autoSave": "onFocusChange",
-  "editor.minimap.enabled": false,
-  "editor.wrappingIndent": "indent",
-  "editor.overviewRulerBorder": false,
-  "editor.lineHeight": 24,
-  "foam.edit.linkReferenceDefinitions": "withExtensions",
-  "[markdown]": {
-    "editor.quickSuggestions": {
-      "other": true,
-      "comments": false,
-      "strings": true
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "terminal.external.linuxExec": "xterm",
+  "terminal.integrated.profiles.linux": {
+    "zsh": {
+      "path": "/usr/bin/zsh",
+      "args": [],
+      "icon": "terminal-linux"
     }
   },
-  "git.enableSmartCommit": true,
-  "git.postCommitCommand": "sync",
   "files.exclude": {
-    "_site/**": true
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.next": true,
+    "**/coverage": true,
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/consolidated_sources": true
   },
-  "files.insertFinalNewline": true,
-  "markdown.styles": [".vscode/custom-tag-style.css"],
-  "deepnote.debugpyDistPath": "",
-  "deepnote.notebookFileRoot": "${fileDirname}"
+  "search.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.next": true,
+    "**/coverage": true,
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/consolidated_sources": true
+  },
+  "files.watcherExclude": {
+    "**/.git/**": true,
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/.next/**": true,
+    "**/coverage/**": true,
+    "**/.venv/**": true,
+    "**/__pycache__/**": true,
+    "**/consolidated_sources/**": true
+  }
 }

@@ -1,0 +1,6 @@
+/home/wsl-vm/projects/foam-modme/.devenv/bootstrap/bootstrapLib.nix
+/home/wsl-vm/projects/foam-modme/.devenv/bootstrap/default.nix
+/home/wsl-vm/projects/foam-modme/devenv.lock
+/home/wsl-vm/projects/foam-modme/devenv.nix
+/home/wsl-vm/projects/foam-modme/devenv.yaml
+/home/wsl-vm/projects/foam-modme/.env

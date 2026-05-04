@@ -1,0 +1,31 @@
+app knowledgePlatform {
+  wasp: {
+    version: "^0.23.0"
+  },
+  title: "foam-modme Knowledge Platform",
+}
+
+// ─── Routes ──────────────────────────────────────────────────────────────────
+
+route RootRoute { path: "/", to: DashboardPage }
+route KnowledgeBrowserRoute { path: "/knowledge", to: KnowledgeBrowserPage }
+route InboxRoute { path: "/inbox", to: InboxPage }
+route TagEditorRoute { path: "/tags", to: TagEditorPage }
+
+// ─── Pages ───────────────────────────────────────────────────────────────────
+
+page DashboardPage {
+  component: import { DashboardPage } from "@src/pages/DashboardPage"
+}
+
+page KnowledgeBrowserPage {
+  component: import { KnowledgeBrowserPage } from "@src/pages/KnowledgeBrowserPage"
+}
+
+page InboxPage {
+  component: import { InboxPage } from "@src/pages/InboxPage"
+}
+
+page TagEditorPage {
+  component: import { TagEditorPage } from "@src/pages/TagEditorPage"
+}
