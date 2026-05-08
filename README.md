@@ -27,8 +27,8 @@ This project uses **isolated git worktrees** and **coordinated agent orchestrati
 
 - **Isolation:** Each agent works in its own branch (e.g., `feature/agent-foo`)  with independent git worktree
 - **Parallel Work:** Multiple agents can work simultaneously without conflicts
-- **Automatic Coordination:** [multi-agent-orchestrator.agent.md](.github/agents/multi-agent-orchestrator.agent.md) auto-detects completed work, creates PRs, merges on approval
-- **Code Gating:** [migration-analyst.agent.md](.github/agents/migration-analyst.agent.md) gates all external code integration with security/quality analysis
+- **Automatic Coordination:** [multi-agent-orchestrator.agent.md](./.github/prompts/agents/multi-agent-orchestrator.agent.md) auto-detects completed work, creates PRs, merges on approval
+- **Code Gating:** [migration-analyst.agent.md](./.github/prompts/agents/migration-analyst.agent.md) gates all external code integration with security/quality analysis
 - **Persistent Memory:** All agent decisions and state persisted across sessions via ContextStream
 
 ### How It Works
@@ -52,7 +52,7 @@ Next agent task ready | ContextStream persists entire workflow history
 - ⚠️ **Before any task:** Read [AGENT_QUICKSTART.md](.github/instructions/AGENT_QUICKSTART.md) — mandatory first step
 - ⚠️ **Before git worktree:** Check [SETUP_STATUS.md](.github/instructions/SETUP_STATUS.md) — know current phase
 - ⚠️ **Before PRs/commits:** Review [multi-agent-workflow.instructions.md](.github/instructions/multi-agent-workflow.instructions.md) — understand flow
-- ⚠️ **Migration folder code:** [migration-analyst.agent.md](.github/agents/migration-analyst.agent.md) will gate it — expect automated analysis
+- ⚠️ **Migration folder code:** [migration-analyst.agent.md](./.github/prompts/agents/migration-analyst.agent.md) will gate it — expect automated analysis
 - ⚠️ **Session persistence:** Use ContextStream (see [contextstream-knowledge-management.instructions.md](.github/instructions/contextstream-knowledge-management.instructions.md)) — state carries across sessions
 - ⚠️ **Codebase context:** See [.github/copilot-instructions.md](.github/copilot-instructions.md) — project conventions and tool access rules
 

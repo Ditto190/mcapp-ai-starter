@@ -180,8 +180,8 @@ Create `.github/scripts/orchestrator.sh` (auto-detect commits → PR → merge �
 
 ### **For Infrastructure**
 
-1. **Orchestration**: [.github/agents/multi-agent-orchestrator.agent.md](.github/agents/multi-agent-orchestrator.agent.md)
-2. **Migration**: [.github/agents/migration-analyst.agent.md](.github/agents/migration-analyst.agent.md)
+1. **Orchestration**: [.github/agents/multi-agent-orchestrator.agent.md](./.github/prompts/agents/multi-agent-orchestrator.agent.md)
+2. **Migration**: [.github/agents/migration-analyst.agent.md](./.github/prompts/agents/migration-analyst.agent.md)
 3. **Security**: [.github/workflows/codeql.yml](.github/workflows/codeql.yml)
 
 ---

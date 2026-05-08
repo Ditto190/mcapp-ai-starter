@@ -11,8 +11,8 @@ applyTo: "**"
 ## Quick Links
 
 - [Initial Setup Instructions](./../instructions/initial-setup.instructions.md) — Foundation (Phases 1–5)
-- [Multi-Agent Orchestrator](./../agents/multi-agent-orchestrator.agent.md) — Automated PR/merge coordination
-- [Migration Analyst](./../agents/migration-analyst.agent.md) — Code recycling from `migration/` folder
+- [Multi-Agent Orchestrator](../prompts/agents/multi-agent-orchestrator.agent.md) — Automated PR/merge coordination
+- [Migration Analyst](../prompts/agents/migration-analyst.agent.md) — Code recycling from `migration/` folder
 - [Copilot Instructions](./../copilot-instructions.md) — Compact agent guide
 
 ---

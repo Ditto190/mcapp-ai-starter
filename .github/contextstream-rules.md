@@ -325,7 +325,4 @@ npm install -g @contextstream/mcp-server@latest
 - Use ContextStream plans/tasks as the persistent record of work
 - Before code discovery, use `search(mode="auto", query="...")`
 
-</contextstream>
-
-
 ---

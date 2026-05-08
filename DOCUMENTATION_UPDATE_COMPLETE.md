@@ -21,7 +21,7 @@
 
 #### 🔄 multi-agent-orchestrator.agent.md
 
-- **Symlink:** [→ .github/agents/multi-agent-orchestrator.agent.md](.github/agents/multi-agent-orchestrator.agent.md)
+- **Symlink:** [→ .github/agents/multi-agent-orchestrator.agent.md](./.github/prompts/agents/multi-agent-orchestrator.agent.md)
 - **Proactive Trigger:** "When multiple agents have completed features (committed + pushed to feature/* branches)"
 - **Required Reading:**
   - multi-agent-workflow.instructions.md (Phases 3–5)
@@ -32,7 +32,7 @@
 
 #### 🔍 migration-analyst.agent.md
 
-- **Symlink:** [→ .github/agents/migration-analyst.agent.md](.github/agents/migration-analyst.agent.md)
+- **Symlink:** [→ .github/agents/migration-analyst.agent.md](./.github/prompts/agents/migration-analyst.agent.md)
 - **Proactive Trigger:** "When PR references code/configs from migration/ folder"
 - **Required Reading:**
   - .github/copilot-instructions.md (Migration Folder Rules)

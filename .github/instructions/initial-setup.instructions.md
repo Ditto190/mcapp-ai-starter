@@ -384,5 +384,5 @@ contextstream-mcp setup --force
 - [.github/copilot-instructions.md](../copilot-instructions.md) — Compact agent guide
 - [DEVELOPER-QUICKSTART.md](../../DEVELOPER-QUICKSTART.md) — Per-component commands
 - [.gitlab-ci.yml](../../.gitlab-ci.yml) — GitLab pipeline config
-- [.github/agents/migration-analyst.agent.md](../agents/migration-analyst.agent.md) — Migration workflow
-- [.github/agents/multi-agent-orchestrator.agent.md](../agents/multi-agent-orchestrator.agent.md) — Coming soon
+- [.github/agents/migration-analyst.agent.md](../prompts/agents/migration-analyst.agent.md) — Migration workflow
+- [.github/agents/multi-agent-orchestrator.agent.md](../prompts/agents/multi-agent-orchestrator.agent.md) — Coming soon
