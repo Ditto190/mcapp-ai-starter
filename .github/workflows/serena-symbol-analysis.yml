@@ -75,11 +75,11 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Setup Node.js (for TypeScript components)
+      - name: Setup Bun (for TypeScript components)
         if: matrix.component == 'prompt-registry'
-        uses: actions/setup-node@v4
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: "20"
+          bun-version: "1.3.13"
 
       - name: Install dependencies
         run: |
@@ -88,7 +88,7 @@ jobs:
           elif [ "${{ matrix.component }}" = "generateagents-mcp" ]; then
             cd generateagents-mcp && pip install -e .
           elif [ "${{ matrix.component }}" = "prompt-registry" ]; then
-            cd prompt-registry && npm ci
+            cd prompt-registry && ~/.bun/bin/bun install --frozen-lockfile
           fi
 
       - name: Run targeted tests
@@ -100,7 +100,7 @@ jobs:
           elif [ "${{ matrix.component }}" = "generateagents-mcp" ]; then
             cd generateagents-mcp && python verify.py
           elif [ "${{ matrix.component }}" = "prompt-registry" ]; then
-            cd prompt-registry && npm test
+            cd prompt-registry && ~/.bun/bin/bun test
           fi
 
   update-serena-memory:

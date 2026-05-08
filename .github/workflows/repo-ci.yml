@@ -65,24 +65,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: prompt-registry/package-lock.json
+          bun-version: "1.3.13"
 
       - name: Install dependencies
         working-directory: prompt-registry
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Lint
         working-directory: prompt-registry
-        run: npm run lint
+        run: bun run lint
 
       - name: Compile
         working-directory: prompt-registry
-        run: npm run compile
+        run: bun run compile
 
   awesome-copilot-build:
     name: Awesome Copilot build
@@ -95,17 +93,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: awesome-copilot/package-lock.json
+          bun-version: "1.3.13"
 
       - name: Install dependencies
         working-directory: awesome-copilot
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Build
         working-directory: awesome-copilot
-        run: npm run build
+        run: bun run build

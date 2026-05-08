@@ -8,6 +8,31 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Phase 2 Planning — Architecture Evolution
+
+#### Added
+
+**Phase 2 Implementation Plans**
+
+- `docs/ways-of-work/plan/knowledge-platform/phase-2c-db-dashboard/implementation-plan.md` — Phase 2c: KM Platform DB Activation & Dashboard UI (Turborepo + Elysia + Prisma + Next.js + shadcn/ui + Podman + AgentCard)
+- `docs/ways-of-work/plan/tool-harmonization/bun-biome-migration/implementation-plan.md` — Phase 2b: Tool Harmonization (Bun + Biome 2 migration, devenv.nix repair, TypeScript config sharing)
+
+**Architecture Decisions (ADRs)**
+
+- **Turborepo monorepo** — foam-modme root initialized as Turborepo workspace; `apps/`, `packages/`, `services/` layout
+- **Elysia API layer** — Elysia (Bun-native, ~17× faster than Express) replaces Wasp queries as primary API layer; Eden type-safe client for dashboard
+- **Composable Prisma ORM package** — `packages/db/` (`@foam/db`) as shared Prisma package; schema.prisma moved from knowledge-platform/; Prisma 7 explicit generate pipeline
+- **Podman Compose** — docker-compose.yml replaced with podman-compose.yml (company policy: NO DOCKER); postgres port mapping fix (`5432:5432` added)
+- **Biome 2** — Replaces ESLint + Prettier across all workspace packages; shared `@foam/biome-config` via `packages/biome-config/`
+- **Bun package manager** — Root migrated from npm to Bun 1.3.13; package-lock.json removed
+- **SecretSpec** — Secret contract management for developer onboarding and pipeline secrets; `secretspec run -- bun start` integration pattern
+- **AgentCard** — `/.well-known/agent.json` added to A.D.A.M. server for agent discovery (Linux Foundation A2A v1.0); full A2A endpoints deferred to Stage 3
+- **Dashboards as iterative artefacts** — Next.js 15 dashboard in `apps/km-dashboard/` treated as evolving design artefact, not a final deliverable
+
+**APM Plan Updates**
+
+- `.apm/plan.md` — Full rewrite: Stage 1 marked ✅ complete; Podman constraint documented; W5 (API Engineer) + W6 (Frontend Engineer) workers added; Stage 2 split into parallel tracks 2b (tool harmonization) and 2c (platform build); Stage 3 and 4 updated for new architecture (Elysia A2A, Podman n8n)
+
 ---
 
 ## [0.1.0] — 2026-05-04
