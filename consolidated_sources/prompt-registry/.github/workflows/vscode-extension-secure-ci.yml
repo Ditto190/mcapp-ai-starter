@@ -127,7 +127,7 @@ jobs:
           npx license-checker --csv > license-report.csv
 
       - name: Upload SBOM artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sbom-reports
           path: |
@@ -280,7 +280,7 @@ jobs:
 
       - name: Upload extension artifacts
         if: matrix.node-version == ${{ env.NODE_VERSION }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: vsix-${{ matrix.os }}-node${{ matrix.node-version }}
           path: ${{ env.EXTENSION_DIR }}/*.vsix
@@ -389,7 +389,7 @@ jobs:
           persist-credentials: false
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
 
       - name: Generate compliance report
         shell: bash
@@ -416,7 +416,7 @@ jobs:
           echo "" >> compliance-report.md
 
       - name: Upload compliance report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: compliance-report
           path: compliance-report.md
