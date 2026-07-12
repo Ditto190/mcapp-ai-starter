@@ -39,7 +39,7 @@ jobs:
           fetch-depth: 0 # Full history for analysis
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -80,7 +80,7 @@ jobs:
 
       - name: Setup Python (for Python components)
         if: matrix.component != 'prompt-registry'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
