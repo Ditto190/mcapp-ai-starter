@@ -20,12 +20,12 @@ authors = [{name = "AI Starter Kit Contributors"}]
 # Shared Python dependencies for root scripts
 dependencies = [
     "pyyaml>=6.0",
-    "requests>=2.31.0",
+    "requests>=2.34.2",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0",
+    "pytest>=9.0.3",
     "black>=23.0",
     "ruff>=0.1.0",
     "mypy>=1.0",
